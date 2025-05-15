@@ -1,0 +1,45 @@
+|-- .gitignore
+|-- jsconfig.json
+|-- next.config.mjs
+|-- package-lock.json
+|-- package.json
+|-- postcss.config.mjs
+|-- public
+    |-- file.svg
+    |-- globe.svg
+    |-- images
+        |-- couple.jpeg
+        |-- couple1.jpeg
+        |-- couple2.jpeg
+        |-- couple3.jpeg
+    |-- logo.png
+    |-- mobileView.png
+    |-- next.svg
+    |-- people
+        |-- ananya.jpg
+        |-- arjun.jpg
+        |-- neha.jpg
+        |-- priya.jpg
+        |-- rohan.jpg
+        |-- vikram.jpg
+    |-- qr.png
+    |-- vercel.svg
+    |-- window.svg
+|-- README.md
+|-- src
+    |-- app
+        |-- globals.css
+        |-- layout.js
+        |-- page.js
+    |-- components
+        |-- AppDownload.jsx
+        |-- BlogPreview.jsx
+        |-- FeaturedProfiles.jsx
+        |-- Footer.jsx
+        |-- HeroSection.jsx
+        |-- Navbar.jsx
+        |-- QuickRegistrationForm.jsx
+        |-- SearchMatchesWidget.jsx
+        |-- SuccessStories.jsx
+        |-- UserTestimonials.jsx
+        |-- WhyChooseUs.jsx
