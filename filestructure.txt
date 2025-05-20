@@ -5,6 +5,11 @@
 |-- package.json
 |-- postcss.config.mjs
 |-- public
+    |-- blogImages
+        |-- blog1.png
+        |-- blog2.png
+        |-- blog3.png
+        |-- blog4.png
     |-- file.svg
     |-- globe.svg
     |-- images

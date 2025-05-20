@@ -1,7 +1,12 @@
 "use client"
 import React from 'react';
 import { Heart, Mail, MapPin, Phone } from 'lucide-react';
-
+import { 
+  Facebook as LucideFacebook, 
+  Twitter as LucideTwitter, 
+  Instagram as LucideInstagram, 
+  Linkedin as LucideLinkedin 
+} from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="w-full bg-rose-900 text-white">
@@ -17,23 +22,28 @@ const Footer = () => {
             <p className="text-rose-100/80 font-sans leading-relaxed">
               Helping you find meaningful connections that last a lifetime. Our thoughtful matchmaking honors tradition while embracing modern relationships.
             </p>
-            <div className="flex space-x-4 pt-2">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((social) => (
-                <a 
-                  key={social} 
-                  href="#" 
-                  className="w-10 h-10 rounded-full bg-rose-900/30 hover:bg-rose-900/50 flex items-center justify-center transition-colors duration-300"
-                  aria-label={social}
-                >
-                  <span className="sr-only">{social}</span>
-                  <img 
-                    src={`/icons/${social}.svg`} 
-                    alt="" 
-                    className="w-5 h-5 filter brightness-0 invert opacity-80" 
-                  />
-                </a>
-              ))}
-            </div>
+           <div className="flex space-x-4 pt-2">
+  {['facebook', 'twitter', 'instagram', 'linkedin'].map((social) => {
+    const Icon = {
+      facebook: LucideFacebook,
+      twitter: LucideTwitter,
+      instagram: LucideInstagram,
+      linkedin: LucideLinkedin
+    }[social];
+    
+    return (
+      <a 
+        key={social} 
+        href="#" 
+        className="w-10 h-10 rounded-full bg-rose-900/30 hover:bg-rose-900/50 flex items-center justify-center transition-colors duration-300"
+        aria-label={social}
+      >
+        <span className="sr-only">{social}</span>
+        <Icon className="w-5 h-5 opacity-80 text-white" />
+      </a>
+    );
+  })}
+</div>
           </div>
 
           {/* Quick Links */}
@@ -85,20 +95,19 @@ const Footer = () => {
               <li className="flex items-start space-x-3">
                 <MapPin className="text-rose-300 mt-1 flex-shrink-0" size={18} />
                 <span className="text-rose-100/80">
-                  123 Matchmaking Lane<br />
-                  Mumbai, Maharashtra 400001
+                 Pune,Maharashtra
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="text-rose-300" size={18} />
                 <a href="mailto:hello@matrimony.com" className="text-rose-100/80 hover:text-rose-50">
-                  hello@matrimony.com
+                  info@shivbandhan.com
                 </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="text-rose-300" size={18} />
                 <a href="tel:+911234567890" className="text-rose-100/80 hover:text-rose-50">
-                  +91 12345 67890
+                 +1 888-843-8693
                 </a>
               </li>
             </ul>

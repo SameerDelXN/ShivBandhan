@@ -8,7 +8,7 @@ const blogPosts = [
     title: "5 Essential Conversations Before Marriage",
     category: "Relationship Advice",
     excerpt: "Discover the key discussions every couple should have to build a strong foundation for their married life.",
-    image: "/api/placeholder/600/400",
+    image: "/blogImages/blog1.png",
     readTime: "5 min read",
     date: "May 15, 2024"
   },
@@ -17,7 +17,7 @@ const blogPosts = [
     title: "Balancing Tradition & Modernity in Relationships",
     category: "Cultural Insights",
     excerpt: "How to honor family traditions while creating a partnership that works for today's world.",
-    image: "/api/placeholder/600/400",
+    image: "/blogImages/blog2.png",
     readTime: "7 min read",
     date: "April 28, 2024"
   },
@@ -26,7 +26,7 @@ const blogPosts = [
     title: "The Psychology of Successful Matches",
     category: "Matchmaking Science",
     excerpt: "What research tells us about the factors that create lasting compatibility between partners.",
-    image: "/api/placeholder/600/400",
+    image: "/blogImages/blog3.png",
     readTime: "8 min read",
     date: "April 10, 2024"
   },
@@ -35,7 +35,7 @@ const blogPosts = [
     title: "Wedding Planning Without the Stress",
     category: "Practical Guides",
     excerpt: "A step-by-step approach to organizing your special day while keeping the joy intact.",
-    image: "/api/placeholder/600/400",
+    image: "/blogImages/blog4.png",
     readTime: "6 min read",
     date: "March 22, 2024"
   }
