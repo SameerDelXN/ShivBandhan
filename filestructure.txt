@@ -39,6 +39,24 @@
                 |-- route.js
             |-- verify-otp
                 |-- route.js
+        |-- dashboard
+            |-- chat
+                |-- page.jsx
+            |-- interests
+                |-- page.jsx
+            |-- layout.jsx
+            |-- matches
+                |-- page.jsx
+            |-- page.jsx
+            |-- profile
+                |-- me
+                    |-- page.jsx
+            |-- search
+                |-- page.jsx
+            |-- settings
+                |-- page.jsx
+            |-- subscription
+                |-- page.jsx
         |-- globals.css
         |-- layout.js
         |-- login
@@ -53,8 +71,11 @@
         |-- Navbar.jsx
         |-- QuickRegistrationForm.jsx
         |-- SearchMatchesWidget.jsx
+        |-- Sidebar.jsx
         |-- SuccessStories.jsx
         |-- UserTestimonials.jsx
         |-- WhyChooseUs.jsx
+    |-- layouts
+        |-- UserLayout.jsx
     |-- lib
         |-- otpStore.js
