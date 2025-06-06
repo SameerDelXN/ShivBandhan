@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 
 export default function SearchProfilesPage() {
+   const [isMobile, setIsMobile] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
@@ -154,7 +155,18 @@ export default function SearchProfilesPage() {
       [section]: !prev[section]
     }));
   };
-
+  useEffect(() => {
+    setIsLoaded(true);
+    // Only run this on client side
+    setIsMobile(window.innerWidth < 1024);
+    
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const resetFilters = () => {
     setFilters({
       ageRange: [22, 35],
@@ -333,7 +345,7 @@ export default function SearchProfilesPage() {
             </div>
 
             {/* Filter Panel */}
-            <div className={`bg-white rounded-xl shadow-lg border border-rose-100/50 ${showFilters || window.innerWidth >= 1024 ? 'block' : 'hidden'} lg:block`}>
+          <div className={`bg-white rounded-xl shadow-lg border border-rose-100/50 ${showFilters || !isMobile ? 'block' : 'hidden'} lg:block`}>
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Filters</h2>

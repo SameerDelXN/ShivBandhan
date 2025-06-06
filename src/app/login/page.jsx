@@ -1,8 +1,9 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, Shield, RotateCcw, Edit } from 'lucide-react';
-
+import { useRouter } from 'next/navigation';
 export default function MatrimonialLogin() {
+  const router = useRouter()
   const [step, setStep] = useState(1); // 1: Phone Number, 2: OTP
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
@@ -112,9 +113,7 @@ export default function MatrimonialLogin() {
       const data = await response.json();
 
       if (data.success) {
-        // On success, you can redirect to dashboard or set user session
-        alert('Login successful! Redirecting to dashboard...');
-        // Example: router.push('/dashboard') or set authentication state
+       router.push("/dashboard")
       } else {
         setError(data.error || 'OTP verification failed');
       }

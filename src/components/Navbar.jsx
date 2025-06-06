@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Heart, User, Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function MatrimonialNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -52,13 +53,13 @@ export default function MatrimonialNavbar() {
 
         {/* Auth Buttons - Desktop */}
         <div className="hidden md:flex items-center space-x-4">
-          <button className="px-4 py-2 text-rose-600 border border-rose-600 rounded-full hover:bg-rose-50 transition-colors duration-300">
+          <Link href="/login" className="px-4 py-2 text-rose-600 border border-rose-600 rounded-full hover:bg-rose-50 transition-colors duration-300">
             Login
-          </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-colors duration-300 flex items-center">
+          </Link>
+          {/* <button className="px-4 py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-colors duration-300 flex items-center">
             <span>Register</span>
             <User size={16} className="ml-2" />
-          </button>
+          </button> */}
         </div>
 
         {/* Mobile Menu Button */}
