@@ -20,15 +20,15 @@ import {
   MessageCircle,
   Camera
 } from 'lucide-react';
-
+import { useSession } from '@/context/SessionContext';
 export default function MatrimonialDashboard() {
   const [profileCompletion, setProfileCompletion] = useState(75);
   const [isLoaded, setIsLoaded] = useState(false);
-  
+  const {user} = useSession()
   useEffect(() => {
     setIsLoaded(true);
   }, []);
-
+  console.log("user = ",user)
   const quickMatches = [
     { id: 1, name: "A***a", age: 25, location: "Mumbai", compatibility: 92 },
     { id: 2, name: "P***i", age: 27, location: "Delhi", compatibility: 88 },

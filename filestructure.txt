@@ -1,4 +1,4 @@
-|-- .env
+|-- .env.local
 |-- .gitignore
 |-- jsconfig.json
 |-- next.config.mjs
@@ -34,9 +34,29 @@
 |-- README.md
 |-- src
     |-- app
+        |-- admin-dashboard
+            |-- profile
+                |-- page.jsx
+            |-- verification
+                |-- verification.jsx
         |-- api
             |-- send-otp
                 |-- route.js
+            |-- session
+                |-- route.js
+            |-- users
+                |-- delete
+                    |-- route.js
+                |-- me
+                    |-- route.js
+                |-- photo
+                    |-- route.js
+                |-- preferences
+                    |-- route.js
+                |-- privacy
+                    |-- route.js
+                |-- update
+                    |-- route.js
             |-- verify-otp
                 |-- route.js
         |-- dashboard
@@ -47,7 +67,6 @@
             |-- layout.jsx
             |-- matches
                 |-- page.jsx
-            |-- page.jsx
             |-- profile
                 |-- me
                     |-- page.jsx
@@ -56,6 +75,8 @@
             |-- settings
                 |-- page.jsx
             |-- subscription
+                |-- page.jsx
+            |-- [id]
                 |-- page.jsx
         |-- globals.css
         |-- layout.js
@@ -75,7 +96,13 @@
         |-- SuccessStories.jsx
         |-- UserTestimonials.jsx
         |-- WhyChooseUs.jsx
+    |-- context
+        |-- SessionContext.jsx
     |-- layouts
         |-- UserLayout.jsx
     |-- lib
+        |-- auth.js
+        |-- dbConnect.js
         |-- otpStore.js
+    |-- models
+        |-- User.js

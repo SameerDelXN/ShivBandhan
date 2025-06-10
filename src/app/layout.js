@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import { SessionProvider } from "@/context/SessionContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,7 +25,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-rose-50 to-amber-50`}
       >
-        {children}
+        <SessionProvider>
+           {children}
+        </SessionProvider>
+       
       </body>
     </html>
   );
