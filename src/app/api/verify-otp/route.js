@@ -1,16 +1,14 @@
 import otpStore from "../../../lib/otpStore";
 import { NextResponse } from "next/server";
-import dbConnect from "../../../lib/dbConnect";
-import User from "../../../models/User";
-import { createToken, setTokenCookie } from "../../../lib/auth";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/User";
+import { createToken, setTokenCookie } from "@/lib/auth";
 
 export async function POST(req) {
   try {
     const { phoneNumber, otp } = await req.json();
 
-    console.log("Received phone number:", phoneNumber);
-    console.log("Received OTP:", otp);
-
+    // Input validation
     if (!phoneNumber || phoneNumber.length !== 10 || !otp || otp.length !== 6) {
       return NextResponse.json(
         { success: false, error: "Invalid phone number or OTP" },
@@ -19,10 +17,9 @@ export async function POST(req) {
     }
 
     const fullPhoneNumber = `+91${phoneNumber}`;
-    const storedOTP = otpStore.get(fullPhoneNumber); // Fixed typo from 'fullPhoneNumber' to 'fullPhoneNumber'
+    const storedOTP = otpStore.get(fullPhoneNumber);
 
-    console.log("Stored OTP:", storedOTP);
-
+    // OTP verification
     if (!storedOTP) {
       return NextResponse.json(
         { success: false, error: "OTP expired or not sent" },
@@ -47,10 +44,12 @@ export async function POST(req) {
       user = new User({
         phone: fullPhoneNumber,
         isVerified: false,
-        phoneIsVerified: true
+        phoneIsVerified: true,
+        lastLoginAt: new Date()
       });
       await user.save();
     } else {
+      user.lastLoginAt = new Date();
       user.phoneIsVerified = true;
       if (!user.isVerified) user.isVerified = true;
       await user.save();
@@ -63,12 +62,12 @@ export async function POST(req) {
     const response = NextResponse.json({
       success: true,
       message: "OTP verified successfully",
+      userId: user._id,
+      isNewUser,
       user: {
-        id: user._id,
         phone: user.phone,
         isVerified: user.isVerified,
-        phoneIsVerified: user.phoneIsVerified,
-        isNewUser,
+        phoneIsVerified: user.phoneIsVerified
       }
     });
 

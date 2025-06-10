@@ -29,25 +29,26 @@ export function SessionProvider({ children }) {
   }, []);
 
   // Login function to be called after OTP verification
-  const login = async (userId) => {
-    try {
-      const response = await fetch('/api/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
+ // In your SessionProvider component
+const login = async (userId) => {
+  try {
+    const response = await fetch('/api/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Login failed:', error);
-      return false;
+    if (response.ok) {
+      const data = await response.json();
+      setUser(data.user);  // Make sure this matches your API response structure
+      return true;
     }
-  };
+    return false;
+  } catch (error) {
+    console.error('Login failed:', error);
+    return false;
+  }
+};
 
   // Logout function
   const logout = async () => {

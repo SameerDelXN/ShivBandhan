@@ -1,4 +1,4 @@
-|-- .env
+|-- .env.local
 |-- .gitignore
 |-- jsconfig.json
 |-- next.config.mjs

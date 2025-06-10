@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
-
+export const dynamic = 'force-dynamic';
 export async function PUT(request) {
   try {
     await dbConnect();

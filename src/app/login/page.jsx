@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, Shield, RotateCcw, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/context/SessionContext';
 export default function MatrimonialLogin() {
   const router = useRouter()
   const [step, setStep] = useState(1); // 1: Phone Number, 2: OTP
@@ -12,6 +13,7 @@ export default function MatrimonialLogin() {
   const [resendTimer, setResendTimer] = useState(0);
   const [error, setError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+  const {login} = useSession()
 
   useEffect(() => {
     setIsLoaded(true);
@@ -118,6 +120,8 @@ export default function MatrimonialLogin() {
     }
 
     if (data.success) {
+       await login(data.userId);
+      console.log(data)
       // Redirect based on user status
       router.push(`/dashboard/${data.user.id}`);
     } else {
