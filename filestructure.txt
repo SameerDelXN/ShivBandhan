@@ -64,6 +64,7 @@
                 |-- page.jsx
             |-- interests
                 |-- page.jsx
+            |-- layout.jsx
             |-- matches
                 |-- page.jsx
             |-- profile
@@ -76,7 +77,6 @@
             |-- subscription
                 |-- page.jsx
             |-- [id]
-                |-- layout.jsx
                 |-- page.jsx
         |-- globals.css
         |-- layout.js
