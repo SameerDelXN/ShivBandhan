@@ -88,41 +88,48 @@ export default function MatrimonialLogin() {
     }
   };
 
-  const handleVerifyOTP = async () => {
-    const otpString = otp.join('');
+ const handleVerifyOTP = async () => {
+  const otpString = otp.join('');
+  
+  if (otpString.length !== 6) {
+    setError('Please enter complete 6-digit OTP');
+    return;
+  }
+
+  setIsLoading(true);
+  setError(''); // Clear previous errors
+  
+  try {
+    const response = await fetch('/api/verify-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        phoneNumber: phoneNumber.replace(/\s/g, ''),
+        otp: otpString
+      }),
+    });
+
+    const data = await response.json();
     
-    if (otpString.length !== 6) {
-      setError('Please enter complete 6-digit OTP');
-      return;
+    if (!response.ok) {
+      throw new Error(data.error || 'OTP verification failed');
     }
 
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch('/api/verify-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          phoneNumber: phoneNumber.replace(/\s/g, ''), // Remove spaces
-          otp: otpString
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-       router.push("/dashboard")
-      } else {
-        setError(data.error || 'OTP verification failed');
-      }
-    } catch (error) {
-      setError('Network error. Please try again.');
-    } finally {
-      setIsLoading(false);
+    if (data.success) {
+      // Redirect based on user status
+      router.push(`/dashboard/${data.user.id}`);
+    } else {
+      setError(data.error || 'OTP verification failed');
     }
-  };
+  } catch (error) {
+    console.error('Verification error:', error);
+    setError(error.message || 'Network error. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleResendOTP = async () => {
     setOtp(['', '', '', '', '', '']);
