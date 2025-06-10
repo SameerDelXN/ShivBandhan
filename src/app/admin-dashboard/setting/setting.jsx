@@ -1,0 +1,394 @@
+"use client";
+import { useState } from "react";
+import { User, Shield, Bell, Trash2, Mail, Phone, Lock, Eye, MessageCircle, Info } from "lucide-react";
+
+    export default function AdminSettings() {
+  const [activeTab, setActiveTab] = useState('account');
+  
+  const [accountData, setAccountData] = useState({
+    email: "admin@shivbandhan.com",
+    phone: "+91 98765 43210"
+  });
+
+  const [privacySettings, setPrivacySettings] = useState({
+    showProfileToRegistered: true,
+    blurPhotoUntilAccepted: false,
+    hideProfileTemporarily: false,
+    contactDetailsVisibility: "Only mutual matches"
+  });
+
+  const [notificationSettings, setNotificationSettings] = useState({
+    masterNotifications: true,
+    emailForNewInterests: true,
+    smsForChatMessages: true,
+    pushForProfileViews: true
+  });
+
+  const [deleteReason, setDeleteReason] = useState("");
+
+  const handlePrivacyToggle = (key) => {
+    setPrivacySettings(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const handleNotificationToggle = (key) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const renderToggle = (isOn) => (
+    <div className={`w-12 h-6 rounded-full ${isOn ? 'bg-red-500' : 'bg-gray-300'} relative transition-colors cursor-pointer`}>
+      <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${isOn ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+    </div>
+  );
+
+  const renderCheckbox = (isChecked) => (
+    <div className={`w-5 h-5 rounded ${isChecked ? 'bg-blue-500' : 'bg-gray-300'} flex items-center justify-center`}>
+      {isChecked && <span className="text-white text-xs">✓</span>}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Fixed Sidebar */}
+      <div className="fixed left-0 top-0 w-80 h-screen overflow-y-auto bg-gray-50 p-6 z-10">
+        {/* Settings Navigation Card */}
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h3>
+          <div className="space-y-2">
+            <button
+              onClick={() => setActiveTab('account')}
+              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                activeTab === 'account' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <User size={20} />
+              <span>Account</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('privacy')}
+              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                activeTab === 'privacy' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Shield size={20} />
+              <span>Privacy</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('notifications')}
+              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                activeTab === 'notifications' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Bell size={20} />
+              <span>Notifications</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('delete')}
+              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                activeTab === 'delete' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <Trash2 size={20} />
+              <span className="text-sm">Delete<br />Account</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content with left margin to account for fixed sidebar */}
+      <div className="ml-80">
+        <div className="p-8">
+          {/* Account Tab */}
+          {activeTab === 'account' && (
+            <div className="max-w-2xl">
+              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div className="flex items-center space-x-2 mb-6">
+                  <Mail className="text-red-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-800">Email Address</h2>
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-gray-600 mb-2">Current Email</label>
+                  <input
+                    type="email"
+                    value={accountData.email}
+                    onChange={(e) => setAccountData(prev => ({...prev, email: e.target.value}))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
+                  Verify Email
+                </button>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex items-center space-x-2 mb-6">
+                  <Phone className="text-red-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-800">Phone Number</h2>
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-gray-600 mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={accountData.phone}
+                    onChange={(e) => setAccountData(prev => ({...prev, phone: e.target.value}))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
+                  Verify with OTP
+                </button>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+                <div className="flex items-center space-x-2 mb-6">
+                  <Lock className="text-red-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-800">Change Password</h2>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-600 mb-2">Current Password</label>
+                    <input
+                      type="password"
+                      placeholder="Enter your current password"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-600 mb-2">New Password</label>
+                    <input
+                      type="password"
+                      placeholder="Enter your new password"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-600 mb-2">Confirm New Password</label>
+                    <input
+                      type="password"
+                      placeholder="Confirm your new password"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
+                  Verify with OTP
+                </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Privacy Tab */}
+          {activeTab === 'privacy' && (
+            <div className="max-w-2xl">
+              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div className="flex items-center space-x-2 mb-6">
+                  <Eye className="text-red-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-800">Profile Visibility</h2>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">Admin Profile Visibility</h3>
+                      <p className="text-gray-500 text-sm">Show admin profile to other admins only</p>
+                    </div>
+                    <button onClick={() => handlePrivacyToggle('showProfileToRegistered')}>
+                      {renderToggle(privacySettings.showProfileToRegistered)}
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">Admin Dashboard Access</h3>
+                      <p className="text-gray-500 text-sm">Require two-factor authentication for dashboard access</p>
+                    </div>
+                    <button onClick={() => handlePrivacyToggle('blurPhotoUntilAccepted')}>
+                      {renderToggle(privacySettings.blurPhotoUntilAccepted)}
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-800">Admin Activity Logging </h3>
+                      <p className="text-gray-500 text-sm">Log all admin actions and profile changes</p>
+                    </div>
+                    <button onClick={() => handlePrivacyToggle('hideProfileTemporarily')}>
+                      {renderToggle(privacySettings.hideProfileTemporarily)}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex items-center space-x-2 mb-6">
+                  <MessageCircle className="text-red-500" size={24} />
+                  <h2 className="text-2xl font-bold text-gray-800">Contact Details Visibility</h2>
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-gray-600 mb-2">Who can view my contact details?</label>
+                  <select
+                    value={privacySettings.contactDetailsVisibility}
+                    onChange={(e) => setPrivacySettings(prev => ({...prev, contactDetailsVisibility: e.target.value}))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    <option value="Only mutual matches">Visible to super admins only</option>
+                    <option value="All verified users">Visible to all admin levels</option>
+                    <option value="Premium members only">Hidden from all users</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+         {/* Notifications Tab */}
+{activeTab === 'notifications' && (
+  <div className="max-w-2xl">
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center space-x-2 mb-6">
+        <Bell className="text-red-500" size={24} />
+        <h2 className="text-2xl font-bold text-gray-800">Notification Preferences</h2>
+      </div>
+      
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">Master Notifications</h3>
+            <p className="text-gray-500 text-sm">Enable or disable all notifications</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('masterNotifications')}>
+            {renderToggle(notificationSettings.masterNotifications)}
+          </button>
+        </div>
+        
+        <hr className="border-gray-200" />
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">Security & Login Alerts</h3>
+            <p className="text-gray-500 text-sm">Get notified of suspicious login activity and security threats</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('securityAlerts')}>
+            {renderCheckbox(notificationSettings.securityAlerts)}
+          </button>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">User Report Notifications</h3>
+            <p className="text-gray-500 text-sm">Immediate alerts when users report issues or policy violations</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('userReports')}>
+            {renderCheckbox(notificationSettings.userReports)}
+          </button>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">System Status Alerts</h3>
+            <p className="text-gray-500 text-sm">Get notified when the platform experiences technical issues</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('systemStatus')}>
+            {renderCheckbox(notificationSettings.systemStatus)}
+          </button>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">New User Registrations</h3>
+            <p className="text-gray-500 text-sm">Stay informed about new users joining the platform</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('newUserRegistrations')}>
+            {renderCheckbox(notificationSettings.newUserRegistrations)}
+          </button>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-800">Admin Task Assignments</h3>
+            <p className="text-gray-500 text-sm">Get notified when tasks are assigned or require immediate attention</p>
+          </div>
+          <button onClick={() => handleNotificationToggle('adminTasks')}>
+            {renderCheckbox(notificationSettings.adminTasks)}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+         {/* Delete Account Tab */}
+{activeTab === 'delete' && (
+  <div className="max-w-2xl">
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center space-x-2 mb-6">
+        <Trash2 className="text-red-500" size={24} />
+        <h2 className="text-2xl font-bold text-gray-800">Delete Admin Account</h2>
+      </div>
+      
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-2 mb-3">
+          <Info className="text-red-500" size={20} />
+          <h3 className="font-semibold text-red-800">Important Information</h3>
+        </div>
+        <ul className="text-red-700 text-sm space-y-1 ml-6">
+          <li>• Your admin account will be permanently deleted</li>
+          <li>• All admin privileges and access will be revoked</li>
+          <li>• All pending admin tasks will be reassigned</li>
+          <li>• Access to admin dashboard and user data will be immediately terminated</li>
+          <li>• This action cannot be undone</li>
+        </ul>
+      </div>
+
+    
+      
+      <div className="mb-6">
+        <label className="block text-gray-600 mb-2">Reason for leaving (required)</label>
+        <select
+          value={deleteReason}
+          onChange={(e) => setDeleteReason(e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+          required
+        >
+          <option value="">Select a reason</option>
+          <option value="leaving-organization">Leaving organization/company</option>
+          <option value="role-transfer">Role transfer to another admin</option>
+          <option value="security-breach">Security breach/compromise</option>
+          <option value="policy-violation">Policy violation</option>
+          <option value="end-of-contract">End of contract/employment</option>
+          <option value="voluntary-resignation">Voluntary resignation from admin role</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      {/* Button Modifications */}
+      <div className="space-y-3">
+        <button 
+          className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors font-semibold"
+          disabled={!deleteReason}
+        >
+          Delete Admin Account
+        </button>
+        
+        
+      </div>
+    </div>
+  </div>
+)}
+        </div>
+      </div>
+    </div>
+  );
+}
