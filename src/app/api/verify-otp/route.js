@@ -51,7 +51,7 @@ export async function POST(req) {
     } else {
       user.lastLoginAt = new Date();
       user.phoneIsVerified = true;
-      if (!user.isVerified) user.isVerified = true;
+      if (!user.isVerified) user.isVerified = false;
       await user.save();
     }
 
