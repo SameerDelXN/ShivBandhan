@@ -123,7 +123,7 @@ export default function MatrimonialLogin() {
        await login(data.userId);
       console.log(data)
       // Redirect based on user status
-      router.push(`/dashboard/${data.user.id}`);
+      router.push(`/dashboard/${data.userId}`);
     } else {
       setError(data.error || 'OTP verification failed');
     }
