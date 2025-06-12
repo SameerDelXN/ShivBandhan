@@ -1,64 +1,126 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { 
-  User, 
-  Heart, 
-  Eye, 
-  CheckCircle, 
-  Edit3, 
-  Crown, 
-  Camera,
-  MapPin,
-  Calendar,
-  Award,
-  Star,
-  Gift,
-  Sparkles,
-  Settings,
-  EyeOff,
-  UserCheck,
-  Upload,
-  Briefcase,
-  GraduationCap,
-  Home,
-  Users,
-  Search,
-  Clock,
-  Bell,
-  Shield,
-  ChevronRight,
-  Plus,
-  X,
-  AlertCircle,
-  ToggleLeft,
-  ToggleRight
-} from 'lucide-react';
+import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight } from 'lucide-react';
+import { useSession } from '@/context/SessionContext';
 
 export default function MyProfilePage() {
-  const [profileCompletion, setProfileCompletion] = useState(72);
+  const { user } = useSession();
+  const [profileCompletion, setProfileCompletion] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [isVisible, setIsVisible] = useState(true);
+  const [showCompletionUpdate, setShowCompletionUpdate] = useState(false);
   const [photos, setPhotos] = useState([
     { id: 1, url: null, isPrimary: true },
     { id: 2, url: null, isPrimary: false },
     { id: 3, url: null, isPrimary: false },
     { id: 4, url: null, isPrimary: false },
   ]);
-  
+
+  const [formData, setFormData] = useState({
+    name: '',
+    dob: '',
+    height: '', 
+    gender: '',
+    maritalStatus: '',
+    motherTongue: '',
+    currentCity: '',
+    religion: '',
+    caste: '',
+    subCaste: '',
+    gothra: '',
+    education: '',
+    fieldOfStudy: '',
+    college: '',
+    occupation: '',
+    company: '',
+    income: '',
+    userId: user?.id || '',
+  });
+
   useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        userId: user?.user?.id
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchUserData();
     setIsLoaded(true);
   }, []);
 
-  const profileSections = [
-    { id: 'basic', label: 'Basic Information', icon: User, completion: 90 },
-    { id: 'religious', label: 'Religious & Community', icon: Star, completion: 80 },
-    { id: 'education', label: 'Education & Profession', icon: GraduationCap, completion: 85 },
-    { id: 'lifestyle', label: 'Lifestyle & Hobbies', icon: Heart, completion: 60 },
-    { id: 'family', label: 'Family Details', icon: Users, completion: 70 },
-    { id: 'preferences', label: 'Partner Preferences', icon: Search, completion: 55 },
-    { id: 'photos', label: 'Photos & Media', icon: Camera, completion: 40 },
-  ];
+  const calculateCompletion = (section) => {
+    const fields = {
+      basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity'],
+      religious: ['religion', 'caste', 'subCaste', 'gothra'],
+      education: ['education', 'fieldOfStudy', 'college', 'occupation', 'company', 'income'],
+     // lifestyle: [],
+     //family: [], 
+     //preferences: [],
+    };
+
+    if (!fields[section]) return 0;
+
+    const sectionFields = fields[section];
+    if (sectionFields.length === 0) return 0;
+
+    const filledFields = sectionFields.filter(field => {
+      const value = formData[field];
+      return value !== null && value !== undefined && value !== '';
+    }).length;
+
+    return Math.round((filledFields / sectionFields.length) * 100);
+  };
+
+  const getProfileSections = () => {
+    return [
+      { 
+        id: 'basic', 
+        label: 'Basic Information', 
+        icon: User,
+        completion: calculateCompletion('basic')
+      },
+      { 
+        id: 'religious', 
+        label: 'Religious & Community', 
+        icon: Star,
+        completion: calculateCompletion('religious') 
+      },
+      { 
+        id: 'education', 
+        label: 'Education & Profession', 
+        icon: GraduationCap,
+        completion: calculateCompletion('education') 
+      },
+      // { 
+      //   id: 'lifestyle', 
+      //   label: 'Lifestyle & Hobbies', 
+      //   icon: Heart,
+      //   completion: calculateCompletion('lifestyle') 
+      // },
+      // { 
+      //   id: 'family', 
+      //   label: 'Family Details', 
+      //   icon: Users,
+      //   completion: calculateCompletion('family') 
+      // },
+      // { 
+      //   id: 'preferences', 
+      //   label: 'Partner Preferences', 
+      //   icon: Search,
+      //   completion: calculateCompletion('preferences') 
+      // },
+      // { 
+      //   id: 'photos', 
+      //   label: 'Photos & Media', 
+      //   icon: Camera,
+      //   completion: Math.round((photos.filter(p => p.url).length / photos.length) * 100)
+      // },
+    ];
+  };
 
   const recentActivity = [
     { type: "view", message: "12 people viewed your profile today", time: "2 hours ago", icon: Eye },
@@ -67,12 +129,87 @@ export default function MyProfilePage() {
   ];
 
   const handlePhotoUpload = (photoId) => {
-    // Simulate photo upload
-    setPhotos(photos.map(photo => 
-      photo.id === photoId 
+    setPhotos(photos.map(photo =>
+      photo.id === photoId
         ? { ...photo, url: `https://via.placeholder.com/200x250/f43f5e/white?text=Photo+${photoId}` }
         : photo
     ));
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('/api/users/me');
+      if (!response.ok) throw new Error('Network error');
+      const data = await response.json();
+
+      setFormData({
+        name: data.name || '',
+        dob: data.dob || '',
+        height: data.height || '',
+        gender: data.gender || '',
+        maritalStatus: data.maritalStatus || '',
+        motherTongue: data.motherTongue || '',
+        currentCity: data.currentCity || '',
+        religion: data.religion || '',
+        caste: data.caste || '',
+        subCaste: data.subCaste || '',
+        gothra: data.gothra || '',
+        education: data.education || '',
+        fieldOfStudy: data.fieldOfStudy || '',
+        college: data.college || '',
+        occupation: data.occupation || '',
+        company: data.company || '',
+        income: data.income || '',
+        userId: user?.user?.id || '',
+      });
+
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+  
+  const handleProfileUpdate = async () => {
+    if (!user?.user?.id) {
+      console.error("No user ID available");
+      return;
+    }
+
+    const prevCompletion = profileCompletion;
+
+    try {
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          userId: user.user.id
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to update profile');
+      const result = await response.json();
+      
+      // Calculate new completion percentages
+      const updatedSections = getProfileSections();
+      const totalCompletion = updatedSections.reduce(
+        (sum, section) => sum + section.completion, 
+        0
+      ) / updatedSections.length;
+      
+      setProfileCompletion(Math.round(totalCompletion));
+      
+      // Show completion update notification if increased
+      if (Math.round(totalCompletion) > prevCompletion) {
+        setShowCompletionUpdate(true);
+        setTimeout(() => setShowCompletionUpdate(false), 3000);
+      }
+      
+      console.log("Profile updated successfully:", result);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   const handleMakePrimary = (photoId) => {
@@ -83,7 +220,7 @@ export default function MyProfilePage() {
   };
 
   const renderTabContent = () => {
-    switch(activeTab) {
+    switch (activeTab) {
       case 'basic':
         return (
           <div className="space-y-6">
@@ -91,33 +228,72 @@ export default function MyProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" value="Priya Sharma" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder='Enter your full name'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                  <input type="date" value="1999-03-15" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input
+                    type="date"
+                    value={formData.dob || ''}
+                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                  <select
+                    value={formData.height}
+                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Height</option>
                     <option>5'4" (162 cm)</option>
                     <option>5'3" (160 cm)</option>
                     <option>5'5" (165 cm)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                  <select
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
                   </select>
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
-                    <option>Never Married</option>
+                  <select
+                    value={formData.maritalStatus}
+                    onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Status</option>
+                    <option>Unmarried</option>
                     <option>Divorced</option>
                     <option>Widowed</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Mother Tongue</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                  <select
+                    value={formData.motherTongue}
+                    onChange={(e) => setFormData({ ...formData, motherTongue: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select language</option>
                     <option>Hindi</option>
                     <option>English</option>
                     <option>Marathi</option>
@@ -125,13 +301,19 @@ export default function MyProfilePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Current City</label>
-                  <input type="text" value="Mumbai, Maharashtra" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.currentCity}
+                    onChange={(e) => setFormData({ ...formData, currentCity: e.target.value })}
+                    placeholder="Enter your city"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
               </div>
             </div>
           </div>
         );
-      
+
       case 'religious':
         return (
           <div className="space-y-6">
@@ -139,7 +321,12 @@ export default function MyProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Religion</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                  <select
+                    value={formData.religion}
+                    onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Religion</option>
                     <option>Hindu</option>
                     <option>Muslim</option>
                     <option>Christian</option>
@@ -148,17 +335,35 @@ export default function MyProfilePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Caste</label>
-                  <input type="text" placeholder="Enter your caste" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.caste}
+                    onChange={(e) => setFormData({ ...formData, caste: e.target.value })}
+                    placeholder="Enter your caste" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Sub-caste</label>
-                  <input type="text" placeholder="Enter your sub-caste" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input
+                    type="text"
+                    value={formData.subCaste || ""}
+                    onChange={(e) => setFormData({ ...formData, subCaste: e.target.value })}
+                    placeholder="Enter your sub-caste"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gothra</label>
-                  <input type="text" placeholder="Enter your gothra" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.gothra}
+                    onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
+                    placeholder="Enter your gothra" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
               </div>
             </div>
@@ -172,7 +377,12 @@ export default function MyProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Highest Education</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                  <select
+                    value={formData.education}
+                    onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Degree</option>
                     <option>Bachelor's Degree</option>
                     <option>Master's Degree</option>
                     <option>PhD</option>
@@ -180,25 +390,54 @@ export default function MyProfilePage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
-                  <input type="text" value="Computer Science" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.fieldOfStudy}
+                    onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
+                    placeholder='Enter your study field'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">College/University</label>
-                  <input type="text" value="Mumbai University" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.college}
+                    onChange={(e) => setFormData({ ...formData, college: e.target.value })}
+                    placeholder='Enter your college name'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
-                  <input type="text" value="Software Engineer" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.occupation}
+                    onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                    placeholder='Enter your occupation'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                  <input type="text" value="Tech Solutions Pvt Ltd" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                  <input 
+                    type="text"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    placeholder='Enter your company name'
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Annual Income</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                  <select
+                    value={formData.income}
+                    onChange={(e) => setFormData({ ...formData, income: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Income</option>
                     <option>₹5-10 Lakhs</option>
                     <option>₹10-15 Lakhs</option>
                     <option>₹15-20 Lakhs</option>
@@ -221,7 +460,7 @@ export default function MyProfilePage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {photos.map((photo) => (
                 <div key={photo.id} className="relative">
@@ -241,14 +480,14 @@ export default function MyProfilePage() {
                     )}
                   </div>
                   <div className="mt-2 space-y-1">
-                    <button 
+                    <button
                       onClick={() => handlePhotoUpload(photo.id)}
                       className="w-full bg-rose-50 text-rose-600 py-1 px-2 rounded text-xs font-medium hover:bg-rose-100 transition-colors"
                     >
                       {photo.url ? 'Change' : 'Upload'}
                     </button>
                     {photo.url && !photo.isPrimary && (
-                      <button 
+                      <button
                         onClick={() => handleMakePrimary(photo.id)}
                         className="w-full bg-gray-50 text-gray-600 py-1 px-2 rounded text-xs font-medium hover:bg-gray-100 transition-colors"
                       >
@@ -278,7 +517,7 @@ export default function MyProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        
+
         {/* Profile Header */}
         <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
@@ -297,25 +536,29 @@ export default function MyProfilePage() {
                       <Camera className="w-3 h-3 text-white" />
                     </button>
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
-                      <h1 className="text-2xl font-bold text-gray-900">Priya Sharma</h1>
+                      <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
                       <Award className="w-5 h-5 text-green-500" />
                     </div>
                     <div className="space-y-1 text-gray-600">
                       <div className="flex items-center space-x-4 text-sm">
-                        <span className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          25 years
-                        </span>
-                        <span>5'4"</span>
-                        <span>Hindu</span>
+                        {formData.dob && (
+                          <span className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {new Date().getFullYear() - new Date(formData.dob).getFullYear()} years
+                          </span>
+                        )}
+                        {formData.height && <span>{formData.height}</span>}
+                        {formData.religion && <span>{formData.religion}</span>}
                       </div>
-                      <div className="flex items-center text-sm">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        Mumbai, Maharashtra
-                      </div>
+                      {formData.currentCity && (
+                        <div className="flex items-center text-sm">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {formData.currentCity}
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center mt-2">
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -325,15 +568,20 @@ export default function MyProfilePage() {
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex flex-col space-y-3">
+
+                <div className="flex flex-col space-y-3 relative">
+                  {showCompletionUpdate && (
+                    <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+                      +{profileCompletion}%
+                    </div>
+                  )}
                   <div className="bg-rose-50 rounded-lg p-4 min-w-[200px]">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">Profile Completion</span>
                       <span className="text-sm font-bold text-rose-600">{profileCompletion}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                      <div 
+                      <div
                         className="bg-gradient-to-r from-rose-500 to-rose-600 h-2 rounded-full transition-all duration-1000"
                         style={{ width: `${profileCompletion}%` }}
                       ></div>
@@ -350,23 +598,23 @@ export default function MyProfilePage() {
 
         {/* Main Content Grid */}
         <div className={`grid grid-cols-1 lg:grid-cols-4 gap-6 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          
+
           {/* Left Sidebar - Profile Sections */}
           <div className="lg:col-span-1 space-y-4">
-            
+
             {/* Profile Sections Navigation */}
             <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
               <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
               <div className="space-y-2">
-                {profileSections.map((section) => {
+                {getProfileSections().map((section) => {
                   const Icon = section.icon;
                   return (
                     <button
                       key={section.id}
                       onClick={() => setActiveTab(section.id)}
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
-                        activeTab === section.id 
-                          ? 'bg-rose-50 text-rose-600 border border-rose-200' 
+                        activeTab === section.id
+                          ? 'bg-rose-50 text-rose-600 border border-rose-200'
                           : 'hover:bg-gray-50 text-gray-700'
                       }`}
                     >
@@ -376,7 +624,7 @@ export default function MyProfilePage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 rounded-full bg-gray-200">
-                          <div 
+                          <div
                             className="h-2 rounded-full bg-green-500 transition-all duration-300"
                             style={{ width: `${section.completion}%` }}
                           ></div>
@@ -419,7 +667,7 @@ export default function MyProfilePage() {
                     <p className="font-medium text-gray-900 text-sm">Profile Visibility</p>
                     <p className="text-xs text-gray-500">Show profile in search</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setIsVisible(!isVisible)}
                     className="p-1"
                   >
@@ -430,12 +678,12 @@ export default function MyProfilePage() {
                     )}
                   </button>
                 </div>
-                
+
                 <button className="w-full bg-gray-50 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors flex items-center justify-center">
                   <UserCheck className="w-4 h-4 mr-2" />
                   View as Others See
                 </button>
-                
+
                 <button className="w-full bg-red-50 text-red-600 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors">
                   Deactivate Temporarily
                 </button>
@@ -449,25 +697,29 @@ export default function MyProfilePage() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-gray-900">
-                    {profileSections.find(s => s.id === activeTab)?.label}
+                    {getProfileSections().find(s => s.id === activeTab)?.label}
                   </h2>
-                  <button className="flex items-center text-rose-600 hover:text-rose-700 font-medium">
+                  {/* <button className="flex items-center text-rose-600 hover:text-rose-700 font-medium">
                     <Edit3 className="w-4 h-4 mr-1" />
                     Edit
-                  </button>
+                  </button> */}
                 </div>
               </div>
-              
+
               <div className="p-6">
                 {renderTabContent()}
               </div>
-              
+
               <div className="p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
                 <div className="flex justify-end space-x-3">
-                  <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setActiveTab('basic')}
+                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                     Cancel
                   </button>
-                  <button className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors">
+                  <button
+                    onClick={handleProfileUpdate}
+                    className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors">
                     Save Changes
                   </button>
                 </div>
@@ -477,7 +729,7 @@ export default function MyProfilePage() {
 
           {/* Right Sidebar - Activity & Stats */}
           <div className="lg:col-span-1 space-y-4">
-            
+
             {/* Recent Activity */}
             <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
               <div className="flex items-center justify-between mb-4">
@@ -516,7 +768,7 @@ export default function MyProfilePage() {
                   </div>
                   <span className="font-bold text-blue-600">89</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Heart className="w-4 h-4 text-red-500 mr-2" />
@@ -524,7 +776,7 @@ export default function MyProfilePage() {
                   </div>
                   <span className="font-bold text-red-600">23</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Star className="w-4 h-4 text-yellow-500 mr-2" />

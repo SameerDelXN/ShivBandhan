@@ -3,10 +3,14 @@ import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 export const dynamic = 'force-dynamic';
+
 export async function PUT(request) {
   try {
     await dbConnect();
+
+    console.log("DB connected✅");
     
+
     // Get token from cookies
     // const token = request.cookies.get('authToken')?.value;
     // if (!token) {
@@ -26,17 +30,13 @@ export async function PUT(request) {
     // }
 
     const body = await request.json();
-    const { name, gender, dob, religion, caste, education, city, state,userId } = body;
+    const { name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,income, userId } = body;
+    console.log(body);
+   
     
     const updateData = {
-      name,
-      gender,
-      dob,
-      religion,
-      caste,
-      education,
-      city,
-      state,
+      name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,
+      income: body.income || null,
       updatedAt: new Date()
     };
 

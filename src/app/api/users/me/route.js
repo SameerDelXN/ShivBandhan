@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';2
 export async function GET(request) {
   try {
     await dbConnect();
-    
+
     // Get token from cookies
     const token = request.cookies.get('authToken')?.value;
     if (!token) {
@@ -15,9 +15,10 @@ export async function GET(request) {
         { status: 401 }
       );
     }
-
+    console.log('Token :', token);
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Decoded Token', decoded);
     if (!decoded) {
       return NextResponse.json(
         { message: 'Invalid token' },
@@ -43,7 +44,18 @@ export async function GET(request) {
       religion: user.religion,
       caste: user.caste,
       education: user.education,
-      city: user.city,
+      currentCity: user.currentCity,
+      maritalStatus: user.maritalStatus,
+      motherTongue: user.motherTongue,  
+      height: user.height,
+      gothra: user.gothra,  
+      subCaste: user.subCaste,
+      fieldOfStudy: user.fieldOfStudy, 
+      college: user.college,
+      occupation: user.occupation,
+      company: user.company,
+      income: user.income,
+      id: user._id, 
       state: user.state,
       isVerified: user.isVerified,
       preferences: user.preferences,

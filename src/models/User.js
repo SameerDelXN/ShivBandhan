@@ -34,12 +34,41 @@ const UserSchema = new mongoose.Schema({
     default: null
   },
   dob: Date,
+  height: String, // Height in cm or ft
   religion: String,
-  caste: String,
+  currentCity: String,
   education: String,
-  city: String,
   state: String,
   profilePhoto: String,
+  maritalStatus:
+   {
+    type: String,
+    enum: [ 'Unmarried', 'Divorced', 'Widowed', ],
+    default: 'Unmarried'
+  },
+   motherTongue: 
+   {
+     type: String,
+    enum:['Hindi', 'English', 'Marathi', null],
+    default: null
+   },
+   caste: String,
+   subcaste: String,
+   gothra: String,
+   fieldOfStudy: String,
+   college: String,
+   occupation: String,
+   company: String,
+   income:
+    {
+      type: String,
+      enum: ['','₹5-10 Lakhs', '₹10-15 Lakhs', '₹15-20 Lakhs', null],
+      default: null
+  },
+
+    
+  
+ 
   
   // Preferences
   preferences: {
@@ -75,5 +104,5 @@ const UserSchema = new mongoose.Schema({
   lastLoginAt: Date
 });
 
-
+delete mongoose.models.User; // Remove existing model if it exists
 export default mongoose.models.User || mongoose.model('User', UserSchema);
