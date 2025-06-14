@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
+import { Weight } from 'lucide-react';
 // export const dynamic = 'force-dynamic';2
 export async function GET(request) {
   try {
@@ -33,10 +34,10 @@ export async function GET(request) {
         { status: 404 }
       );
     }
-
+    console.log('User found:', user);
     // Filter data based on privacy settings
     const userData = {
-      name: user.privacySettings.showFullName ? user.name : undefined,
+      name:  user.name || "Anonymous",
       phone: user.privacySettings.showContact ? user.phone : undefined,
       profilePhoto: user.privacySettings.showPhoto ? user.profilePhoto : undefined,
       gender: user.gender,
@@ -45,6 +46,7 @@ export async function GET(request) {
       caste: user.caste,
       education: user.education,
       currentCity: user.currentCity,
+      weight: user.weight,
       maritalStatus: user.maritalStatus,
       motherTongue: user.motherTongue,  
       height: user.height,

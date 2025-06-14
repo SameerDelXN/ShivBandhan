@@ -30,12 +30,12 @@ export async function PUT(request) {
     // }
 
     const body = await request.json();
-    const { name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,income, userId } = body;
+    const { name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,income,weight, userId,verificationStatus } = body;
     console.log(body);
    
     
     const updateData = {
-      name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,
+      name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,weight,verificationStatus,
       income: body.income || null,
       updatedAt: new Date()
     };

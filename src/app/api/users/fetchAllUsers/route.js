@@ -22,6 +22,11 @@ export async function GET(request) {
     if (searchParams.get('isVerified')) {
       query.isVerified = searchParams.get('isVerified') === 'true';
     }
+
+    if (searchParams.get('verificationStatus')) {
+      query.verificationStatus = searchParams.get('verificationStatus');
+    }
+    
     
     if (searchParams.get('gender')) {
       query.gender = searchParams.get('gender');

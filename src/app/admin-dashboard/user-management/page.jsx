@@ -19,7 +19,6 @@ import {
 const recentUsers = [
   {
     name: "Amit Singh",
-    email: "amit.singh@example.com",
     status: "Active",
     plan: "Premium",
     joined: "2024-06-01",
@@ -34,7 +33,6 @@ const recentUsers = [
   },
   {
     name: "Sneha Patel",
-    email: "sneha.patel@example.com",
     status: "Inactive",
     plan: "Free",
     joined: "2024-05-15",
@@ -49,7 +47,6 @@ const recentUsers = [
   },
   {
     name: "Farhan Ali",
-    email: "farhan.ali@example.com",
     status: "Pending",
     plan: "Gold",
     joined: "2024-04-20",
@@ -64,7 +61,6 @@ const recentUsers = [
   },
   {
     name: "Ritika Joshi",
-    email: "ritika.j@example.com",
     status: "Suspended",
     plan: "Free",
     joined: "2024-03-12",
@@ -79,7 +75,6 @@ const recentUsers = [
   },
   {
     name: "Rajesh Kumar",
-    email: "rajesh.kumar@example.com",
     status: "Active",
     plan: "Premium",
     joined: "2024-02-28",
@@ -94,7 +89,6 @@ const recentUsers = [
   },
   {
     name: "Priya Sharma",
-    email: "priya.sharma@example.com",
     status: "Active",
     plan: "Gold",
     joined: "2024-01-15",
@@ -109,7 +103,6 @@ const recentUsers = [
   },
   {
     name: "Vikram Reddy",
-    email: "vikram.reddy@example.com",
     status: "Pending",
     plan: "Free",
     joined: "2023-12-10",
@@ -124,7 +117,6 @@ const recentUsers = [
   },
   {
     name: "Kavya Menon",
-    email: "kavya.menon@example.com",
     status: "Inactive",
     plan: "Premium",
     joined: "2023-11-22",

@@ -1,15 +1,17 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight } from 'lucide-react';
+import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 
 export default function MyProfilePage() {
   const { user } = useSession();
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [isVisible, setIsVisible] = useState(true);
   const [showCompletionUpdate, setShowCompletionUpdate] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState('Unverified');
   const [photos, setPhotos] = useState([
     { id: 1, url: null, isPrimary: true },
     { id: 2, url: null, isPrimary: false },
@@ -25,6 +27,7 @@ export default function MyProfilePage() {
     maritalStatus: '',
     motherTongue: '',
     currentCity: '',
+    weight: '',
     religion: '',
     caste: '',
     subCaste: '',
@@ -36,25 +39,42 @@ export default function MyProfilePage() {
     company: '',
     income: '',
     userId: user?.id || '',
+    verificationStatus:""
   });
+  console.log("form = ",formData)
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchUserData();
+      setIsLoaded(true);
+    };
+    
+    loadData();
+  }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user?.user?.id) {
       setFormData(prev => ({
         ...prev,
-        userId: user?.user?.id
+        userId: user.user.id
       }));
     }
   }, [user]);
 
+  // Auto-save after 2 seconds of inactivity
   useEffect(() => {
-    fetchUserData();
-    setIsLoaded(true);
-  }, []);
+    const timer = setTimeout(() => {
+      if (formData.name) { // Only save if there's actual data
+        handleProfileUpdate();
+        console.log('inside use effect ')
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [formData]);
 
   const calculateCompletion = (section) => {
     const fields = {
-      basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity'],
+      basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight'],
       religious: ['religion', 'caste', 'subCaste', 'gothra'],
       education: ['education', 'fieldOfStudy', 'college', 'occupation', 'company', 'income'],
      // lifestyle: [],
@@ -63,9 +83,9 @@ export default function MyProfilePage() {
     };
 
     if (!fields[section]) return 0;
-
+    
     const sectionFields = fields[section];
-    if (sectionFields.length === 0) return 0;
+    //if (sectionFields.length === 0) return 0;
 
     const filledFields = sectionFields.filter(field => {
       const value = formData[field];
@@ -95,30 +115,6 @@ export default function MyProfilePage() {
         icon: GraduationCap,
         completion: calculateCompletion('education') 
       },
-      // { 
-      //   id: 'lifestyle', 
-      //   label: 'Lifestyle & Hobbies', 
-      //   icon: Heart,
-      //   completion: calculateCompletion('lifestyle') 
-      // },
-      // { 
-      //   id: 'family', 
-      //   label: 'Family Details', 
-      //   icon: Users,
-      //   completion: calculateCompletion('family') 
-      // },
-      // { 
-      //   id: 'preferences', 
-      //   label: 'Partner Preferences', 
-      //   icon: Search,
-      //   completion: calculateCompletion('preferences') 
-      // },
-      // { 
-      //   id: 'photos', 
-      //   label: 'Photos & Media', 
-      //   icon: Camera,
-      //   completion: Math.round((photos.filter(p => p.url).length / photos.length) * 100)
-      // },
     ];
   };
 
@@ -128,19 +124,12 @@ export default function MyProfilePage() {
     { type: "interest", message: "2 new interests received", time: "1 day ago", icon: Heart },
   ];
 
-  const handlePhotoUpload = (photoId) => {
-    setPhotos(photos.map(photo =>
-      photo.id === photoId
-        ? { ...photo, url: `https://via.placeholder.com/200x250/f43f5e/white?text=Photo+${photoId}` }
-        : photo
-    ));
-  };
-
   const fetchUserData = async () => {
     try {
       const response = await fetch('/api/users/me');
       if (!response.ok) throw new Error('Network error');
       const data = await response.json();
+       setVerificationStatus(data.verificationStatus || 'Unverified');
 
       setFormData({
         name: data.name || '',
@@ -160,21 +149,34 @@ export default function MyProfilePage() {
         occupation: data.occupation || '',
         company: data.company || '',
         income: data.income || '',
+        weight: data.weight || '',
         userId: user?.user?.id || '',
+        verificationStatus:data?.verificationStatus || 'Unverified'
       });
+
+      
+
+      // Calculate initial profile completion
+      const sections = getProfileSections();
+      const totalCompletion = sections.reduce(
+        (sum, section) => sum + section.completion, 
+        0
+      ) / sections.length;
+      
+      setProfileCompletion(Math.round(totalCompletion));
 
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
-  
+
   const handleProfileUpdate = async () => {
-    if (!user?.user?.id) {
-      console.error("No user ID available");
+    if (!user?.user?.id || isSaving) {
       return;
     }
 
     const prevCompletion = profileCompletion;
+    setIsSaving(true);
 
     try {
       const response = await fetch('/api/users/update', {
@@ -187,8 +189,7 @@ export default function MyProfilePage() {
           userId: user.user.id
         }),
       });
-
-      if (!response.ok) throw new Error('Failed to update profile');
+       if (!response.ok) throw new Error('Failed to update profile');
       const result = await response.json();
       
       // Calculate new completion percentages
@@ -205,11 +206,52 @@ export default function MyProfilePage() {
         setShowCompletionUpdate(true);
         setTimeout(() => setShowCompletionUpdate(false), 3000);
       }
+      // If profile completion reaches 100% after save, automatically trigger verification
+      if (Math.round(totalCompletion) === 100 && prevCompletion < 100 && verificationStatus === 'Unverified')
+    {
+      await handleVerificationSubmit();
+    }
       
       console.log("Profile updated successfully:", result);
     } catch (error) {
       console.error("Error updating profile:", error);
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  
+const handleVerificationSubmit = async () => {
+  try {
+    const response = await fetch('/api/users/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: user?.user?.id,
+        verificationStatus: 'Pending',
+        createdAt: new Date(),
+      }),
+    });
+
+    if (!response.ok) throw new Error('Failed to submit verification');
+    
+    const result = await response.json();
+    setVerificationStatus(true);
+    console.log("Verification submitted:", result);
+    
+  } catch (error) {
+    console.error("Error submitting verification:", error);
+  }
+};
+
+  const handlePhotoUpload = (photoId) => {
+    setPhotos(photos.map(photo =>
+      photo.id === photoId
+        ? { ...photo, url: `https://via.placeholder.com/200x250/f43f5e/white?text=Photo+${photoId}` }
+        : photo
+    ));
   };
 
   const handleMakePrimary = (photoId) => {
@@ -218,6 +260,43 @@ export default function MyProfilePage() {
       isPrimary: photo.id === photoId
     })));
   };
+  function VerificationBadge({ status }) {
+  const statusConfig = {
+    Unverified: {
+      bg: 'bg-gray-100',
+      text: 'text-gray-800',
+      icon: null,
+      label: 'Unverified'
+    },
+    Pending: {
+      bg: 'bg-yellow-100',
+      text: 'text-yellow-800',
+      icon: <Clock className="w-3 h-3 mr-1" />,
+      label: 'Pending Verification'
+    },
+    Verified: {
+      bg: 'bg-green-100',
+      text: 'text-green-800',
+      icon: <Shield className="w-3 h-3 mr-1" />,
+      label: 'Verified Profile'
+    },
+    Rejected: {
+      bg: 'bg-red-100',
+      text: 'text-red-800',
+      icon: <XCircle className="w-3 h-3 mr-1" />,
+      label: 'Verification Rejected'
+    }
+  };
+
+  const config = statusConfig[status] || statusConfig.Unverified;
+
+  return (
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+      {config.icon}
+      {config.label}
+    </span>
+  );
+}
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -306,6 +385,16 @@ export default function MyProfilePage() {
                     value={formData.currentCity}
                     onChange={(e) => setFormData({ ...formData, currentCity: e.target.value })}
                     placeholder="Enter your city"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
+                  <input 
+                    type="text"
+                    value={formData.weight}
+                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                    placeholder="Enter your weight"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
                   />
                 </div>
@@ -540,7 +629,7 @@ export default function MyProfilePage() {
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
-                      <Award className="w-5 h-5 text-green-500" />
+                        {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
                     </div>
                     <div className="space-y-1 text-gray-600">
                       <div className="flex items-center space-x-4 text-sm">
@@ -561,10 +650,7 @@ export default function MyProfilePage() {
                       )}
                     </div>
                     <div className="flex items-center mt-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <Shield className="w-3 h-3 mr-1" />
-                        Verified Profile
-                      </span>
+                     <VerificationBadge status={formData.verificationStatus} />
                     </div>
                   </div>
                 </div>
@@ -578,17 +664,30 @@ export default function MyProfilePage() {
                   <div className="bg-rose-50 rounded-lg p-4 min-w-[200px]">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">Profile Completion</span>
-                      <span className="text-sm font-bold text-rose-600">{profileCompletion}%</span>
+                      <span className="text-sm font-bold text-rose-600">
+                        {isLoaded ? `${profileCompletion}%` : 'Loading...'}
+                      </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                       <div
                         className="bg-gradient-to-r from-rose-500 to-rose-600 h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${profileCompletion}%` }}
+                        style={{ width: `${isLoaded ? profileCompletion : 0}%` }}
                       ></div>
                     </div>
-                    <button className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors">
-                      Complete Your Profile
-                    </button>
+                   <button 
+                    onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
+                    className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
+                    disabled={verificationStatus === 'Pending' || isSaving}
+                    >
+                    {isSaving ? 'Saving...' : (
+                    profileCompletion === 100 ?
+                     (
+                    verificationStatus === 'Pending' ? 'Verification Pending' :
+                    verificationStatus === 'Verified' ? 'Profile Verified' :
+                    'Send for Verification'
+                     ) : 'Save Profile'
+                     )}
+                     </button>
                   </div>
                 </div>
               </div>
@@ -699,10 +798,6 @@ export default function MyProfilePage() {
                   <h2 className="text-xl font-bold text-gray-900">
                     {getProfileSections().find(s => s.id === activeTab)?.label}
                   </h2>
-                  {/* <button className="flex items-center text-rose-600 hover:text-rose-700 font-medium">
-                    <Edit3 className="w-4 h-4 mr-1" />
-                    Edit
-                  </button> */}
                 </div>
               </div>
 
@@ -719,8 +814,9 @@ export default function MyProfilePage() {
                   </button>
                   <button
                     onClick={handleProfileUpdate}
-                    className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors">
-                    Save Changes
+                    disabled={isSaving}
+                    className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                    {isSaving ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </div>

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
   // Basic information
+  
   name: String,
   phone: { 
     type: String, 
@@ -26,7 +27,16 @@ const UserSchema = new mongoose.Schema({
     default: false, // Specific phone verification status
     description: "Indicates if the phone number has been verified via OTP"
   },
-
+  verificationRequested: {
+  type: Boolean,
+  default: false, // Profile verification request status
+  description: "Indicates if user has requested profile verification"
+  },
+  verificationStatus: { 
+  type: String,
+  enum: ['Unverified', 'Pending', 'Verified', 'Rejected'],
+  default: 'Unverified'
+ },
   // Profile information
   gender: {
     type: String,
@@ -53,12 +63,13 @@ const UserSchema = new mongoose.Schema({
     default: null
    },
    caste: String,
-   subcaste: String,
+   subCaste: String,
    gothra: String,
    fieldOfStudy: String,
    college: String,
    occupation: String,
    company: String,
+   weight: String, 
    income:
     {
       type: String,
@@ -83,7 +94,7 @@ const UserSchema = new mongoose.Schema({
   
   // Privacy settings
   privacySettings: {
-    showFullName: { type: Boolean, default: false },
+    showname: { type: Boolean, default: false },
     showPhoto: { type: Boolean, default: false },
     showContact: { type: Boolean, default: false }
   },

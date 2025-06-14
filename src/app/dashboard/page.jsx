@@ -5,13 +5,14 @@ import {
 } from 'lucide-react';
 
 import { useSession } from '@/context/SessionContext';
-export default function MatrimonialDashboard() {
-  const {user} = useSession();
+export default function MatrimonialDashboard() 
+{
+const { user } = useSession();
   console.log("User in Dashboard", user);
-  const [userData, setUserData] = useState({ name: '' });
-  const [profileCompletion, setProfileCompletion] = useState(0);
+  const [userData, setUserData] = useState({ name: '', profileCompletion: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
-   const fetchUserData = async () => {
+   
+  const fetchUserData = async () => {
     try {
       const response = await fetch('/dashboard/profile/me');
       if (!response.ok) throw new Error('Failed to fetch user data');
@@ -19,37 +20,25 @@ export default function MatrimonialDashboard() {
       return data;
     } catch (error) {
       console.error("Error fetching user data:", error);
-      return { name: 'User' };
+      return { name: 'User', profileCompletion: 0 };
     }
   };
-   const fetchProfileCompletion = async () => {
-    try {
-      const response = await fetch('/dashboard/profile/me');
-      if (!response.ok) throw new Error('Failed to fetch profile completion');
-      const data = await response.json();
-      return data.profileCompletion || 0;
-    } catch (error) {
-      console.error("Error fetching profile completion:", error);
-      return 0;
-    }
-  };
-    useEffect(() => {
+  
+    
+     useEffect(() => {
     const loadData = async () => {
-      const [userData, completion] = await Promise.all([
-        fetchUserData(),
-        fetchProfileCompletion()
-      ]);
-      setUserData(userData);
-      setProfileCompletion(completion);
+      const data = await fetchUserData();
+      setUserData({
+        name: data.name || user?.user?.name || 'User',
+        profileCompletion: data.profileCompletion || 0
+      });
       setIsLoaded(true);
     };
+    
     loadData();
-  }, []);
+  }, [user]);
   
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
+  
   const quickMatches = [
     { id: 1, name: "A***a", age: 25, location: "Mumbai", compatibility: 92 },
     { id: 2, name: "P***i", age: 27, location: "Delhi", compatibility: 88 },
@@ -98,13 +87,13 @@ export default function MatrimonialDashboard() {
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-gray-900">{profileCompletion}%</span>
+                <span className="text-2xl font-bold text-gray-900">{userData.profileCompletion}%</span>
                 <span className="text-sm text-gray-500">Complete</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
                   className="bg-gradient-to-r from-rose-500 to-rose-600 h-2 rounded-full transition-all duration-1000"
-                  style={{ width: `${profileCompletion}%` }}
+                 style={{ width: `${userData.profileCompletion}%` }}
                 ></div>
               </div>
               <button className="w-full bg-rose-50 text-rose-600 py-2 rounded-lg text-sm font-medium hover:bg-rose-100 transition-colors">
