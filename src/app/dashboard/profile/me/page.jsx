@@ -633,12 +633,12 @@ const handleVerificationSubmit = async () => {
                     </div>
                     <div className="space-y-1 text-gray-600">
                       <div className="flex items-center space-x-4 text-sm">
-                        {formData.dob && (
+                        {/* {formData.dob && (
                           <span className="flex items-center">
                             <Calendar className="w-4 h-4 mr-1" />
                             {new Date().getFullYear() - new Date(formData.dob).getFullYear()} years
                           </span>
-                        )}
+                        )} */}
                         {formData.height && <span>{formData.height}</span>}
                         {formData.religion && <span>{formData.religion}</span>}
                       </div>

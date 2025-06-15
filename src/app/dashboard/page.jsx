@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 
 import { useSession } from '@/context/SessionContext';
+import Link from 'next/link';
 export default function MatrimonialDashboard() 
 {
 const { user } = useSession();
@@ -65,7 +66,7 @@ const { user } = useSession();
             <div className="relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.user.name}! 👋</h1>
+                  <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.name || user?.user?.name}! 👋</h1>
                   <p className="text-rose-100">Your perfect match is just a click away</p>
                 </div>
                 <div className="hidden md:block">
@@ -77,10 +78,10 @@ const { user } = useSession();
         </div>
 
         {/* Profile Completion & Stats Row */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           
           {/* Profile Completion */}
-          <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300">
+          {/* <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-gray-800">Profile Status</h3>
               <User className="w-5 h-5 text-rose-500" />
@@ -100,7 +101,7 @@ const { user } = useSession();
                 Complete Profile
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Total Matches */}
           <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300">
@@ -162,8 +163,8 @@ const { user } = useSession();
                   <CheckCircle className="w-3 h-3 text-white" />
                 </div>
               </div>
-              <h3 className="font-bold text-gray-900 text-lg mb-1">Priya Sharma</h3>
-              <div className="space-y-1 text-sm text-gray-600 mb-4">
+              <h3 className="font-bold text-gray-900 text-lg mb-1">{user?.name || user?.user?.name}</h3>
+              {/* <div className="space-y-1 text-sm text-gray-600 mb-4">
                 <div className="flex items-center justify-center">
                   <Calendar className="w-4 h-4 mr-1" />
                   25 years • 5'4"
@@ -172,14 +173,14 @@ const { user } = useSession();
                   <MapPin className="w-4 h-4 mr-1" />
                   Mumbai, Maharashtra
                 </div>
-              </div>
+              </div> */}
               <div className="flex items-center justify-center mb-4">
                 <Award className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">Verified Profile</span>
+                <span className={`text-sm ${user?.isVerified || user?.user?.isVerified ? "text-green-600" : "text-slate-400"  } font-medium`}>{user?.isVerified || user?.user?.isVerified ? "Verified Profile" : "Unverified Profile"}</span>
               </div>
-              <button className="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white py-2 rounded-lg font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300">
+              <Link href={"/dashboard/profile/me"} className="w-full bg-gradient-to-r px-3 from-rose-500 to-rose-600 text-white py-2 rounded-lg font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300">
                 Edit Profile
-              </button>
+              </Link>
             </div>
           </div>
 

@@ -39,18 +39,14 @@
             |-- page.jsx
             |-- payment
                 |-- page.jsx
-                |-- payment.jsx
             |-- profile
                 |-- page.jsx
             |-- report
                 |-- page.jsx
-                |-- report.jsx
             |-- setting
                 |-- page.jsx
-                |-- setting.jsx
             |-- user-management
                 |-- page.jsx
-                |-- user-management.jsx
             |-- verification
                 |-- page.jsx
                 |-- verification.jsx
@@ -123,4 +119,5 @@
         |-- dbConnect.js
         |-- otpStore.js
     |-- models
+        |-- Interest.js
         |-- User.js

@@ -63,7 +63,7 @@ export async function GET(request) {
       preferences: user.preferences,
       subscription: user.subscription
     };
-
+    console.log("Me = ",userData)
     return NextResponse.json(userData);
   } catch (error) {
     console.error('Error fetching user profile:', error);

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   UserPlus,
   Download,
@@ -14,138 +14,89 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
-
-const recentUsers = [
-  {
-    name: "Amit Singh",
-    status: "Active",
-    plan: "Premium",
-    joined: "2024-06-01",
-    age: 30,
-    dob: "1994-02-10",
-    address: "New Delhi, India",
-    education: "MBA, IIM Ahmedabad",
-    familyBackground: "Business",
-    height: "5'10\"",
-    weight: "72kg",
-    hobbies: "Reading, Traveling",
-  },
-  {
-    name: "Sneha Patel",
-    status: "Inactive",
-    plan: "Free",
-    joined: "2024-05-15",
-    age: 27,
-    dob: "1997-01-20",
-    address: "Ahmedabad, Gujarat",
-    education: "B.Tech, Nirma University",
-    familyBackground: "Service",
-    height: "5'4\"",
-    weight: "58kg",
-    hobbies: "Dancing, Painting",
-  },
-  {
-    name: "Farhan Ali",
-    status: "Pending",
-    plan: "Gold",
-    joined: "2024-04-20",
-    age: 32,
-    dob: "1992-07-15",
-    address: "Lucknow, UP",
-    education: "BBA, AMU",
-    familyBackground: "Educated",
-    height: "5'8\"",
-    weight: "70kg",
-    hobbies: "Music, Cricket",
-  },
-  {
-    name: "Ritika Joshi",
-    status: "Suspended",
-    plan: "Free",
-    joined: "2024-03-12",
-    age: 26,
-    dob: "1998-10-05",
-    address: "Pune, Maharashtra",
-    education: "MCA, Pune University",
-    familyBackground: "Service",
-    height: "5'5\"",
-    weight: "60kg",
-    hobbies: "Yoga, Cooking",
-  },
-  {
-    name: "Rajesh Kumar",
-    status: "Active",
-    plan: "Premium",
-    joined: "2024-02-28",
-    age: 35,
-    dob: "1989-03-12",
-    address: "Mumbai, Maharashtra",
-    education: "M.Tech, IIT Bombay",
-    familyBackground: "Business",
-    height: "5'9\"",
-    weight: "75kg",
-    hobbies: "Photography, Cycling",
-  },
-  {
-    name: "Priya Sharma",
-    status: "Active",
-    plan: "Gold",
-    joined: "2024-01-15",
-    age: 29,
-    dob: "1995-08-22",
-    address: "Bangalore, Karnataka",
-    education: "MBA, ISB Hyderabad",
-    familyBackground: "Service",
-    height: "5'6\"",
-    weight: "55kg",
-    hobbies: "Reading, Swimming",
-  },
-  {
-    name: "Vikram Reddy",
-    status: "Pending",
-    plan: "Free",
-    joined: "2023-12-10",
-    age: 31,
-    dob: "1993-11-05",
-    address: "Hyderabad, Telangana",
-    education: "B.Tech, NIT Warangal",
-    familyBackground: "Educated",
-    height: "5'11\"",
-    weight: "78kg",
-    hobbies: "Gaming, Movies",
-  },
-  {
-    name: "Kavya Menon",
-    status: "Inactive",
-    plan: "Premium",
-    joined: "2023-11-22",
-    age: 28,
-    dob: "1996-06-18",
-    address: "Kochi, Kerala",
-    education: "M.Sc, Cochin University",
-    familyBackground: "Service",
-    height: "5'3\"",
-    weight: "52kg",
-    hobbies: "Dancing, Cooking",
-  },
-];
 
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
-  const [users, setUsers] = useState(recentUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const usersPerPage = 4;
 
-  // Calculate pagination values
-  const totalPages = Math.ceil(users.length / usersPerPage);
-  const startIndex = (currentPage - 1) * usersPerPage;
-  const endIndex = startIndex + usersPerPage;
-  const currentUsers = users.slice(startIndex, endIndex);
+  // Fetch users from API
+  const fetchUsers = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/users/fetchAllUsers?page=${page}&limit=${usersPerPage}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Transform API data to match UI expectations
+        const transformedUsers = data.data.map(user => ({
+          id: user._id,
+          name: user.name || 'N/A',
+          email: user.phone, // Using phone as email since API doesn't have email
+          phone: user.phone,
+          status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
+          plan: user.subscription?.plan || 'Free',
+          joined: new Date(user.createdAt).toLocaleDateString('en-US'),
+          age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
+          dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
+          address: user.currentCity || 'N/A',
+          education: user.education || 'N/A',
+          familyBackground: user.occupation || 'N/A',
+          height: user.height || 'N/A',
+          weight: user.weight ? `${user.weight}kg` : 'N/A',
+          hobbies: 'N/A', // API doesn't have hobbies field
+          gender: user.gender || 'N/A',
+          maritalStatus: user.maritalStatus || 'N/A',
+          motherTongue: user.motherTongue || 'N/A',
+          religion: user.religion || 'N/A',
+          caste: user.caste || 'N/A',
+          subCaste: user.subCaste || 'N/A',
+          gothra: user.gothra || 'N/A',
+          college: user.college || 'N/A',
+          company: user.company || 'N/A',
+          fieldOfStudy: user.fieldOfStudy || 'N/A',
+          income: user.income || 'N/A',
+          lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
+          isVerified: user.isVerified,
+          phoneIsVerified: user.phoneIsVerified,
+          verificationStatus: user.verificationStatus || 'Unverified'
+        }));
+        
+        setUsers(transformedUsers);
+        setTotalUsers(data.pagination.total);
+        setTotalPages(data.pagination.totalPages);
+        setCurrentPage(data.pagination.page);
+      } else {
+        throw new Error('API response indicates failure');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load users on component mount
+  useEffect(() => {
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   // Pagination handlers
   const handlePrevious = () => {
@@ -167,29 +118,47 @@ export default function UserManagement() {
   // Handle view user details
   const handleViewUser = (user) => {
     setSelectedUser(user);
-    setEditingUser(null); // Close edit mode if open
+    setEditingUser(null);
   };
 
   // Handle edit user
   const handleEditUser = (user) => {
     setEditingUser(user);
     setEditFormData(user);
-    setSelectedUser(null); // Close view mode if open
+    setSelectedUser(null);
   };
 
   // Handle save edited user
-  const handleSaveEdit = () => {
-    setUsers(users.map(user => 
-      user.email === editingUser.email ? { ...user, ...editFormData } : user
-    ));
-    setEditingUser(null);
+  const handleSaveEdit = async () => {
+    try {
+      // Here you would typically make an API call to update the user
+      // For demo purposes, we'll just update the local state
+      setUsers(users.map(user => 
+        user.id === editingUser.id ? { ...user, ...editFormData } : user
+      ));
+      setEditingUser(null);
+      
+      // In a real implementation, you'd call something like:
+      // await updateUser(editingUser.id, editFormData);
+      // Then refresh the users list
+    } catch (err) {
+      console.error('Error updating user:', err);
+    }
   };
 
   // Handle ban/suspend user
-  const handleBanUser = (userEmail) => {
-    setUsers(users.map(user => 
-      user.email === userEmail ? { ...user, status: "Suspended" } : user
-    ));
+  const handleBanUser = async (userId) => {
+    try {
+      // Here you would typically make an API call to suspend the user
+      setUsers(users.map(user => 
+        user.id === userId ? { ...user, status: "Suspended" } : user
+      ));
+      
+      // In a real implementation, you'd call something like:
+      // await suspendUser(userId);
+    } catch (err) {
+      console.error('Error suspending user:', err);
+    }
   };
 
   // Handle input change in edit form
@@ -201,6 +170,33 @@ export default function UserManagement() {
     });
   };
 
+  // Calculate display range for pagination
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = Math.min(startIndex + usersPerPage, totalUsers);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
+        <span className="ml-2 text-gray-600">Loading users...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-800">Error: {error}</p>
+        <button 
+          onClick={() => fetchUsers(currentPage)}
+          className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* User Management Header */}
@@ -208,7 +204,7 @@ export default function UserManagement() {
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
             <h2 className="text-xl font-bold text-gray-900">User Management</h2>
-            <p className="text-gray-600">Manage all registered users and their profiles</p>
+            <p className="text-gray-600">Manage all registered users and their profiles ({totalUsers} total users)</p>
           </div>
           <div className="flex items-center space-x-3">
             <button className="bg-rose-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors flex items-center">
@@ -262,12 +258,13 @@ export default function UserManagement() {
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Status</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Plan</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Joined</th>
+                <th className="text-left py-4 px-6 font-semibold text-gray-900">Last Login</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user, index) => (
-                <tr key={index} className="border-b border-gray-100 hover:bg-rose-50/30 transition-colors">
+              {users.map((user, index) => (
+                <tr key={user.id} className="border-b border-gray-100 hover:bg-rose-50/30 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
@@ -275,7 +272,13 @@ export default function UserManagement() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
+                        <p className="text-sm text-gray-500">{user.phone}</p>
+                        {user.isVerified && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <Check className="w-3 h-3 mr-1" />
+                            Verified
+                          </span>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -286,6 +289,8 @@ export default function UserManagement() {
                           ? "bg-green-100 text-green-800"
                           : user.status === "Pending"
                           ? "bg-amber-100 text-amber-800"
+                          : user.status === "Inactive"
+                          ? "bg-gray-100 text-gray-800"
                           : "bg-red-100 text-red-800"
                       }`}
                     >
@@ -307,6 +312,7 @@ export default function UserManagement() {
                     </span>
                   </td>
                   <td className="py-4 px-6 text-sm text-gray-600">{user.joined}</td>
+                  <td className="py-4 px-6 text-sm text-gray-600">{user.lastLogin}</td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button
@@ -323,7 +329,7 @@ export default function UserManagement() {
                       </button>
                       <button 
                         className="text-red-600 hover:text-red-700 p-1"
-                        onClick={() => handleBanUser(user.email)}
+                        onClick={() => handleBanUser(user.id)}
                       >
                         <Ban className="w-4 h-4" />
                       </button>
@@ -339,7 +345,7 @@ export default function UserManagement() {
         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Showing {startIndex + 1} to {Math.min(endIndex, users.length)} of {users.length} users
+              Showing {startIndex + 1} to {endIndex} of {totalUsers} users
             </p>
             <div className="flex items-center space-x-2">
               <button 
@@ -395,9 +401,9 @@ export default function UserManagement() {
       {/* View User Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-2xl overflow-hidden">
+          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-4xl overflow-hidden max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center sticky top-0">
               <div>
                 <h3 className="text-xl font-bold text-rose-800">User Profile</h3>
                 <p className="text-sm text-rose-600/80">Detailed information about {selectedUser.name}</p>
@@ -406,9 +412,7 @@ export default function UserManagement() {
                 onClick={() => setSelectedUser(null)}
                 className="text-rose-400 hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-rose-100/50"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="h-6 w-6" />
               </button>
             </div>
 
@@ -422,8 +426,8 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
-                    <p className="text-sm text-gray-600">{selectedUser.email}</p>
-                    <div className="flex space-x-2 mt-1">
+                    <p className="text-sm text-gray-600">{selectedUser.phone}</p>
+                    <div className="flex flex-wrap gap-2 mt-2">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           selectedUser.status === "Active"
@@ -447,6 +451,12 @@ export default function UserManagement() {
                         ) : null}
                         {selectedUser.plan}
                       </span>
+                      {selectedUser.isVerified && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <Check className="w-3 h-3 mr-1" />
+                          Verified
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -454,19 +464,25 @@ export default function UserManagement() {
                 {/* Personal Details Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <Users className="h-4 w-4 mr-2 text-rose-500" />
                     Personal Details
                   </h5>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
                       <p className="text-gray-500">Age</p>
                       <p className="font-medium">{selectedUser.age}</p>
                     </div>
                     <div>
+                      <p className="text-gray-500">Gender</p>
+                      <p className="font-medium">{selectedUser.gender}</p>
+                    </div>
+                    <div>
                       <p className="text-gray-500">Date of Birth</p>
                       <p className="font-medium">{selectedUser.dob}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Marital Status</p>
+                      <p className="font-medium">{selectedUser.maritalStatus}</p>
                     </div>
                     <div>
                       <p className="text-gray-500">Height</p>
@@ -475,6 +491,36 @@ export default function UserManagement() {
                     <div>
                       <p className="text-gray-500">Weight</p>
                       <p className="font-medium">{selectedUser.weight}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Religious Details Card */}
+                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <Crown className="h-4 w-4 mr-2 text-rose-500" />
+                    Religious & Cultural Details
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-gray-500">Religion</p>
+                      <p className="font-medium">{selectedUser.religion}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Caste</p>
+                      <p className="font-medium">{selectedUser.caste}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Sub Caste</p>
+                      <p className="font-medium">{selectedUser.subCaste}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Gothra</p>
+                      <p className="font-medium">{selectedUser.gothra}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-gray-500">Mother Tongue</p>
+                      <p className="font-medium">{selectedUser.motherTongue}</p>
                     </div>
                   </div>
                 </div>
@@ -489,63 +535,93 @@ export default function UserManagement() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Address
+                    Location
                   </h5>
                   <p className="text-sm">{selectedUser.address}</p>
                 </div>
 
-                {/* Education Card */}
+                {/* Education & Career Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path d="M12 14l9-5-9-5-9 5 9 5z" />
                       <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
                     </svg>
-                    Education & Background
+                    Education & Career
                   </h5>
                   <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-500">Education:</span> {selectedUser.education}</p>
-                    <p><span className="text-gray-500">Family Background:</span> {selectedUser.familyBackground}</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      <div>
+                        <p className="text-gray-500">Education</p>
+                        <p className="font-medium">{selectedUser.education}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Field of Study</p>
+                        <p className="font-medium">{selectedUser.fieldOfStudy}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">College</p>
+                        <p className="font-medium">{selectedUser.college}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Occupation</p>
+                        <p className="font-medium">{selectedUser.familyBackground}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Company</p>
+                        <p className="font-medium">{selectedUser.company}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Income</p>
+                        <p className="font-medium">{selectedUser.income}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Hobbies Card */}
+                {/* Account Details Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Hobbies & Interests
+                    Account Information
                   </h5>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedUser.hobbies.split(", ").map((hobby, index) => (
-                      <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
-                        {hobby}
-                      </span>
-                    ))}
+                  <div className="grid grid-cols-1 gap-2 text-sm">
+                    <div>
+                      <p className="text-gray-500">Joined</p>
+                      <p className="font-medium">{selectedUser.joined}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Last Login</p>
+                      <p className="font-medium">{selectedUser.lastLogin}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Verification Status</p>
+                      <p className="font-medium">{selectedUser.verificationStatus}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-500">Phone Verified</p>
+                      <p className="font-medium">{selectedUser.phoneIsVerified ? 'Yes' : 'No'}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3">
+            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3 sticky bottom-0">
               <button
                 onClick={() => setSelectedUser(null)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               >
                 Close
               </button>
-              <button 
-                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 flex items-center"
-                onClick={() => {
-                  setSelectedUser(null);
-                  handleEditUser(selectedUser);
-                }}
+             <button 
+                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                onClick={() => handleEditUser(selectedUser)}
               >
-                <Edit3 className="w-4 h-4 mr-2" />
-                Edit Profile
+                Edit User
               </button>
             </div>
           </div>
@@ -555,27 +631,24 @@ export default function UserManagement() {
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-2xl overflow-hidden">
+          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center">
+            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center sticky top-0">
               <div>
-                <h3 className="text-xl font-bold text-rose-800">Edit User Profile</h3>
-                <p className="text-sm text-rose-600/80">Edit information for {editingUser.name}</p>
+                <h3 className="text-xl font-bold text-rose-800">Edit User</h3>
+                <p className="text-sm text-rose-600/80">Update information for {editingUser.name}</p>
               </div>
               <button
                 onClick={() => setEditingUser(null)}
                 className="text-rose-400 hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-rose-100/50"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="h-6 w-6" />
               </button>
             </div>
 
-            {/* Edit Form */}
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Basic Information */}
-              <div className="space-y-4">
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                   <input
@@ -587,69 +660,65 @@ export default function UserManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
-                    type="email"
-                    name="email"
-                    value={editFormData.email || ''}
+                    type="text"
+                    name="phone"
+                    value={editFormData.phone || ''}
                     onChange={handleEditChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select
-                      name="status"
-                      value={editFormData.status || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Suspended">Suspended</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
-                    <select
-                      name="plan"
-                      value={editFormData.plan || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    >
-                      <option value="Free">Free</option>
-                      <option value="Premium">Premium</option>
-                      <option value="Gold">Gold</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    name="status"
+                    value={editFormData.status || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
                 </div>
-              </div>
-
-              {/* Personal Details */}
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
-                    <input
-                      type="number"
-                      name="age"
-                      value={editFormData.age || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                    <input
-                      type="date"
-                      name="dob"
-                      value={editFormData.dob || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+                  <select
+                    name="plan"
+                    value={editFormData.plan || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="Free">Free</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Gold">Gold</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                  <select
+                    name="gender"
+                    value={editFormData.gender || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Education</label>
+                  <input
+                    type="text"
+                    name="education"
+                    value={editFormData.education || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
@@ -662,11 +731,11 @@ export default function UserManagement() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Hobbies (comma separated)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
                   <input
                     type="text"
-                    name="hobbies"
-                    value={editFormData.hobbies || ''}
+                    name="familyBackground"
+                    value={editFormData.familyBackground || ''}
                     onChange={handleEditChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
@@ -675,7 +744,7 @@ export default function UserManagement() {
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3">
+            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3 sticky bottom-0">
               <button
                 onClick={() => setEditingUser(null)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
@@ -684,9 +753,8 @@ export default function UserManagement() {
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 flex items-center"
+                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               >
-                <Check className="w-4 h-4 mr-2" />
                 Save Changes
               </button>
             </div>

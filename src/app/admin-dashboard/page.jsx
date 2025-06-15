@@ -12,7 +12,7 @@ import {
   XCircle ,
   Flag
 } from 'lucide-react';
-import { FaRupeeSign } from 'react-icons/fa';   
+import { FaRupeeSign } from 'react-icons/fa6';   
 
 export default function AdminDashboard() {
   const [isLoaded, setIsLoaded] = useState(false);
