@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
   
   name: String,
   phone: { 
-    type: String, 
+  type: String, 
     unique: true, 
     required: true,
     validate: {
@@ -43,8 +43,8 @@ const UserSchema = new mongoose.Schema({
     enum: ['Male', 'Female', 'Other', null],
     default: null
   },
-  dob: Date,
-  height: String, // Height in cm or ft
+  dob: Date, // Date of Birth
+  height: String, 
   religion: String,
   currentCity: String,
   education: String,

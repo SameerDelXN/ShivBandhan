@@ -41,7 +41,7 @@ export default function MyProfilePage() {
     userId: user?.id || '',
     verificationStatus:""
   });
-  console.log("form = ",formData)
+
   useEffect(() => {
     const loadData = async () => {
       await fetchUserData();
@@ -65,9 +65,8 @@ export default function MyProfilePage() {
     const timer = setTimeout(() => {
       if (formData.name) { // Only save if there's actual data
         handleProfileUpdate();
-        console.log('inside use effect ')
       }
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [formData]);
@@ -77,16 +76,11 @@ export default function MyProfilePage() {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight'],
       religious: ['religion', 'caste', 'subCaste', 'gothra'],
       education: ['education', 'fieldOfStudy', 'college', 'occupation', 'company', 'income'],
-     // lifestyle: [],
-     //family: [], 
-     //preferences: [],
     };
 
     if (!fields[section]) return 0;
     
     const sectionFields = fields[section];
-    //if (sectionFields.length === 0) return 0;
-
     const filledFields = sectionFields.filter(field => {
       const value = formData[field];
       return value !== null && value !== undefined && value !== '';
@@ -129,7 +123,7 @@ export default function MyProfilePage() {
       const response = await fetch('/api/users/me');
       if (!response.ok) throw new Error('Network error');
       const data = await response.json();
-       setVerificationStatus(data.verificationStatus || 'Unverified');
+      setVerificationStatus(data.verificationStatus || 'Unverified');
 
       setFormData({
         name: data.name || '',
@@ -151,10 +145,8 @@ export default function MyProfilePage() {
         income: data.income || '',
         weight: data.weight || '',
         userId: user?.user?.id || '',
-        verificationStatus:data?.verificationStatus || 'Unverified'
+        verificationStatus: data?.verificationStatus || 'Unverified'
       });
-
-      
 
       // Calculate initial profile completion
       const sections = getProfileSections();
@@ -189,7 +181,7 @@ export default function MyProfilePage() {
           userId: user.user.id
         }),
       });
-       if (!response.ok) throw new Error('Failed to update profile');
+      if (!response.ok) throw new Error('Failed to update profile');
       const result = await response.json();
       
       // Calculate new completion percentages
@@ -204,15 +196,13 @@ export default function MyProfilePage() {
       // Show completion update notification if increased
       if (Math.round(totalCompletion) > prevCompletion) {
         setShowCompletionUpdate(true);
-        setTimeout(() => setShowCompletionUpdate(false), 3000);
+        setTimeout(() => setShowCompletionUpdate(false), 1000);
       }
       // If profile completion reaches 100% after save, automatically trigger verification
-      if (Math.round(totalCompletion) === 100 && prevCompletion < 100 && verificationStatus === 'Unverified')
-    {
-      await handleVerificationSubmit();
-    }
+      if (Math.round(totalCompletion) === 100 && prevCompletion < 100 && verificationStatus === 'Unverified') {
+        await handleVerificationSubmit();
+      }
       
-      console.log("Profile updated successfully:", result);
     } catch (error) {
       console.error("Error updating profile:", error);
     } finally {
@@ -220,31 +210,28 @@ export default function MyProfilePage() {
     }
   };
 
-  
-const handleVerificationSubmit = async () => {
-  try {
-    const response = await fetch('/api/users/update', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: user?.user?.id,
-        verificationStatus: 'Pending',
-        createdAt: new Date(),
-      }),
-    });
+  const handleVerificationSubmit = async () => {
+    try {
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.user?.id,
+          verificationStatus: 'Pending',
+          createdAt: new Date(),
+        }),
+      });
 
-    if (!response.ok) throw new Error('Failed to submit verification');
-    
-    const result = await response.json();
-    setVerificationStatus(true);
-    console.log("Verification submitted:", result);
-    
-  } catch (error) {
-    console.error("Error submitting verification:", error);
-  }
-};
+      if (!response.ok) throw new Error('Failed to submit verification');
+      
+      const result = await response.json();
+      setVerificationStatus(true);
+    } catch (error) {
+      console.error("Error submitting verification:", error);
+    }
+  };
 
   const handlePhotoUpload = (photoId) => {
     setPhotos(photos.map(photo =>
@@ -260,43 +247,44 @@ const handleVerificationSubmit = async () => {
       isPrimary: photo.id === photoId
     })));
   };
+
   function VerificationBadge({ status }) {
-  const statusConfig = {
-    Unverified: {
-      bg: 'bg-gray-100',
-      text: 'text-gray-800',
-      icon: null,
-      label: 'Unverified'
-    },
-    Pending: {
-      bg: 'bg-yellow-100',
-      text: 'text-yellow-800',
-      icon: <Clock className="w-3 h-3 mr-1" />,
-      label: 'Pending Verification'
-    },
-    Verified: {
-      bg: 'bg-green-100',
-      text: 'text-green-800',
-      icon: <Shield className="w-3 h-3 mr-1" />,
-      label: 'Verified Profile'
-    },
-    Rejected: {
-      bg: 'bg-red-100',
-      text: 'text-red-800',
-      icon: <XCircle className="w-3 h-3 mr-1" />,
-      label: 'Verification Rejected'
-    }
-  };
+    const statusConfig = {
+      Unverified: {
+        bg: 'bg-gray-100',
+        text: 'text-gray-800',
+        icon: null,
+        label: 'Unverified'
+      },
+      Pending: {
+        bg: 'bg-yellow-100',
+        text: 'text-yellow-800',
+        icon: <Clock className="w-3 h-3 mr-1" />,
+        label: 'Pending Verification'
+      },
+      Verified: {
+        bg: 'bg-green-100',
+        text: 'text-green-800',
+        icon: <Shield className="w-3 h-3 mr-1" />,
+        label: 'Verified Profile'
+      },
+      Rejected: {
+        bg: 'bg-red-100',
+        text: 'text-red-800',
+        icon: <XCircle className="w-3 h-3 mr-1" />,
+        label: 'Verification Rejected'
+      }
+    };
 
-  const config = statusConfig[status] || statusConfig.Unverified;
+    const config = statusConfig[status] || statusConfig.Unverified;
 
-  return (
-    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-      {config.icon}
-      {config.label}
-    </span>
-  );
-}
+    return (
+      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+        {config.icon}
+        {config.label}
+      </span>
+    );
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -388,7 +376,7 @@ const handleVerificationSubmit = async () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
                   />
                 </div>
-                 <div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
                   <input 
                     type="text"
@@ -629,7 +617,7 @@ const handleVerificationSubmit = async () => {
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
-                        {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
+                      {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
                     </div>
                     <div className="space-y-1 text-gray-600">
                       <div className="flex items-center space-x-4 text-sm">
@@ -650,7 +638,7 @@ const handleVerificationSubmit = async () => {
                       )}
                     </div>
                     <div className="flex items-center mt-2">
-                     <VerificationBadge status={formData.verificationStatus} />
+                      <VerificationBadge status={formData.verificationStatus} />
                     </div>
                   </div>
                 </div>
@@ -674,20 +662,20 @@ const handleVerificationSubmit = async () => {
                         style={{ width: `${isLoaded ? profileCompletion : 0}%` }}
                       ></div>
                     </div>
-                   <button 
-                    onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
-                    className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
-                    disabled={verificationStatus === 'Pending' || isSaving}
+                    <button 
+                      onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
+                      className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
+                      disabled={verificationStatus === 'Pending' || isSaving}
                     >
-                    {isSaving ? 'Saving...' : (
-                    profileCompletion === 100 ?
-                     (
-                    verificationStatus === 'Pending' ? 'Verification Pending' :
-                    verificationStatus === 'Verified' ? 'Profile Verified' :
-                    'Send for Verification'
-                     ) : 'Save Profile'
-                     )}
-                     </button>
+                      {isSaving ? 'Saving...' : (
+                        profileCompletion === 100 ?
+                        (
+                          verificationStatus === 'Pending' ? 'Verification Pending' :
+                          verificationStatus === 'Verified' ? 'Profile Verified' :
+                          'Send for Verification'
+                        ) : 'Save Profile'
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -714,7 +702,7 @@ const handleVerificationSubmit = async () => {
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
                         activeTab === section.id
                           ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                          : 'hover:bg-gray-50 text-gray-700'
+                          : 'text-gray-700'
                       }`}
                     >
                       <div className="flex items-center">
@@ -852,7 +840,6 @@ const handleVerificationSubmit = async () => {
                 View All
               </button>
             </div>
-
             {/* Profile Stats */}
             <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
               <h3 className="font-bold text-gray-900 mb-4">Profile Stats</h3>

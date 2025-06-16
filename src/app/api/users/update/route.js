@@ -36,7 +36,7 @@ export async function PUT(request) {
     
     const updateData = {
       name, dob, currentCity, maritalStatus, height, motherTongue,gender,religion,caste,subCaste,gothra,education,fieldOfStudy,college,occupation,company,weight,verificationStatus,
-      income: body.income || null,
+      income,
       updatedAt: new Date()
     };
 

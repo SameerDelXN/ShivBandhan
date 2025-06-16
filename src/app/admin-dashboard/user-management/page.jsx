@@ -180,15 +180,15 @@ export default function UserManagement() {
   // Handle save edited user
   const handleSaveEdit = () => {
     setUsers(users.map(user => 
-      user.email === editingUser.email ? { ...user, ...editFormData } : user
+      user.name === editingUser.name ? { ...user, ...editFormData } : user
     ));
     setEditingUser(null);
   };
 
   // Handle ban/suspend user
-  const handleBanUser = (userEmail) => {
+  const handleBanUser = (userName) => {
     setUsers(users.map(user => 
-      user.email === userEmail ? { ...user, status: "Suspended" } : user
+      user.name === userName ? { ...user, status: "Suspended" } : user
     ));
   };
 
@@ -275,7 +275,6 @@ export default function UserManagement() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
                       </div>
                     </div>
                   </td>
@@ -323,7 +322,7 @@ export default function UserManagement() {
                       </button>
                       <button 
                         className="text-red-600 hover:text-red-700 p-1"
-                        onClick={() => handleBanUser(user.email)}
+                        onClick={() => handleBanUser(user.name)}
                       >
                         <Ban className="w-4 h-4" />
                       </button>
@@ -422,7 +421,6 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
-                    <p className="text-sm text-gray-600">{selectedUser.email}</p>
                     <div className="flex space-x-2 mt-1">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -582,16 +580,6 @@ export default function UserManagement() {
                     type="text"
                     name="name"
                     value={editFormData.name || ''}
-                    onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={editFormData.email || ''}
                     onChange={handleEditChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />

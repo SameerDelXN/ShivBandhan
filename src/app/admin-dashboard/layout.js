@@ -85,7 +85,7 @@ export default function AdminLayout({ children }) {
         {/* Main Content */}
         <div className="flex-1">
           {/* Top Header */}
-          <div className="bg-rose-500 shadow-lg rounded-lg mx-6 mt-4 p-6 sticky top-4 z-10">
+          <div className="bg-rose-500 shadow-lg rounded-lg mx-6 mt-4 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-white">
