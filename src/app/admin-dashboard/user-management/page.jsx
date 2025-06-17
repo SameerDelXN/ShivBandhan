@@ -129,6 +129,7 @@ export default function UserManagement() {
   };
 
   // Handle save edited user
+<<<<<<< HEAD
   const handleSaveEdit = async () => {
     try {
       // Here you would typically make an API call to update the user
@@ -159,6 +160,20 @@ export default function UserManagement() {
     } catch (err) {
       console.error('Error suspending user:', err);
     }
+=======
+  const handleSaveEdit = () => {
+    setUsers(users.map(user => 
+      user.name === editingUser.name ? { ...user, ...editFormData } : user
+    ));
+    setEditingUser(null);
+  };
+
+  // Handle ban/suspend user
+  const handleBanUser = (userName) => {
+    setUsers(users.map(user => 
+      user.name === userName ? { ...user, status: "Suspended" } : user
+    ));
+>>>>>>> 4c2a26bf636a7fcebbf905da4cab0ee9bca2bd98
   };
 
   // Handle input change in edit form
@@ -272,6 +287,7 @@ export default function UserManagement() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
+<<<<<<< HEAD
                         <p className="text-sm text-gray-500">{user.phone}</p>
                         {user.isVerified && (
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -279,6 +295,8 @@ export default function UserManagement() {
                             Verified
                           </span>
                         )}
+=======
+>>>>>>> 4c2a26bf636a7fcebbf905da4cab0ee9bca2bd98
                       </div>
                     </div>
                   </td>
@@ -329,7 +347,11 @@ export default function UserManagement() {
                       </button>
                       <button 
                         className="text-red-600 hover:text-red-700 p-1"
+<<<<<<< HEAD
                         onClick={() => handleBanUser(user.id)}
+=======
+                        onClick={() => handleBanUser(user.name)}
+>>>>>>> 4c2a26bf636a7fcebbf905da4cab0ee9bca2bd98
                       >
                         <Ban className="w-4 h-4" />
                       </button>
@@ -426,8 +448,12 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
+<<<<<<< HEAD
                     <p className="text-sm text-gray-600">{selectedUser.phone}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
+=======
+                    <div className="flex space-x-2 mt-1">
+>>>>>>> 4c2a26bf636a7fcebbf905da4cab0ee9bca2bd98
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           selectedUser.status === "Active"
@@ -659,6 +685,7 @@ export default function UserManagement() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
+<<<<<<< HEAD
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
@@ -682,6 +709,36 @@ export default function UserManagement() {
                     <option value="Pending">Pending</option>
                     <option value="Suspended">Suspended</option>
                   </select>
+=======
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select
+                      name="status"
+                      value={editFormData.status || ''}
+                      onChange={handleEditChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Suspended">Suspended</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+                    <select
+                      name="plan"
+                      value={editFormData.plan || ''}
+                      onChange={handleEditChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    >
+                      <option value="Free">Free</option>
+                      <option value="Premium">Premium</option>
+                      <option value="Gold">Gold</option>
+                    </select>
+                  </div>
+>>>>>>> 4c2a26bf636a7fcebbf905da4cab0ee9bca2bd98
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
