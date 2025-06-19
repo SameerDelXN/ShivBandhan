@@ -7,13 +7,13 @@ const UserSchema = new mongoose.Schema({
   phone: { 
   type: String, 
     unique: true, 
-    required: true,
-    validate: {
-      validator: function(v) {
-        return /^\+91\d{10}$/.test(v); // Validates Indian phone numbers with +91 prefix
-      },
-      message: props => `${props.value} is not a valid Indian phone number!`
-    }
+  profileCompletion: { type: Number, default: 0 },
+    // validate: {
+    //   validator: function(v) {
+    //     return /^\+91\d{10}$/.test(v); // Validates Indian phone numbers with +91 prefix
+    //   },
+    //   message: props => `${props.value} is not a valid Indian phone number!`
+    // }
   },
   
   // Verification status
@@ -48,7 +48,7 @@ const UserSchema = new mongoose.Schema({
   religion: String,
   currentCity: String,
   education: String,
-  state: String,
+  
   profilePhoto: String,
   maritalStatus:
    {
@@ -70,18 +70,74 @@ const UserSchema = new mongoose.Schema({
    occupation: String,
    company: String,
    weight: String, 
+   permanentAddress: String,
+   complexion: String,
+
    income:
     {
       type: String,
       enum: ['','₹5-10 Lakhs', '₹10-15 Lakhs', '₹15-20 Lakhs', null],
       default: null
   },
+    email: {
+    type: String,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    validate: {
+      validator: function(v) {
+        return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
+  },
+  bloodGroup: {
+    type: String,
+    // enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', null],
+    default: null
+  },
+  wearsLens: {
+    type: Boolean,
+    default: false
+  },
+   // Relative Info
+  fatherName: String,
+  parentResidenceCity: String,
+  mother: String,
+  brothers: { type: Number, default: 0 },
+  marriedBrothers: { type: Number, default: 0 },
+  sisters: { type: Number, default: 0 },
+  marriedSisters: { type: Number, default: 0 },
+  nativeDistrict: String,
+  nativeCity: String,
+  familyWealth: String,
+  relativeSurname: {
+  type: [String], 
+},
+  parentOccupation: String,
+  mamaSurname: String,
 
-    
-  
- 
-  
-  // Preferences
+  // Horoscope Info
+  rashi: String,
+  nakshira: String,
+  charan: String,
+  gan: String,
+  nadi: String,
+  mangal: { type: Boolean, default: false },
+  birthPlace: String,
+  birthTime: String,
+  gotraDevak: String,
+
+  // Expectations
+  expectedCaste: String,
+  preferredCity: String,
+  expectedAgeDifference: String,
+  expectedEducation: String,
+  divorcee: { type: Boolean, default: false },
+  expectedHeight: String,
+  expectedIncome: String,
+
+    // Preferences
   preferences: {
     ageRange: {
       min: { type: Number, min: 18, max: 100 },

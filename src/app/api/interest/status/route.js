@@ -6,7 +6,8 @@ export async function PATCH(req) {
   await connectDB();
 
   const { interestId, status } = await req.json();
-
+  console.log("Interest ID:", interestId);
+  console.log("Status:", status);
   if (!interestId || !["accepted", "declined"].includes(status)) {
     return NextResponse.json({ message: "Invalid input" }, { status: 400 });
   }

@@ -8,6 +8,7 @@ export default function AdminPlansTable() {
       id: 1,
       name: "Premium",
       price: "₹999",
+      duration: "monthly",
       status: "ENABLED",
       features: ["Unlimited Profile Views", "Priority Support"],
       createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
@@ -16,6 +17,7 @@ export default function AdminPlansTable() {
       id: 2,
       name: "Free", 
       price: "Free",
+      duration: "lifetime",
       status: "DISABLED",
       features: ["Limited Profile Views", "Basic Support"],
       createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
@@ -30,6 +32,7 @@ export default function AdminPlansTable() {
   const [newPlan, setNewPlan] = useState({
     name: "",
     price: "",
+    duration: "monthly",
     status: "ENABLED",
     features: [],
   });
@@ -86,6 +89,7 @@ export default function AdminPlansTable() {
       id: plans.length > 0 ? Math.max(...plans.map(p => p.id)) + 1 : 1,
       name: newPlan.name,
       price: newPlan.price,
+      duration: newPlan.duration,
       status: newPlan.status,
       features: newPlan.features,
       createdAt: new Date(),
@@ -95,6 +99,7 @@ export default function AdminPlansTable() {
     setNewPlan({
       name: "",
       price: "",
+      duration: "monthly",
       status: "ENABLED",
       features: [],
     });
@@ -107,6 +112,7 @@ export default function AdminPlansTable() {
     setNewPlan({
       name: plan.name,
       price: plan.price,
+      duration: plan.duration,
       status: plan.status,
       features: [...plan.features],
     });
@@ -123,6 +129,7 @@ export default function AdminPlansTable() {
             ...plan, 
             name: newPlan.name,
             price: newPlan.price,
+            duration: newPlan.duration,
             status: newPlan.status,
             features: newPlan.features,
           } 
@@ -133,6 +140,7 @@ export default function AdminPlansTable() {
     setNewPlan({
       name: "",
       price: "",
+      duration: "monthly",
       status: "ENABLED",
       features: [],
     });
@@ -226,6 +234,7 @@ export default function AdminPlansTable() {
               setNewPlan({
                 name: "",
                 price: "",
+                duration: "monthly",
                 status: "ENABLED",
                 features: [],
               });
@@ -245,6 +254,7 @@ export default function AdminPlansTable() {
               <th className="p-4 font-medium">Plan</th>
               <th className="p-4 font-medium">Status</th>
               <th className="p-4 font-medium">Price</th>
+              <th className="p-4 font-medium">Duration</th>
               <th className="p-4 font-medium">Created</th>
               <th className="p-4 font-medium">Actions</th>
             </tr>
@@ -269,6 +279,7 @@ export default function AdminPlansTable() {
                     </span>
                   </td>
                   <td className="p-4 font-medium text-gray-800">{plan.price}</td>
+                  <td className="p-4 text-gray-600 capitalize">{plan.duration}</td>
                   <td className="p-4 text-gray-600">{formatRelativeTime(plan.createdAt)}</td>
                   <td className="p-4">
                     <div className="flex gap-2">
@@ -290,7 +301,7 @@ export default function AdminPlansTable() {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="p-4 text-center text-gray-500">
+                <td colSpan="6" className="p-4 text-center text-gray-500">
                   No plans found
                 </td>
               </tr>
@@ -300,12 +311,12 @@ export default function AdminPlansTable() {
       </div>
 
       {/* Add/Edit Plan Modal */}
-        {showAddPlanModal && (
+      {showAddPlanModal && (
         <div className="fixed inset-0 bg-gray-600/80 flex items-center justify-center p-4 z-50">
           <div 
-             className="bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-md"
-             onClick={(e) => e.stopPropagation()}
-       >
+            className="bg-white rounded-lg shadow-xl border border-gray-200 w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-5">
               <h2 className="text-lg font-bold mb-4">
                 {editingPlan ? "Edit Plan" : "Add New Plan"}
@@ -332,6 +343,21 @@ export default function AdminPlansTable() {
                     onChange={(e) => setNewPlan({...newPlan, price: e.target.value})}
                     placeholder="Enter price (e.g., ₹999 or Free)"
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                  <select
+                    className="w-full border rounded-lg px-3 py-2 text-sm"
+                    value={newPlan.duration}
+                    onChange={(e) => setNewPlan({...newPlan, duration: e.target.value})}
+                  >
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="lifetime">Lifetime</option>
+                  </select>
                 </div>
                 
                 <div>
@@ -404,4 +430,4 @@ export default function AdminPlansTable() {
       )}
     </div>
   );
-}
+} 
