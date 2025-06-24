@@ -67,6 +67,7 @@ export async function POST(request) {
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
         profilePhoto: user.profilePhoto,
+        subscription: user.subscription || null,
       }
     });
 
