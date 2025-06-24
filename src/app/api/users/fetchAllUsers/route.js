@@ -1,3 +1,4 @@
+// This file handles the API route for fetching all users with pagination and filtering
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import User from '@/models/User'; // Assuming your User model is imported from here

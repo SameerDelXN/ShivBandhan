@@ -20,7 +20,7 @@ export async function GET(request) {
 
     const user = await User.findById(decoded.userId)
       .select('-__v -createdAt -updatedAt');
-
+console.log('User found:', user);
     if (!user) {
       return NextResponse.json({ user: null }, { status: 200 });
     }
