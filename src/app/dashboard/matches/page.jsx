@@ -2,32 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '@/context/SessionContext';
 import { 
-  Heart,
-  User,
-  MapPin,
-  GraduationCap,
-  Briefcase,
-  Calendar,
-  Star,
-  CheckCircle,
-  Lock,
-  Camera,
-  Clock,
-  Crown,
-  Sparkles,
-  Filter,
-  ArrowUpDown,
-  Bookmark,
-  Eye,
-  MessageCircle,
-  TrendingUp,
-  Users,
-  Navigation,
-  Zap,
-  ChevronDown,
-  SlidersHorizontal,
-  X
+  Heart, User, MapPin, GraduationCap, Briefcase, Calendar, Star, CheckCircle, Lock, Camera, Clock, Crown, Sparkles, Filter, ArrowUpDown, Bookmark, Eye, MessageCircle, TrendingUp, Users, Navigation, Zap, ChevronDown, SlidersHorizontal, X, Loader2
 } from 'lucide-react';
+import { Toaster,toast } from 'react-hot-toast';
 
 // Utility function to mask first names
 const maskFirstName = (fullName) => {
@@ -39,6 +16,12 @@ const maskFirstName = (fullName) => {
   return '****';
 };
 
+// Helper function for case-insensitive city comparison
+const isSameCity = (city1, city2) => {
+  if (!city1 || !city2) return false;
+  return city1.toLowerCase() === city2.toLowerCase();
+};
+
 export default function MatchesPage() {
   const { user } = useSession();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,7 +31,9 @@ export default function MatchesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [matches, setMatches] = useState([]);
-  
+  const [hasSubscription, setHasSubscription] = useState(true);
+  const [checkingSubscription, setCheckingSubscription] = useState(true);
+
   // Quick filter states
   const [quickFilters, setQuickFilters] = useState({
     withPhoto: false,
@@ -58,9 +43,27 @@ export default function MatchesPage() {
   });
 
   useEffect(() => {
-    setIsLoaded(true);
-    fetchUsers(); 
-  }, []);
+    const initialize = async () => {
+      setIsLoaded(true);
+      await checkSubscription();
+      await fetchUsers();
+    };
+    initialize();
+  }, [user]);
+
+ 
+
+  const checkSubscription = async () => {
+    try {
+      setCheckingSubscription(true);
+      // Check subscription status from user session
+      setHasSubscription(true);
+    } catch (err) {
+      console.error('Error checking subscription:', err);
+    } finally {
+      setCheckingSubscription(false);
+    }
+  };
 
   const calculateAge = (dob) => {
     if (!dob) return null;
@@ -70,73 +73,79 @@ export default function MatchesPage() {
   };
 
   const calculateCompatibility = (userProfile, matchProfile) => {
-  // List of expectation fields to compare with basic info
-  const expectationFields = [
-    { expectation: 'expectedCaste', matchField: 'caste' },
-    { expectation: 'preferredCity', matchField: 'currentCity' },
-    { expectation: 'expectedEducation', matchField: 'education' },
-    { expectation: 'expectedHeight', matchField: 'height' },
-    { expectation: 'expectedIncome', matchField: 'income' },
-    { expectation: 'gotraDevak', matchField: 'gotraDevak' },
-    { expectation: 'expectedAgeDifference', matchField: 'age' },
-    // Add any additional fields here to maintain equal weightage
-  ];
+    // List of expectation fields to compare with basic info
+    const expectationFields = [
+      { expectation: 'expectedCaste', matchField: 'caste' },
+      { expectation: 'preferredCity', matchField: 'currentCity' },
+      { expectation: 'expectedEducation', matchField: 'education' },
+      { expectation: 'expectedHeight', matchField: 'height' },
+      { expectation: 'expectedIncome', matchField: 'income' },
+      { expectation: 'gotraDevak', matchField: 'gotraDevak' },
+      { expectation: 'expectedAgeDifference', matchField: 'age' },
+    ];
 
-  const totalFields = expectationFields.length;
-  const percentagePerField = 100 / totalFields; // 12.5% per field for 8 fields
-  let matchedPercentage = 0;
+    const totalFields = expectationFields.length;
+    const percentagePerField = 100 / totalFields;
+    let matchedPercentage = 0;
 
-  expectationFields.forEach(({ expectation, matchField }) => {
-    const expectedValue = userProfile[expectation];
-    const matchValue = matchProfile[matchField];
-    
-    // Skip if either value is missing
-    if (!expectedValue || !matchValue) return;
-    
-    // Special handling for age difference
-    if (expectation === 'expectedAgeDifference') {
-      const userAge = calculateAge(userProfile.dob);
-      const matchAge = matchProfile.age;
-      const ageDiff = Math.abs(userAge - matchAge);
+    expectationFields.forEach(({ expectation, matchField }) => {
+      const expectedValue = userProfile[expectation];
+      const matchValue = matchProfile[matchField];
       
-      if (expectedValue === '±1 year' && ageDiff <= 1) {
-        matchedPercentage += percentagePerField;
-      } else if (expectedValue === '±2 years' && ageDiff <= 2) {
-        matchedPercentage += percentagePerField;
-      } else if (expectedValue === '±3 years' && ageDiff <= 3) {
-        matchedPercentage += percentagePerField;
-      } else if (expectedValue === '±5 years' && ageDiff <= 5) {
-        matchedPercentage += percentagePerField;
-      }
-    } 
-    // For height ranges (e.g., "5'0" - 5'5"")
-    else if (expectation === 'expectedHeight' && matchField === 'height') {
-      const expectedRange = expectedValue.split('-').map(s => s.trim());
-      if (expectedRange.length === 2) {
-        const matchHeight = parseInt(matchValue.split("'")[0]);
-        const minHeight = parseInt(expectedRange[0].split("'")[0]);
-        const maxHeight = parseInt(expectedRange[1].split("'")[0]);
+      if (!expectedValue || !matchValue) return;
+      
+      if (expectation === 'expectedAgeDifference') {
+        const userAge = calculateAge(userProfile.dob);
+        const matchAge = matchProfile.age;
+        const ageDiff = Math.abs(userAge - matchAge);
         
-        if (matchHeight >= minHeight && matchHeight <= maxHeight) {
+        if (expectedValue === '±1 year' && ageDiff <= 1) {
+          matchedPercentage += percentagePerField;
+        } else if (expectedValue === '±2 years' && ageDiff <= 2) {
+          matchedPercentage += percentagePerField;
+        } else if (expectedValue === '±3 years' && ageDiff <= 3) {
+          matchedPercentage += percentagePerField;
+        } else if (expectedValue === '±5 years' && ageDiff <= 5) {
+          matchedPercentage += percentagePerField;
+        }
+      } 
+      else if (expectation === 'expectedHeight' && matchField === 'height') {
+        const expectedRange = expectedValue.split('-').map(s => s.trim());
+        if (expectedRange.length === 2) {
+          const matchHeight = parseInt(matchValue.split("'")[0]);
+          const minHeight = parseInt(expectedRange[0].split("'")[0]);
+          const maxHeight = parseInt(expectedRange[1].split("'")[0]);
+          
+          if (matchHeight >= minHeight && matchHeight <= maxHeight) {
+            matchedPercentage += percentagePerField;
+          }
+        }
+      }
+      else if (expectation === 'expectedIncome' && matchField === 'income') {
+        if (expectedValue === matchValue) {
           matchedPercentage += percentagePerField;
         }
       }
-    }
-    // For income ranges (e.g., "₹5-10 Lakhs")
-    else if (expectation === 'expectedIncome' && matchField === 'income') {
-      if (expectedValue === matchValue) {
+      else if (expectedValue === matchValue) {
         matchedPercentage += percentagePerField;
       }
-    }
-    // For exact matches (caste, city, education, etc.)
-    else if (expectedValue === matchValue) {
-      matchedPercentage += percentagePerField;
-    }
-  });
+    });
 
-  // Round to nearest integer percentage
-  return Math.round(matchedPercentage);
+    return Math.round(matchedPercentage);
+  };
+const fetchSentInterests = async (senderId) => {
+  try {
+    const res = await fetch(`/api/interest?userId=${senderId}`);
+    const data = await res.json();
+    if (data.success) {
+      return data.interests.map(i => i.receiver.id); // ⬅️ array of IDs where interest was sent
+    }
+  } catch (err) {
+    console.error('Error fetching sent interests:', err);
+  }
+  return [];
 };
+
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
@@ -145,6 +154,7 @@ export default function MatchesPage() {
       const currentUserRes = await fetch('/api/users/me');
       const currentUserData = await currentUserRes.json();
       
+      const sentReceiverIds = await fetchSentInterests(currentUserData._id);
       // Then fetch potential matches
       const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
       const data = await res.json();
@@ -164,10 +174,12 @@ export default function MatchesPage() {
             isBlurred: matchUser.subscription?.plan !== 'Premium',
             matchType: 'all',
             mutualMatch: false,
-            interestSent: false,
+            interestSent: sentReceiverIds.includes(matchUser._id),
             shortlisted: false,
             compatibility,
             bio: matchUser.bio || 'Looking for a compatible life partner.',
+            isNew: Math.random() > 0.7, // Randomly mark some as new for demo
+            lastActive: ['Recently', 'Today', '1 day ago', '2 days ago'][Math.floor(Math.random() * 4)] // Random last active time
           };
         });
         
@@ -184,7 +196,7 @@ export default function MatchesPage() {
     { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility > 0).length, icon: Users },
     { id: 'preferred', label: 'Preferred', count: matches.filter(m => m.compatibility >= 70).length, icon: Star },
     { id: 'new', label: 'New', count: matches.filter(m => m.isNew).length, icon: Sparkles },
-    { id: 'nearby', label: 'Nearby', count: matches.filter(m => m.currentCity === user?.user?.currentCity).length, icon: Navigation }
+    { id: 'nearby', label: 'Nearby', count: matches.filter(m => isSameCity(m.currentCity, user?.currentCity)).length, icon: Navigation }
   ];
 
   const filteredMatches = matches.filter(match => {
@@ -192,12 +204,12 @@ export default function MatchesPage() {
     if (activeTab !== 'all') {
       if (activeTab === 'preferred' && match.compatibility < 70) return false;
       if (activeTab === 'new' && !match.isNew) return false;
-      if (activeTab === 'nearby' && match.currentCity !== user?.user?.currentCity) return false;
+      if (activeTab === 'nearby' && !isSameCity(match.currentCity, user?.currentCity)) return false;
     }
     if (quickFilters.withPhoto && !match.hasPhoto) return false;
     if (quickFilters.verified && !match.isVerified) return false;
     if (quickFilters.activeRecently && match.lastActive.includes('day')) return false;
-    if (quickFilters.sameCity && match.currentCity !== user?.user?.currentCity) return false;
+    if (quickFilters.sameCity && !isSameCity(match.currentCity, user?.currentCity)) return false;
     return true;
   }).sort((a, b) => {
     if (sortBy === 'compatibility') return b.compatibility - a.compatibility;
@@ -208,36 +220,42 @@ export default function MatchesPage() {
     return 0;
   });
 
-  const handleSendInterest = async (senderId, receiverId) => {
+   const handleSendInterest = async (senderId, receiverId) => {
+
+    const alreadySent = matches.find(m => m._id === receiverId)?.interestSent;
+     if (alreadySent) return;
+    
+    if (!hasSubscription) {
+      window.location.href = '/dashboard/subscription';
+      return;
+    }
+  
     try {
       const res = await fetch('/api/interest/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          senderId,
-          receiverId
+         senderId,
+         receiverId
         }),
       });
 
       const data = await res.json();
       if (res.ok) {
-        console.log('Interest sent:', data);
-      } else {
-        console.error('Failed to send interest:', data.message);
-      }
-    } catch (error) {
-      console.error('Error sending interest:', error);
+      // Update UI to show interest was sent
+       const updatedMatches = matches.map(match => 
+       match._id === receiverId ? { ...match, interestSent: true } : match
+       );
+       setMatches(updatedMatches);
+
+      console.log('Interest sent successfully:', data);
+    } else {
+      toast.error(data.message || 'Failed to send interest');
     }
-  };
-
-  const handleShortlist = (profileId) => {
-    console.log('Shortlist profile:', profileId);
-  };
-
-  const handleViewProfile = (profile) => {
-    setSelectedProfile(profile);
-  };
-
+  } catch (error) {
+    console.error('Error sending interest:', error);
+  }
+};
   const closeProfilePopup = () => {
     setSelectedProfile(null);
   };
@@ -324,10 +342,15 @@ export default function MatchesPage() {
               <div className="flex space-x-3">
                 <button 
                   onClick={() => handleSendInterest(user?.user?.id, profile._id)}
-                  className="flex-1 bg-rose-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-rose-600 transition-colors"
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
+                    profile.interestSent 
+                      ? 'bg-gray-200 text-gray-500 cursor-default'
+                      : 'bg-rose-500 text-white hover:bg-rose-600'
+                  }`}
+                  disabled={profile.interestSent}
                 >
-                  <Heart className="w-4 h-4 mr-2 inline" />
-                  Send Interest
+                  <Heart className={`w-4 h-4 mr-2 ${profile.interestSent ? 'fill-rose-600' : ''}`} />
+                  {profile.interestSent ? 'Interest Sent' : 'Send Interest'}
                 </button>
                 <button className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors">
                   <MessageCircle className="w-4 h-4 mr-2 inline" />
@@ -413,8 +436,6 @@ export default function MatchesPage() {
             </div>
           )}
           
-        
-
           {/* Badges */}
           <div className="absolute top-1 left-1 flex flex-col space-y-1">
             {match.isVerified && (
@@ -431,20 +452,20 @@ export default function MatchesPage() {
             )}
           </div>
 
-          {/* Compatibility Score - Color Coded */}
+          {/* Compatibility Score */}
           <div className="absolute top-1 right-1 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-full">
             <div className="flex items-center">
               <Star className={`w-2.5 h-2.5 mr-0.5 
                 ${
                   match.compatibility >= 90 ? 'text-green-500' :
-                  match.compatibility >= 70 ? 'text-orange-500' :
+                  match.compatibility >= 70 ? 'text-teal-500' :
                   match.compatibility >= 50 ? 'text-yellow-500' :
                   'text-rose-500'
                 }`} />
               <span className={`text-[10px] font-medium 
                 ${
                   match.compatibility >= 90 ? 'text-green-700' :
-                  match.compatibility >= 70 ? 'text-orange-700' :
+                  match.compatibility >= 70 ? 'text-teal-700' :
                   match.compatibility >= 50 ? 'text-yellow-700' :
                   'text-rose-700'
                 }`}>
@@ -487,59 +508,75 @@ export default function MatchesPage() {
                 Chat
               </button>
             ) : match.interestSent ? (
-              <button className="flex-1 bg-gray-100 text-gray-500 py-1 px-2 rounded text-xs font-medium cursor-not-allowed">
-                Interest Sent
-              </button>
+              <button 
+             onClick={() => handleSendInterest(user?.user?.id, match._id)}
+             disabled={match.interestSent}
+             className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
+             match.interestSent 
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+               : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
+               }`}
+>
+             <Heart className={`w-4 h-4 mr-1 ${match.interestSent ? 'fill-rose-600' : ''}`} />
+              {match.interestSent ? 'Interest Sent' : 'Send Interest'}
+               </button>
             ) : (
               <button 
                 onClick={() => handleSendInterest(user?.user?.id, match._id)}
-                className="flex-1 bg-rose-50 text-rose-600 py-1 px-2 rounded text-xs font-medium hover:bg-rose-100 transition-colors flex items-center justify-center"
+                disabled={checkingSubscription}
+                className={`flex-1 py-1 px-2 rounded text-xs font-medium ${
+                  checkingSubscription ? 'bg-gray-100' :
+                  'bg-rose-50 hover:bg-rose-100 text-rose-600'
+                }`}
               >
-                <Heart className="w-3 h-3 mr-0.5" />
-                Interest
+                {checkingSubscription ? (
+                  <Loader2 className="w-3 h-3 animate-spin mx-auto" />
+                ) : (
+                  <>
+                    <Heart className="w-3 h-3 mr-0.5 inline" />
+                    Interest
+                  </>
+                )}
               </button>
             )}
-            
-            <button 
-              onClick={() => handleViewProfile(match)}
-              className="flex-1 bg-gray-50 text-gray-600 py-1 px-2 rounded text-xs font-medium hover:bg-gray-100 transition-colors"
-            >
-              View
-            </button>
-            
-            <button 
-              onClick={() => handleShortlist(match.id)}
-              className={`p-1.5 rounded transition-colors ${
-                match.shortlisted 
-                  ? 'bg-blue-50 text-blue-600' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <Bookmark className={`w-3 h-3 ${match.shortlisted ? 'fill-current' : ''}`} />
-            </button>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const EmptyState = () => (
+  const EmptyState = ({ isLoading }) => (
     <div className="text-center py-12">
-      <div className="bg-rose-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-        <Heart className="w-8 h-8 text-rose-400" />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">No matches found yet</h3>
-      <p className="text-gray-600 mb-6 max-w-md mx-auto">
-        Try updating your preferences or keep checking back — someone special may join soon!
-      </p>
-      <button className="bg-rose-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors">
-        Edit Preferences
-      </button>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center">
+          <div className="animate-pulse flex space-x-4 mb-4">
+            <div className="rounded-full bg-rose-100 h-12 w-12"></div>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Browsing matches...</h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            Finding the best matches for you
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="bg-rose-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Heart className="w-8 h-8 text-rose-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No matches found yet</h3>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            Try updating your preferences or keep checking back — someone special may join soon!
+          </p>
+          <button className="bg-rose-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors">
+            Edit Preferences
+          </button>
+        </>
+      )}
     </div>
   );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+      <Toaster position="top-right" />
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
         
         {/* Header Section */}
@@ -680,11 +717,11 @@ export default function MatchesPage() {
         {/* Match Results */}
         <div className={`transform transition-all duration-1000 delay-400 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
           {filteredMatches.length === 0 ? (
-            <EmptyState />
+            <EmptyState isLoading={isLoading} />
           ) : (
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredMatches.map((match) => (
-                <MatchCard key={match._id} match={match} />
+                <MatchCard key={match._id } match={match} />
               ))}
             </div>
           )}

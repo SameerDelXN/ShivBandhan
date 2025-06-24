@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle } from 'lucide-react';
+import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 
 export default function MyProfilePage() {
@@ -20,6 +20,7 @@ export default function MyProfilePage() {
     { id: 3, url: null, isPrimary: false },
     { id: 4, url: null, isPrimary: false },
   ]);
+  
 console.log("User Data", user)
   const [formData, setFormData] = useState({
     name: '',
@@ -103,7 +104,7 @@ console.log("User Data", user)
   }, [user]);
 
  
-
+    
   const calculateCompletion = (section) => {
     const fields = {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
@@ -525,7 +526,7 @@ console.log("User Data", user)
   <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
   <input 
     type="text"
-    value={user?.phone || "09877654331"}
+    value={user?.phone || "840840198"}
     readOnly
     className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-0 cursor-not-allowed"
   />
@@ -1248,39 +1249,41 @@ case 'relative':
           <div className="lg:col-span-1 space-y-4">
 
             {/* Profile Sections Navigation */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
-              <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
-              <div className="space-y-2">
-                {getProfileSections().map((section) => {
-                  const Icon = section.icon;
-                  return (
-                   <button
-  key={section.id}
-  onClick={() => setActiveTab(section.id)}
-  className={`w-full px-4 flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
-    activeTab === section.id
-      ? 'bg-rose-50 text-rose-600 border border-rose-200'
-      : 'text-gray-700'
-  }`}
->
-                      <div className="flex items-center">
-                        <Icon className="w-4 h-4 mr-2" />
-                        <span className="text-sm font-medium">{section.label}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-gray-200">
-                          <div
-                            className="h-2 rounded-full bg-green-500 transition-all duration-300"
-                            style={{ width: `${section.completion}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-gray-500">{section.completion}%</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+<div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
+  <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
+  <div className="space-y-2">
+    {getProfileSections().map((section) => {
+      const Icon = section.icon;
+      return (
+        <button
+          key={section.id}
+          onClick={() => setActiveTab(section.id)}
+          className={`w-full px-4 flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
+            activeTab === section.id
+              ? 'bg-rose-50 text-rose-600 border border-rose-200'
+              : 'text-gray-700'
+          }`}
+        >
+          <div className="flex items-center">
+            <Icon className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">{section.label}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-2 h-2 rounded-full bg-gray-200 mr-2">
+              <div
+                className="h-2 rounded-full bg-green-500 transition-all duration-300"
+                style={{ width: `${section.completion}%` }}
+              ></div>
             </div>
+            <span className="text-xs text-gray-500 w-8 text-right">
+              {section.completion}%
+            </span>
+          </div>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
             {/* Subscription Info */}
             <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">

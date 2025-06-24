@@ -162,7 +162,9 @@ const UserSchema = new mongoose.Schema({
       enum: ['Free', 'Basic', 'Premium', null],
       default: null
     },
-    expiresAt: Date
+    expiresAt: Date,
+   
+
   },
   
   // Timestamps
