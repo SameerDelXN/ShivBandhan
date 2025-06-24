@@ -4,18 +4,6 @@ const UserSchema = new mongoose.Schema({
   // Basic information
 
   name: String,
-<<<<<<< HEAD
-  phone: {
-    type: String,
-    unique: true,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return /^\+91\d{10}$/.test(v); // Validates Indian phone numbers with +91 prefix
-      },
-      message: (props) => `${props.value} is not a valid Indian phone number!`,
-    },
-=======
   phone: { 
   type: String, 
     unique: true, 
@@ -26,7 +14,6 @@ const UserSchema = new mongoose.Schema({
     //   },
     //   message: props => `${props.value} is not a valid Indian phone number!`
     // }
->>>>>>> 2ac1f1e17d3804e4bb73afcbdead27dac4a20403
   },
 
   // Verification status
@@ -69,25 +56,6 @@ const UserSchema = new mongoose.Schema({
     enum: ["Unmarried", "Divorced", "Widowed"],
     default: "Unmarried",
   },
-<<<<<<< HEAD
-  motherTongue: {
-    type: String,
-    enum: ["Hindi", "English", "Marathi", null],
-    default: null,
-  },
-  caste: String,
-  subCaste: String,
-  gothra: String,
-  fieldOfStudy: String,
-  college: String,
-  occupation: String,
-  company: String,
-  weight: String,
-  income: {
-    type: String,
-    enum: ["", "₹5-10 Lakhs", "₹10-15 Lakhs", "₹15-20 Lakhs", null],
-    default: null,
-=======
    motherTongue: 
    {
      type: String,
@@ -110,7 +78,6 @@ const UserSchema = new mongoose.Schema({
       type: String,
       enum: ['','₹5-10 Lakhs', '₹10-15 Lakhs', '₹15-20 Lakhs', null],
       default: null
->>>>>>> 2ac1f1e17d3804e4bb73afcbdead27dac4a20403
   },
     email: {
     type: String,
@@ -150,9 +117,6 @@ const UserSchema = new mongoose.Schema({
   parentOccupation: String,
   mamaSurname: String,
 
-<<<<<<< HEAD
-  // Preferences
-=======
   // Horoscope Info
   rashi: String,
   nakshira: String,
@@ -174,7 +138,6 @@ const UserSchema = new mongoose.Schema({
   expectedIncome: String,
 
     // Preferences
->>>>>>> 2ac1f1e17d3804e4bb73afcbdead27dac4a20403
   preferences: {
     ageRange: {
       min: { type: Number, min: 18, max: 100 },

@@ -72,96 +72,193 @@ export default function DynamicSubscriptionPlans() {
 
     fetchPlans();
   }, [user]);
+const handleSubscription = async (plan, e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  
+  try {
+    setActiveButtonId(plan._id);
+    setIsSubscribing(true);
 
-  const handleSubscription = async (plan, e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    
-    try {
-      setActiveButtonId(plan._id);
-      setIsSubscribing(true);
+    // 1. Create Razorpay Order
+    const res = await fetch("/api/payment/create-order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: plan.price * 100,
+        userId: user?.user?.id,
+        planId: plan._id,
+        currentSubscriptionId: currentSubscription?.subscriptionId || null
+      }),
+    });
 
-      // 1. Create Razorpay Order from your backend
-      const res = await fetch("/api/payment/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: plan.price * 100,
-          userId: user?.user?.id,
-          planId: plan._id,
-          currentSubscriptionId: currentSubscription?.subscriptionId || null
-        }),
-      });
+    const order = await res.json();
 
-      const order = await res.json();
+    // 2. Configure Razorpay checkout
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "ShivBandhan Subscription",
+      description: plan.name,
+      order_id: order.id,
+      handler: async function (response) {
+        console.log("✅ Payment response:", response);
+        
+        // ✅ 3. Update subscription on success
+        const updateRes = await fetch("/api/users/update-plan", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user?.user?.id,
+            plan: plan.name,
+            razorpay_payment_id: response.razorpay_payment_id,
+            planId: plan._id,
+            currentSubscriptionId: currentSubscription?.subscriptionId || null
+          }),
+        });
 
-      // 2. Configure Razorpay checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
-        name: "ShivBandhan Subscription",
-        description: plan.name,
-        order_id: order.id,
-        handler: async function (response) {
-          console.log("✅ Payment response:", response);
-          
-          // ✅ 3. Call your update API to store the plan after successful payment
-          const updateRes = await fetch("/api/users/update-plan", {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              userId: user?.user?.id,
-              plan: plan.name,
-              razorpay_payment_id: response.razorpay_payment_id,
-              planId: plan._id,
-              currentSubscriptionId: currentSubscription?.subscriptionId || null
-            }),
+        const updateResult = await updateRes.json();
+        if (updateRes.ok) {
+          setCurrentSubscription({
+            subscriptionId: plan._id,
+            plan: plan.name,
           });
+          router.push("/payment-success");
+        } else {
+          throw new Error(updateResult.message || "Failed to update subscription");
+        }
+      },
+      prefill: {
+        name: user?.user?.name || "Aniket Dahire",
+        email: user?.user?.email || "aniket@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
 
-          const updateResult = await updateRes.json();
-          if (updateRes.ok) {
-            // Update local state with new subscription
-            setCurrentSubscription({
-              subscriptionId: plan._id,
-              plan: plan.name,
-            });
-            router.push("/payment-success");
-            
-          } else {
-            
-            console.error(updateResult.error);
-            throw new Error(updateResult.message || "Failed to update subscription");
-          }
-        },
-        prefill: {
-          name: user?.user?.name || "Aniket Dahire",
-          email: user?.user?.email || "aniket@example.com",
-          contact: "9999999999",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
+    // Initialize Razorpay
+    const razorpay = new window.Razorpay(options);
 
-      const razorpay = new window.Razorpay(options);
-      razorpay.on('payment.failed', function (response) {
-        console.error("❌ Payment failed:", response.error);
-        alert("Payment failed. Please try again.");
-      });
-      razorpay.open();
-    } catch (err) {
-      console.error("❌ Error in handleSubscription:", err);
-      alert(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setActiveButtonId(null);
-      setIsSubscribing(false);
-    }
-  };
+    // Handle Payment Failure (IMPORTANT: Close the modal)
+    razorpay.on('payment.failed', function (response) {
+      console.error("❌ Payment failed:", response.error);
+      razorpay.close(); // <-- THIS CLOSES THE POPUP IMMEDIATELY
+      window.location.href = "/payment-failure"; 
+    });
+
+    // Open Razorpay modal
+    razorpay.open();
+
+  } catch (err) {
+    console.error("❌ Error in handleSubscription:", err);
+    alert(err.message || "Something went wrong. Please try again.");
+  } finally {
+    setActiveButtonId(null);
+    setIsSubscribing(false);
+  }
+};
+  // const handleSubscription = async (plan, e) => {
+  //   e.stopPropagation();
+  //   e.preventDefault();
+    
+  //   try {
+  //     setActiveButtonId(plan._id);
+  //     setIsSubscribing(true);
+
+  //     // 1. Create Razorpay Order from your backend
+  //     const res = await fetch("/api/payment/create-order", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         amount: plan.price * 100,
+  //         userId: user?.user?.id,
+  //         planId: plan._id,
+  //         currentSubscriptionId: currentSubscription?.subscriptionId || null
+  //       }),
+  //     });
+
+  //     const order = await res.json();
+
+  //     // 2. Configure Razorpay checkout
+  //     const options = {
+  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  //       amount: order.amount,
+  //       currency: order.currency,
+  //       name: "ShivBandhan Subscription",
+  //       description: plan.name,
+  //       order_id: order.id,
+  //       handler: async function (response) {
+  //         console.log("✅ Payment response:", response);
+          
+  //         // ✅ 3. Call your update API to store the plan after successful payment
+  //         const updateRes = await fetch("/api/users/update-plan", {
+  //           method: "PATCH",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             userId: user?.user?.id,
+  //             plan: plan.name,
+  //             razorpay_payment_id: response.razorpay_payment_id,
+  //             planId: plan._id,
+  //             currentSubscriptionId: currentSubscription?.subscriptionId || null
+  //           }),
+  //         });
+
+  //         const updateResult = await updateRes.json();
+  //         if (updateRes.ok) {
+  //           // Update local state with new subscription
+  //           setCurrentSubscription({
+  //             subscriptionId: plan._id,
+  //             plan: plan.name,
+  //           });
+  //           router.push("/payment-success");
+            
+  //         } else {
+            
+  //           // Handle error from update API
+  //           console.error(updateResult.error);
+  //           throw new Error(updateResult.message || "Failed to update subscription");
+  //         }
+  //       },
+  //       prefill: {
+  //         name: user?.user?.name || "Aniket Dahire",
+  //         email: user?.user?.email || "aniket@example.com",
+  //         contact: "9999999999",
+  //       },
+  //       theme: {
+  //         color: "#3399cc",
+  //       },
+  //     };
+
+  //     const razorpay = new window.Razorpay(options);
+  //     razorpay.on('payment.failed', function (response) {
+  //        razorpay.close();
+  //       router.push("/payment-failure");
+  //       console.error("❌ Payment failed:", response.error);
+  //       // alert("Payment failed. Please try again.");
+        
+  //     });
+  //     razorpay.open();
+      
+  //   } catch (err) {
+  //     console.error("❌ Error in handleSubscription:", err);
+  //     alert(err.message || "Something went wrong. Please try again.");
+  //   } finally {
+  //     setActiveButtonId(null);
+  //     setIsSubscribing(false);
+  //   }
+  // };
+  
 
   // Get plan configuration based on name
   const getPlanConfig = (planName) => {
