@@ -33,7 +33,8 @@ console.log('User found:', user);
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
         subscription: {
-          isActive: user.subscription?.isActive || false, // Assuming subscription is a field in User
+
+          isSubscribed: user.subscription?.isSubscribed || false, // Assuming subscription is a field in User
         },
         profilePhoto: user.profilePhoto,
       }
@@ -73,6 +74,7 @@ export async function POST(request) {
           isActive: user.subscription?.isActive || false, // Assuming subscription is a field in User
         },
         profilePhoto: user.profilePhoto,
+        subscription: user.subscription || null,
       }
     });
 

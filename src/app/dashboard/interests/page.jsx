@@ -18,11 +18,11 @@ export default function InterestsPage() {
 
   const fetchInterests = async (type) => {
     try {
-      if (!user?.user?.id) return [];
+      if (!user?.id ? user.id : user?.user?.id) return [];
       
       const endpoint = type === 'send' 
-        ? `/api/interest/send?userId=${user.user.id}`
-        : `/api/interest/received?userId=${user.user.id}`;
+        ? `/api/interest/send?userId=${user?.id ? user.id : user.user.id}`
+        : `/api/interest/received?userId=${user?.id ? user.id : user.user.id}`;
       const response = await fetch(endpoint);
       const data = await response.json();
       console.log(`Fetched ${type} interests:`, data);
@@ -34,7 +34,7 @@ export default function InterestsPage() {
   };
 
   const loadAllData = async () => {
-    if (!user?.user?.id) {
+    if (!user?.id ? user.id : user?.user?.id) {
       setIsLoading(false);
       return;
     }
@@ -129,6 +129,7 @@ export default function InterestsPage() {
   };
 
   const InterestCard = ({ person, type }) => (
+
     console.log('Rendering InterestCard for:', person),
     <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300 hover:border-rose-200">
       <div className="flex items-start space-x-4">

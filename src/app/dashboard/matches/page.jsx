@@ -33,7 +33,7 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState([]);
   const [hasSubscription, setHasSubscription] = useState(true);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
-
+  console.log('User data: Matches', user);
   // Quick filter states
   const [quickFilters, setQuickFilters] = useState({
     withPhoto: false,
@@ -56,10 +56,14 @@ export default function MatchesPage() {
   const checkSubscription = async () => {
     try {
       setCheckingSubscription(true);
+       
+    // Check subscription status - either isSubscribed is true or subscription hasn't expired
+    const isActive = user?.subscription?.isSubscribed || user?.user?.subscription?.isSubscribed;
       // Check subscription status from user session
-      setHasSubscription(true);
+      setHasSubscription(isActive);
     } catch (err) {
       console.error('Error checking subscription:', err);
+       setHasSubscription(false);
     } finally {
       setCheckingSubscription(false);
     }
@@ -221,6 +225,7 @@ const fetchSentInterests = async (senderId) => {
   });
 
    const handleSendInterest = async (senderId, receiverId) => {
+    console.log('Sending interest from', senderId, 'to', receiverId);
 
     const alreadySent = matches.find(m => m._id === receiverId)?.interestSent;
      if (alreadySent) return;
@@ -259,7 +264,7 @@ const fetchSentInterests = async (senderId) => {
   const closeProfilePopup = () => {
     setSelectedProfile(null);
   };
-
+  console.log("USERRRRRR = ",user?.id)
   const ProfilePopup = ({ profile, onClose }) => (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -341,7 +346,7 @@ const fetchSentInterests = async (senderId) => {
               
               <div className="flex space-x-3">
                 <button 
-                  onClick={() => handleSendInterest(user?.user?.id, profile._id)}
+                  onClick={() => handleSendInterest(user.id , profile._id)}
                   className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
                     profile.interestSent 
                       ? 'bg-gray-200 text-gray-500 cursor-default'
@@ -522,7 +527,7 @@ const fetchSentInterests = async (senderId) => {
                </button>
             ) : (
               <button 
-                onClick={() => handleSendInterest(user?.user?.id, match._id)}
+                onClick={() => handleSendInterest(user?.id ? user.id : user.user.id, match._id)}
                 disabled={checkingSubscription}
                 className={`flex-1 py-1 px-2 rounded text-xs font-medium ${
                   checkingSubscription ? 'bg-gray-100' :

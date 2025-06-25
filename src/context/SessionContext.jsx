@@ -10,23 +10,26 @@ export function SessionProvider({ children }) {
   const router = useRouter();
 
   // Check for existing session on initial load
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const response = await fetch('/api/session');
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error('Session check failed:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+useEffect(() => {
+  async function loadUser() {
+    try {
+      const response = await fetch('/api/session', {
+        credentials: 'include' // Important for cookie-based auth
+      });
+      const result = await response.json();
+      console.log("✅ SessionContext: /api/session result:", result);
 
-    loadUser();
-  }, []);
+      setUser(result.user); // ✅ Very important: use result.user
+    } catch (error) {
+      console.error("❌ Failed to load session:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadUser();
+}, []);
+
 
   // Login function to be called after OTP verification
  // In your SessionProvider component

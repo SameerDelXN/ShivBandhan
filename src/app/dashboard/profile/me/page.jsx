@@ -41,7 +41,6 @@ console.log("User Data", user)
     occupation: '',
     company: '',
     income: '',
-    phone: '',
     email: '',
     bloodGroup: '',
     complexion: '',
@@ -98,7 +97,7 @@ console.log("User Data", user)
       setFormData(prev => ({
         ...prev,
         userId: user.user.id,
-        phone: user.phone || prev.phone,
+        
       }));
     }
   }, [user]);
@@ -179,6 +178,7 @@ console.log("User Data", user)
       const response = await fetch('/api/users/me');
       if (!response.ok) throw new Error('Network error');
       const data = await response.json();
+      console.log("User Data: profile", data);
       setProfileCompletion(data.profileCompletion || 0);
       setVerificationStatus(data.verificationStatus || 'Unverified');
      
@@ -202,7 +202,6 @@ console.log("User Data", user)
         company: data.company || '',
         income: data.income || '',
         weight: data.weight || '',
-        phone: data.phone || '', 
         email: data.email || '',
         wearsLens: data.wearsLens || false,
         bloodGroup: data.bloodGroup || '',
@@ -522,16 +521,7 @@ console.log("User Data", user)
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
                   />
                 </div>
-                <div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-  <input 
-    type="text"
-    value={user?.phone || "840840198"}
-    readOnly
-    className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg focus:ring-0 cursor-not-allowed"
-  />
-</div>
-                  <div>
+                       <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <input 
                   type="email"
