@@ -64,9 +64,6 @@
                     |-- route.js
             |-- auth
                 |-- route.js
-            |-- cloudinary
-                |-- upload
-                    |-- route.js
             |-- interest
                 |-- received
                     |-- route.js
