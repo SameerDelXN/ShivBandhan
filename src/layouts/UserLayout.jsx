@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { useSession } from "@/context/SessionContext";
-
+//sample
 export default function UserLayout({ children }) {
   const { isAuthenticated, loading, user, logout } = useSession();
   const [shouldRender, setShouldRender] = useState(false);
