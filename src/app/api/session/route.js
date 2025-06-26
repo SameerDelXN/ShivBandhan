@@ -20,7 +20,7 @@ export async function GET(request) {
 
     const user = await User.findById(decoded.userId)
       .select('-__v -createdAt -updatedAt');
-
+console.log('User found:', user);
     if (!user) {
       return NextResponse.json({ user: null }, { status: 200 });
     }
@@ -32,6 +32,10 @@ export async function GET(request) {
         name: user.name,
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
+        subscription: {
+
+          isSubscribed: user.subscription?.isSubscribed || false, // Assuming subscription is a field in User
+        },
         profilePhoto: user.profilePhoto,
       }
     });
@@ -66,7 +70,11 @@ export async function POST(request) {
         name: user.name,
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
+        subscription: {
+          isActive: user.subscription?.isActive || false, // Assuming subscription is a field in User
+        },
         profilePhoto: user.profilePhoto,
+        subscription: user.subscription || null,
       }
     });
 

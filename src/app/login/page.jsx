@@ -17,6 +17,7 @@ export default function MatrimonialLogin() {
 
   useEffect(() => {
     setIsLoaded(true);
+    
   }, []);
 
   // Resend timer countdown
@@ -202,7 +203,7 @@ export default function MatrimonialLogin() {
                     <select 
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      className="w-20 px-3 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                      className="w-24 px-3 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
                     >
                       <option value="+91">🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>

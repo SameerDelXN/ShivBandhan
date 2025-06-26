@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle } from 'lucide-react';
+import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 
 export default function MyProfilePage() {
@@ -10,6 +10,8 @@ export default function MyProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [isVisible, setIsVisible] = useState(true);
+  const [updatedSurname, setUpdatedSurname] = useState('');
+  const [filteredSurname, setFilteredSurname] = useState('');
   const [showCompletionUpdate, setShowCompletionUpdate] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('Unverified');
   const [photos, setPhotos] = useState([
@@ -18,7 +20,8 @@ export default function MyProfilePage() {
     { id: 3, url: null, isPrimary: false },
     { id: 4, url: null, isPrimary: false },
   ]);
-
+  
+console.log("User Data", user)
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -38,10 +41,48 @@ export default function MyProfilePage() {
     occupation: '',
     company: '',
     income: '',
+    email: '',
+    bloodGroup: '',
+    complexion: '',
+    wearsLens: false,
+    permanentAddress: '',
     userId: user?.id || '',
-    verificationStatus:""
+    verificationStatus:"",
+    
+    // Relative Info
+    fatherName: '',
+    parentResidenceCity: '',
+    mother: '',
+    brothers: '',
+    marriedBrothers: '',
+    sisters: '',
+    marriedSisters: '',
+    nativeDistrict: '',
+    nativeCity: '',
+    familyWealth: '',
+    relativeSurname: '',
+    parentOccupation: '',
+    mamaSurname: '',
+    // Horoscope Info
+    rashi: '',
+    nakshira: '',
+    charan: '',
+    gan: '',
+    nadi: '',
+    mangal: '',
+    birthPlace: '',
+    birthTime: '',
+    gotraDevak: '',
+    // Expectations
+    expectedCaste: '',
+    preferredCity: '',
+    expectedAgeDifference: '',
+    expectedEducation: '',
+    divorcee: false,
+    expectedHeight: '',
+    expectedIncome: ''
   });
-  console.log("form = ",formData)
+
   useEffect(() => {
     const loadData = async () => {
       await fetchUserData();
@@ -55,38 +96,28 @@ export default function MyProfilePage() {
     if (user?.user?.id) {
       setFormData(prev => ({
         ...prev,
-        userId: user.user.id
+        userId: user.user.id,
+        
       }));
     }
   }, [user]);
 
-  // Auto-save after 2 seconds of inactivity
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (formData.name) { // Only save if there's actual data
-        handleProfileUpdate();
-        console.log('inside use effect ')
-      }
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [formData]);
-
+ 
+    
   const calculateCompletion = (section) => {
     const fields = {
-      basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight'],
+      basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
       religious: ['religion', 'caste', 'subCaste', 'gothra'],
       education: ['education', 'fieldOfStudy', 'college', 'occupation', 'company', 'income'],
-     // lifestyle: [],
-     //family: [], 
-     //preferences: [],
+      relative: ['fatherName', 'parentResidenceCity', 'mother', 'brothers', 'marriedBrothers', 'sisters', 'marriedSisters', 'nativeDistrict', 'nativeCity', 'familyWealth', 'relativeSurname', 'parentOccupation', 'mamaSurname',],
+      horoscope: ['rashi', 'nakshira', 'charan', 'gan', 'nadi', 'mangal', 'birthPlace', 'birthTime', 'gotraDevak'],
+      expectations: ['expectedCaste', 'preferredCity', 'expectedAgeDifference', 'expectedEducation', 'divorcee', 'expectedHeight', 'expectedIncome',]
     };
+  
 
     if (!fields[section]) return 0;
     
     const sectionFields = fields[section];
-    //if (sectionFields.length === 0) return 0;
-
     const filledFields = sectionFields.filter(field => {
       const value = formData[field];
       return value !== null && value !== undefined && value !== '';
@@ -115,6 +146,24 @@ export default function MyProfilePage() {
         icon: GraduationCap,
         completion: calculateCompletion('education') 
       },
+       { 
+        id: 'relative', 
+        label: 'Relative Info', 
+        icon: Users,
+        completion: calculateCompletion('relative') 
+      },
+      { 
+        id: 'horoscope', 
+        label: 'Horoscope Info', 
+        icon: Sparkles,
+        completion: calculateCompletion('horoscope') 
+      },
+      { 
+        id: 'expectations', 
+        label: 'Expectations', 
+        icon: Heart,
+        completion: calculateCompletion('expectations') 
+      },
     ];
   };
 
@@ -129,7 +178,10 @@ export default function MyProfilePage() {
       const response = await fetch('/api/users/me');
       if (!response.ok) throw new Error('Network error');
       const data = await response.json();
-       setVerificationStatus(data.verificationStatus || 'Unverified');
+      console.log("User Data: profile", data);
+      setProfileCompletion(data.profileCompletion || 0);
+      setVerificationStatus(data.verificationStatus || 'Unverified');
+     
 
       setFormData({
         name: data.name || '',
@@ -150,11 +202,48 @@ export default function MyProfilePage() {
         company: data.company || '',
         income: data.income || '',
         weight: data.weight || '',
+        email: data.email || '',
+        wearsLens: data.wearsLens || false,
+        bloodGroup: data.bloodGroup || '',
+        complexion: data.complexion || '',
+        permanentAddress: data.permanentAddress || '',
         userId: user?.user?.id || '',
-        verificationStatus:data?.verificationStatus || 'Unverified'
-      });
+        verificationStatus: data?.verificationStatus || 'Unverified',
 
-      
+         // Relative Info
+        fatherName: data.fatherName || '',
+        parentResidenceCity: data.parentResidenceCity || '',
+        mother: data.mother || '',
+        brothers: data.brothers || 0,
+        marriedBrothers: data.marriedBrothers || 0,
+        sisters: data.sisters || 0,
+        marriedSisters: data.marriedSisters || 0,
+        nativeDistrict: data.nativeDistrict || '',
+        nativeCity: data.nativeCity || '',
+        familyWealth: data.familyWealth || '',
+        relativeSurname: data.relativeSurname || '',
+        parentOccupation: data.parentOccupation || '',
+        mamaSurname: data.mamaSurname || '',
+        // Horoscope Info
+        rashi: data.rashi || '',
+        nakshira: data.nakshira || '',
+        charan: data.charan || '',
+        gan: data.gan || '',
+        nadi: data.nadi || '',
+        mangal: data.mangal || false,
+        birthPlace: data.birthPlace || '',
+        birthTime: data.birthTime || '',
+        gotraDevak: data.gotraDevak || '',
+        
+        // Expectations
+        expectedCaste: data.expectedCaste || '',
+        preferredCity: data.preferredCity || '',
+        expectedAgeDifference: data.expectedAgeDifference || '',
+        expectedEducation: data.expectedEducation || '',
+        divorcee: data.divorcee || false,
+        expectedHeight: data.expectedHeight || '',
+        expectedIncome: data.expectedIncome || '',
+      });
 
       // Calculate initial profile completion
       const sections = getProfileSections();
@@ -189,7 +278,7 @@ export default function MyProfilePage() {
           userId: user.user.id
         }),
       });
-       if (!response.ok) throw new Error('Failed to update profile');
+      if (!response.ok) throw new Error('Failed to update profile');
       const result = await response.json();
       
       // Calculate new completion percentages
@@ -204,15 +293,13 @@ export default function MyProfilePage() {
       // Show completion update notification if increased
       if (Math.round(totalCompletion) > prevCompletion) {
         setShowCompletionUpdate(true);
-        setTimeout(() => setShowCompletionUpdate(false), 3000);
+        setTimeout(() => setShowCompletionUpdate(false), 1000);
       }
       // If profile completion reaches 100% after save, automatically trigger verification
-      if (Math.round(totalCompletion) === 100 && prevCompletion < 100 && verificationStatus === 'Unverified')
-    {
-      await handleVerificationSubmit();
-    }
+      if (Math.round(totalCompletion) === 100 && prevCompletion < 100 && verificationStatus === 'Unverified') {
+        await handleVerificationSubmit();
+      }
       
-      console.log("Profile updated successfully:", result);
     } catch (error) {
       console.error("Error updating profile:", error);
     } finally {
@@ -220,31 +307,28 @@ export default function MyProfilePage() {
     }
   };
 
-  
-const handleVerificationSubmit = async () => {
-  try {
-    const response = await fetch('/api/users/update', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: user?.user?.id,
-        verificationStatus: 'Pending',
-        createdAt: new Date(),
-      }),
-    });
+  const handleVerificationSubmit = async () => {
+    try {
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.user?.id,
+          verificationStatus: 'Pending',
+          createdAt: new Date(),
+        }),
+      });
 
-    if (!response.ok) throw new Error('Failed to submit verification');
-    
-    const result = await response.json();
-    setVerificationStatus(true);
-    console.log("Verification submitted:", result);
-    
-  } catch (error) {
-    console.error("Error submitting verification:", error);
-  }
-};
+      if (!response.ok) throw new Error('Failed to submit verification');
+      
+      const result = await response.json();
+      setVerificationStatus(true);
+    } catch (error) {
+      console.error("Error submitting verification:", error);
+    }
+  };
 
   const handlePhotoUpload = (photoId) => {
     setPhotos(photos.map(photo =>
@@ -260,43 +344,53 @@ const handleVerificationSubmit = async () => {
       isPrimary: photo.id === photoId
     })));
   };
+
   function VerificationBadge({ status }) {
-  const statusConfig = {
-    Unverified: {
-      bg: 'bg-gray-100',
-      text: 'text-gray-800',
-      icon: null,
-      label: 'Unverified'
-    },
-    Pending: {
-      bg: 'bg-yellow-100',
-      text: 'text-yellow-800',
-      icon: <Clock className="w-3 h-3 mr-1" />,
-      label: 'Pending Verification'
-    },
-    Verified: {
-      bg: 'bg-green-100',
-      text: 'text-green-800',
-      icon: <Shield className="w-3 h-3 mr-1" />,
-      label: 'Verified Profile'
-    },
-    Rejected: {
-      bg: 'bg-red-100',
-      text: 'text-red-800',
-      icon: <XCircle className="w-3 h-3 mr-1" />,
-      label: 'Verification Rejected'
-    }
-  };
+    const statusConfig = {
+      Unverified: {
+        bg: 'bg-gray-100',
+        text: 'text-gray-800',
+        icon: null,
+        label: 'Unverified'
+      },
+      Pending: {
+        bg: 'bg-yellow-100',
+        text: 'text-yellow-800',
+        icon: <Clock className="w-3 h-3 mr-1" />,
+        label: 'Pending Verification'
+      },
+      Verified: {
+        bg: 'bg-green-100',
+        text: 'text-green-800',
+        icon: <Shield className="w-3 h-3 mr-1" />,
+        label: 'Verified Profile'
+      },
+      Rejected: {
+        bg: 'bg-red-100',
+        text: 'text-red-800',
+        icon: <XCircle className="w-3 h-3 mr-1" />,
+        label: 'Verification Rejected'
+      }
+    };
 
-  const config = statusConfig[status] || statusConfig.Unverified;
+    const config = statusConfig[status] || statusConfig.Unverified;
 
-  return (
-    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-      {config.icon}
-      {config.label}
-    </span>
-  );
+    return (
+      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+        {config.icon}
+        {config.label}
+      </span>
+    );
+  }
+ function formatDateToYYYYMMDD(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 0-indexed
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
+
+  console.log(formData)
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -318,11 +412,12 @@ const handleVerificationSubmit = async () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                   <input
-                    type="date"
-                    value={formData.dob || ''}
-                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  />
+  type="date"
+  value={formatDateToYYYYMMDD(formData.dob)}
+  onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+/>
+
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
@@ -338,6 +433,16 @@ const handleVerificationSubmit = async () => {
                   </select>
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
+                  <input 
+                    type="text"
+                    value={formData.weight}
+                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                    placeholder="Enter your weight"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                   <select
                     value={formData.gender}
@@ -350,6 +455,34 @@ const handleVerificationSubmit = async () => {
                     <option>Other</option>
                   </select>
                 </div>
+                <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Blood Group</label>
+                <select
+                  value={formData.bloodGroup}
+                  onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="">Select Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Complexion</label>
+                <input
+                  type="text"
+                  value={formData.complexion}
+                  onChange={(e) => setFormData({ ...formData, complexion: e.target.value })}
+                  placeholder="E.g. Fair, Wheatish, etc."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                />
+              </div>
               </div>
               <div className="space-y-4">
                 <div>
@@ -388,16 +521,37 @@ const handleVerificationSubmit = async () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
                   />
                 </div>
+                       <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input 
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                />
+                </div>
                  <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Permanent Address</label>
                   <input 
                     type="text"
-                    value={formData.weight}
-                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                    placeholder="Enter your weight"
+                    value={formData.permanentAddress}
+                    onChange={(e) => setFormData({ ...formData, permanentAddress: e.target.value })}
+                    placeholder='Enter your permanent address'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
                   />
                 </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Wears Lens</label>
+                <select
+                  value={formData.wearsLens ? 'Yes' : 'No'}
+                  onChange={(e) => setFormData({ ...formData, wearsLens: e.target.value === 'Yes' })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                >
+                  <option value="No">No</option>
+                  <option value="Yes">Yes</option>
+                </select>
+              </div>
               </div>
             </div>
           </div>
@@ -589,7 +743,390 @@ const handleVerificationSubmit = async () => {
             </div>
           </div>
         );
+case 'relative':
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Father's Name</label>
+                  <input 
+                    type="text"
+                    value={formData.fatherName}
+                    onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
+                    placeholder="Enter father's name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mother's Name</label>
+                  <input 
+                    type="text"
+                    value={formData.mother}
+                    onChange={(e) => setFormData({ ...formData, mother: e.target.value })}
+                    placeholder="Enter mother's name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Number of Brothers</label>
+                  <input 
+                    type="number"
+                    value={formData.brothers}
+                    onChange={(e) => setFormData({ ...formData, brothers: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Married Brothers</label>
+                  <input 
+                    type="number"
+                    value={formData.marriedBrothers}
+                    onChange={(e) => setFormData({ ...formData, marriedBrothers: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Number of Sisters</label>
+                  <input 
+                    type="number"
+                    value={formData.sisters}
+                    onChange={(e) => setFormData({ ...formData, sisters: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Married Sisters</label>
+                  <input 
+                    type="number"
+                    value={formData.marriedSisters}
+                    onChange={(e) => setFormData({ ...formData, marriedSisters: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                 {/* Relative Surnames Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Relative Surnames</label>
+            {formData.relativeSurname?.map((surname, index) => (
+              <div key={index} className="flex items-center gap-2 mb-2">
+                <input
+                  type="text"
+                  value={surname}
+                  onChange={(e) => {
+                    const updatedSurnames = [...formData.relativeSurname];
+                    updatedSurnames[index] = e.target.value;
+                    setFormData({
+                      ...formData,
+                      relativeSurname: updatedSurnames
+                    });
+                  }}
+                  placeholder="Enter surname"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const filteredSurnames = formData.relativeSurname.filter((_, i) => i !== index);
+                    setFormData({
+                      ...formData,
+                      relativeSurname: filteredSurnames
+                    });
+                  }}
+                  className="p-2 text-red-500 hover:text-red-700"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                setFormData({
+                  ...formData,
+                  relativeSurname: [...(formData.relativeSurname || []), ""]
+                });
+              }}
+              className="mt-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+            >
+              Add Surname
+            </button>
+          </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Native District</label>
+                  <input 
+                    type="text"
+                    value={formData.nativeDistrict}
+                    onChange={(e) => setFormData({ ...formData, nativeDistrict: e.target.value })}
+                    placeholder="Enter native district"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Native City</label>
+                  <input 
+                    type="text"
+                    value={formData.nativeCity}
+                    onChange={(e) => setFormData({ ...formData, nativeCity: e.target.value })}
+                    placeholder="Enter native city"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Family Wealth</label>
+                  <input 
+                    type="text"
+                    value={formData.familyWealth}
+                    onChange={(e) => setFormData({ ...formData, familyWealth: e.target.value })}
+                    placeholder="Enter family wealth details"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Parent Occupation</label>
+                  <input 
+                    type="text"
+                    value={formData.parentOccupation}
+                    onChange={(e) => setFormData({ ...formData, parentOccupation: e.target.value })}
+                    placeholder="Enter parent occupation"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Parent Residence City</label>
+                  <input 
+                    type="text"
+                    value={formData.parentResidenceCity}
+                    onChange={(e) => setFormData({ ...formData, parentResidenceCity: e.target.value })}
+                    placeholder="Enter parent residence city"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mama Surname</label>
+                  <input 
+                    type="text"
+                    value={formData.mamaSurname}
+                    onChange={(e) => setFormData({ ...formData, mamaSurname: e.target.value })}
+                    placeholder="Enter mama surname"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        );
 
+      case 'horoscope':
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Rashi</label>
+                  <input 
+                    type="text"
+                    value={formData.rashi}
+                    onChange={(e) => setFormData({ ...formData, rashi: e.target.value })}
+                    placeholder="Enter your rashi"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nakshira</label>
+                  <input 
+                    type="text"
+                    value={formData.nakshira}
+                    onChange={(e) => setFormData({ ...formData, nakshira: e.target.value })}
+                    placeholder="Enter your nakshira"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Charan</label>
+                  <input 
+                    type="text"
+                    value={formData.charan}
+                    onChange={(e) => setFormData({ ...formData, charan: e.target.value })}
+                    placeholder="Enter your charan"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gan</label>
+                  <input 
+                    type="text"
+                    value={formData.gan}
+                    onChange={(e) => setFormData({ ...formData, gan: e.target.value })}
+                    placeholder="Enter your gan"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gotra/Devak</label>
+                  <input 
+                    type="text"
+                    value={formData.gotraDevak}
+                    onChange={(e) => setFormData({ ...formData, gotraDevak: e.target.value })}
+                    placeholder="Enter gotra/devak"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nadi</label>
+                  <input 
+                    type="text"
+                    value={formData.nadi}
+                    onChange={(e) => setFormData({ ...formData, nadi: e.target.value })}
+                    placeholder="Enter your nadi"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mangal</label>
+                  <select
+                    value={formData.mangal ? 'Yes' : 'No'}
+                    onChange={(e) => setFormData({ ...formData, mangal: e.target.value === 'Yes' })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Birth Place</label>
+                  <input 
+                    type="text"
+                    value={formData.birthPlace}
+                    onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
+                    placeholder="Enter birth place"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Birth Time</label>
+                  <input 
+                    type="text"
+                    value={formData.birthTime}
+                    onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
+                    placeholder="Enter birth time"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+               
+              </div>
+            </div>
+          </div>
+        );
+        case 'expectations':
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expected Caste</label>
+            <input 
+              type="text"
+              value={formData.expectedCaste}
+              onChange={(e) => setFormData({ ...formData, expectedCaste: e.target.value })}
+              placeholder="Enter expected caste"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Preferred City</label>
+            <input 
+              type="text"
+              value={formData.preferredCity}
+              onChange={(e) => setFormData({ ...formData, preferredCity: e.target.value })}
+              placeholder="Enter preferred city"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expected Age Difference</label>
+            <select
+              value={formData.expectedAgeDifference}
+              onChange={(e) => setFormData({ ...formData, expectedAgeDifference: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">Select age difference</option>
+              <option>±1 year</option>
+              <option>±2 years</option>
+              <option>±3 years</option>
+              <option>±5 years</option>
+            </select>
+          </div>
+            <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expected Income</label>
+            <select
+              value={formData.expectedIncome}
+              onChange={(e) => setFormData({ ...formData, expectedIncome: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">Select income range</option>
+              <option>₹5-10 Lakhs</option>
+              <option>₹10-15 Lakhs</option>
+              <option>₹15-20 Lakhs</option>
+            </select>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expected Education</label>
+            <select
+              value={formData.expectedEducation}
+              onChange={(e) => setFormData({ ...formData, expectedEducation: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">Select education level</option>
+              <option>Bachelor's Degree</option>
+              <option>Master's Degree</option>
+              <option>PhD</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Accept Divorcee</label>
+            <select
+              value={formData.divorcee ? 'Yes' : 'No'}
+              onChange={(e) => setFormData({ ...formData, divorcee: e.target.value === 'Yes' })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Expected Height</label>
+            <select
+              value={formData.expectedHeight}
+              onChange={(e) => setFormData({ ...formData, expectedHeight: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            >
+              <option value="">Select height range</option>
+              <option>5'0" - 5'5"</option>
+              <option>5'5" - 5'10"</option>
+              <option>5'10" - 6'0"</option>
+            </select>
+          </div>
+          <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gotra/Devak</label>
+                  <input 
+                    type="text"
+                    value={formData.gotraDevak}
+                    onChange={(e) => setFormData({ ...formData, gotraDevak: e.target.value })}
+                    placeholder="Expected gotra"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                  />
+                </div>
+        </div>
+      </div>
+    </div>
+  );
       default:
         return (
           <div className="text-center py-12">
@@ -629,7 +1166,7 @@ const handleVerificationSubmit = async () => {
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
-                        {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
+                      {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
                     </div>
                     <div className="space-y-1 text-gray-600">
                       <div className="flex items-center space-x-4 text-sm">
@@ -650,7 +1187,7 @@ const handleVerificationSubmit = async () => {
                       )}
                     </div>
                     <div className="flex items-center mt-2">
-                     <VerificationBadge status={formData.verificationStatus} />
+                      <VerificationBadge status={formData.verificationStatus} />
                     </div>
                   </div>
                 </div>
@@ -674,20 +1211,20 @@ const handleVerificationSubmit = async () => {
                         style={{ width: `${isLoaded ? profileCompletion : 0}%` }}
                       ></div>
                     </div>
-                   <button 
-                    onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
-                    className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
-                    disabled={verificationStatus === 'Pending' || isSaving}
+                    <button 
+                      onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
+                      className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
+                      disabled={verificationStatus === 'Pending' || isSaving}
                     >
-                    {isSaving ? 'Saving...' : (
-                    profileCompletion === 100 ?
-                     (
-                    verificationStatus === 'Pending' ? 'Verification Pending' :
-                    verificationStatus === 'Verified' ? 'Profile Verified' :
-                    'Send for Verification'
-                     ) : 'Save Profile'
-                     )}
-                     </button>
+                      {isSaving ? 'Saving...' : (
+                        profileCompletion === 100 ?
+                        (
+                          verificationStatus === 'Pending' ? 'Verification Pending' :
+                          verificationStatus === 'Verified' ? 'Profile Verified' :
+                          'Send for Verification'
+                        ) : 'Save Profile'
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -702,39 +1239,41 @@ const handleVerificationSubmit = async () => {
           <div className="lg:col-span-1 space-y-4">
 
             {/* Profile Sections Navigation */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
-              <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
-              <div className="space-y-2">
-                {getProfileSections().map((section) => {
-                  const Icon = section.icon;
-                  return (
-                    <button
-                      key={section.id}
-                      onClick={() => setActiveTab(section.id)}
-                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
-                        activeTab === section.id
-                          ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                          : 'hover:bg-gray-50 text-gray-700'
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <Icon className="w-4 h-4 mr-2" />
-                        <span className="text-sm font-medium">{section.label}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 rounded-full bg-gray-200">
-                          <div
-                            className="h-2 rounded-full bg-green-500 transition-all duration-300"
-                            style={{ width: `${section.completion}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-xs text-gray-500">{section.completion}%</span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+<div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
+  <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
+  <div className="space-y-2">
+    {getProfileSections().map((section) => {
+      const Icon = section.icon;
+      return (
+        <button
+          key={section.id}
+          onClick={() => setActiveTab(section.id)}
+          className={`w-full px-4 flex items-center justify-between p-3 rounded-lg transition-all duration-200 ${
+            activeTab === section.id
+              ? 'bg-rose-50 text-rose-600 border border-rose-200'
+              : 'text-gray-700'
+          }`}
+        >
+          <div className="flex items-center">
+            <Icon className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">{section.label}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-2 h-2 rounded-full bg-gray-200 mr-2">
+              <div
+                className="h-2 rounded-full bg-green-500 transition-all duration-300"
+                style={{ width: `${section.completion}%` }}
+              ></div>
             </div>
+            <span className="text-xs text-gray-500 w-8 text-right">
+              {section.completion}%
+            </span>
+          </div>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
             {/* Subscription Info */}
             <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">
@@ -791,7 +1330,7 @@ const handleVerificationSubmit = async () => {
           </div>
 
           {/* Main Profile Content */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="bg-white rounded-xl shadow-lg border border-rose-100/50">
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
@@ -821,83 +1360,7 @@ const handleVerificationSubmit = async () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Right Sidebar - Activity & Stats */}
-          <div className="lg:col-span-1 space-y-4">
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">Recent Activity</h3>
-                <Bell className="w-4 h-4 text-rose-500" />
-              </div>
-              <div className="space-y-3">
-                {recentActivity.map((activity, index) => {
-                  const Icon = activity.icon;
-                  return (
-                    <div key={index} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-rose-50/50 transition-colors">
-                      <div className="flex-shrink-0 w-6 h-6 bg-rose-100 rounded-full flex items-center justify-center">
-                        <Icon className="w-3 h-3 text-rose-600" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-gray-900">{activity.message}</p>
-                        <p className="text-xs text-gray-500">{activity.time}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <button className="w-full mt-3 text-rose-600 hover:text-rose-700 font-medium text-sm">
-                View All
-              </button>
-            </div>
-
-            {/* Profile Stats */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
-              <h3 className="font-bold text-gray-900 mb-4">Profile Stats</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Eye className="w-4 h-4 text-blue-500 mr-2" />
-                    <span className="text-sm text-gray-700">Profile Views</span>
-                  </div>
-                  <span className="font-bold text-blue-600">89</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Heart className="w-4 h-4 text-red-500 mr-2" />
-                    <span className="text-sm text-gray-700">Interests Received</span>
-                  </div>
-                  <span className="font-bold text-red-600">23</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 mr-2" />
-                    <span className="text-sm text-gray-700">Mutual Matches</span>
-                  </div>
-                  <span className="font-bold text-yellow-600">7</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-rose-500 to-amber-500 rounded-xl p-4 text-white shadow-lg">
-              <h3 className="font-bold mb-3">Quick Actions</h3>
-              <div className="space-y-2">
-                <button className="w-full bg-white/20 text-white py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors flex items-center justify-center">
-                  <Search className="w-4 h-4 mr-2" />
-                  Browse Matches
-                </button>
-                <button className="w-full bg-white/20 text-white py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors flex items-center justify-center">
-                  <Gift className="w-4 h-4 mr-2" />
-                  Upgrade Plan
-                </button>
-              </div>
-            </div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>

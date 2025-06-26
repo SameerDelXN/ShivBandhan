@@ -1,12 +1,14 @@
 "use client"
 import { useState, useEffect } from 'react';
+import { useSession } from '@/context/SessionContext';
 import { 
   Settings,
   User,
   Shield,
   Bell,
-  Trash2,
   ArrowLeft,
+  Trash2,
+  LogOut,
   Save,
   Eye,
   EyeOff,
@@ -22,6 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function SettingsLayout() {
+  const { logout } = useSession(); 
   const [currentView, setCurrentView] = useState('account');
   const [isLoaded, setIsLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +33,7 @@ export default function SettingsLayout() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteReason, setDeleteReason] = useState('');
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Form states
   const [accountData, setAccountData] = useState({
@@ -70,12 +74,30 @@ export default function SettingsLayout() {
       setShowDeleteModal(false);
     }
   };
+ const handleLogout = async () => {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include', // Important for cookies
+    });
 
+    if (response.ok) {
+      // Clear client-side state
+      logout(); // From your SessionContext
+      // Redirect or perform other cleanup
+    } else {
+      throw new Error('Logout failed');
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+};
   const navigationItems = [
     { id: 'account', label: 'Account', icon: User },
     { id: 'privacy', label: 'Privacy', icon: Shield },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'delete-account', label: 'Delete Account', icon: Trash2 }
+    { id: 'delete-account', label: 'Delete Account', icon: Trash2 },
+    { id: 'log-out', label: 'Log Out', icon: LogOut, action: () => setShowLogoutModal(true) }
   ];
 
   const renderAccountSettings = () => (
@@ -407,6 +429,7 @@ export default function SettingsLayout() {
         return renderDeleteAccount();
       default:
         return renderAccountSettings();
+      
     }
   };
 
@@ -449,25 +472,31 @@ export default function SettingsLayout() {
           <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-6">
               <h2 className="font-bold text-gray-900 mb-4">Navigation</h2>
-              <nav className="space-y-2">
-                {navigationItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setCurrentView(item.id)}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
-                        currentView === item.id
-                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
+             <nav className="space-y-2">
+  {navigationItems.map((item) => {
+    const Icon = item.icon;
+    return (
+      <button
+        key={item.id}
+        onClick={() => {
+          if (item.action) {
+            item.action(); // This will handle the logout modal
+          } else {
+            setCurrentView(item.id); // This handles other navigation items
+          }
+        }}
+        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
+          currentView === item.id && !item.action
+            ? 'bg-rose-50 text-rose-700 border border-rose-200'
+            : 'text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        <Icon className="w-5 h-5" />
+        <span className="font-medium">{item.label}</span>
+      </button>
+    );
+  })}
+</nav>
             </div>
           </div>
 
@@ -516,6 +545,46 @@ export default function SettingsLayout() {
                 }`}
               >
                 Delete Account
+              </button> 
+              <button
+               onClick={() => {
+                if (confirm("Are you sure you want to log out? You’ll need to log in again to continue.")) {
+                handleLogout();
+                }
+}}
+                className="flex-1 px-4 py-2 rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition-colors"
+              >
+              Logout
+             </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Logout Modal */}
+      {showLogoutModal && (
+       <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-600/50">
+         <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl border border-rose-100/50">
+            <div className="flex items-center space-x-3 mb-4">
+              <LogOut className="w-6 h-6 text-rose-500" />
+              <h3 className="text-lg font-bold text-gray-900">Confirm Logout</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to log out now?
+            </p>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors"
+              >
+                Log Out
               </button>
             </div>
           </div>
