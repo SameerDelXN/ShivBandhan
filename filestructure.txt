@@ -64,6 +64,9 @@
                     |-- route.js
             |-- auth
                 |-- route.js
+            |-- cloudinary
+                |-- upload
+                    |-- route.js
             |-- interest
                 |-- received
                     |-- route.js
@@ -92,6 +95,8 @@
                 |-- delete
                     |-- route.js
                 |-- fetchAllUsers
+                    |-- route.js
+                |-- generatePdf
                     |-- route.js
                 |-- me
                     |-- route.js

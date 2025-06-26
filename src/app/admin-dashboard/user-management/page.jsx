@@ -135,7 +135,33 @@ export default function UserManagement() {
     ));
     setEditingUser(null);
   };
+  const handleExportUser = async (user) => {
+  try {
+    const response = await fetch('/api/users/generatePdf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userData: user }),
+    });
 
+    const data = await response.json();
+
+    if (data.success) {
+      // Create a download link
+      const link = document.createElement('a');
+      link.href = `data:application/pdf;base64,${data.pdf}`;
+      link.download = data.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.error('Failed to generate PDF');
+    }
+  } catch (error) {
+    console.error('Error exporting user:', error);
+  }
+};
   // Handle ban/suspend user
   const handleBanUser = (userName) => {
     setUsers(users.map(user => 
@@ -302,6 +328,12 @@ export default function UserManagement() {
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
+                       <button 
+      className="text-green-600 hover:text-green-700 p-1"
+      onClick={() => handleExportUser(user)}
+    >
+      <Download className="w-4 h-4" />
+    </button>
                       <button 
                         className="text-red-600 hover:text-red-700 p-1"
                         onClick={() => handleBanUser(user.name)}

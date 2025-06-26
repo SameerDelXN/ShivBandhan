@@ -260,9 +260,7 @@ console.log("User Data", user)
   };
 
   const handleProfileUpdate = async () => {
-    if (!user?.user?.id || isSaving) {
-      return;
-    }
+
 
     const prevCompletion = profileCompletion;
     setIsSaving(true);
@@ -275,7 +273,7 @@ console.log("User Data", user)
         },
         body: JSON.stringify({
           ...formData,
-          userId: user.user.id
+          userId: user?.user?.id || user?.id
         }),
       });
       if (!response.ok) throw new Error('Failed to update profile');
