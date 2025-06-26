@@ -7,6 +7,9 @@ const UserSchema = new mongoose.Schema({
   phone: { 
   type: String, 
     unique: true, 
+    profilePhoto:{
+      type:String
+    },
   profileCompletion: { type: Number, default: 0 },
     // validate: {
     //   validator: function(v) {
