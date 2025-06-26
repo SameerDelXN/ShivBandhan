@@ -168,7 +168,7 @@ export default function UserManagement() {
       user.name === userName ? { ...user, status: "Suspended" } : user
     ));
   };
-
+  console.log("ShivBandhan")
   // Handle input change in edit form
   const handleEditChange = (e) => {
     const { name, value } = e.target;
