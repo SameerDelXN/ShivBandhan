@@ -223,7 +223,7 @@ const fetchSentInterests = async (senderId) => {
     if (sortBy === 'age_high') return b.age - a.age;
     return 0;
   });
-
+  console.log("fi = ",filteredMatches)
    const handleSendInterest = async (senderId, receiverId) => {
     console.log('Sending interest from', senderId, 'to', receiverId);
 
