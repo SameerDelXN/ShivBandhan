@@ -3,23 +3,11 @@ import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 import { verifyToken } from '@/lib/auth'; 
 
-// Accept/Reject user profile
+
 export async function POST(req) {
   try {
     await dbConnect();
-    const token = req.cookies.get('authToken')?.value;
-    const decoded = verifyToken(token);
-
-    if (!decoded?.userId) {
-      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
-    }
-
-    const body = await req.json();
-    const { userId, action } = body;
-
-    if (!userId || !['Verified', 'Rejected'].includes(action)) {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
-    }
+    const { userId, action } = await req.json();
 
     const user = await User.findById(userId);
     if (!user) {
@@ -27,13 +15,16 @@ export async function POST(req) {
     }
 
     user.verificationStatus = action;
-    user.isVerified = action === 'Verified';
-    user.verificationRequested = false;
+    user.isVerified = (action === 'Verified');
     await user.save();
 
-    return NextResponse.json({ message: `User ${action.toLowerCase()} successfully.` });
+    return NextResponse.json({ 
+      message: `User ${action.toLowerCase()} successfully` 
+    });
   } catch (error) {
-    console.error('Error in verification API:', error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Server error during verification' },
+      { status: 500 }
+    );
   }
 }

@@ -2,11 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from '@/context/SessionContext';
 import { 
-<<<<<<< HEAD
   Heart, User, MapPin, GraduationCap, Briefcase, Calendar, Star, CheckCircle, Lock, Camera, Clock, Crown, Sparkles, Filter, ArrowUpDown, Bookmark, Eye, MessageCircle, TrendingUp, Users, Navigation, Zap, ChevronDown, SlidersHorizontal, X, Loader2,Search
-=======
-  Heart, User, MapPin, GraduationCap, Briefcase, Calendar, Star, CheckCircle, Lock, Camera, Clock, Crown, Sparkles, Filter, ArrowUpDown, Bookmark, Eye, MessageCircle, TrendingUp, Users, Navigation, Zap, ChevronDown, SlidersHorizontal, X, Loader2
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
 } from 'lucide-react';
 import { Toaster,toast } from 'react-hot-toast';
 
@@ -37,7 +33,6 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState([]);
   const [hasSubscription, setHasSubscription] = useState(true);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
-<<<<<<< HEAD
   const [searchQuery, setSearchQuery] = useState('');
   console.log('User data: Matches', user);
 
@@ -50,15 +45,7 @@ export default function MatchesPage() {
     ageRange: [null, null],
     heightRange: [null, null],
     education: null,
-=======
-  console.log('User data: Matches', user);
-  // Quick filter states
-  const [quickFilters, setQuickFilters] = useState({
-    withPhoto: false,
-    verified: false,
-    activeRecently: false,
-    sameCity: false
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
+    income: null,
   });
 
   useEffect(() => {
@@ -181,9 +168,15 @@ const fetchSentInterests = async (senderId) => {
       // Then fetch potential matches
       const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
       const data = await res.json();
+      console.log("Data = ",data.data)
+   
       
       if (data.success) {
-        const enriched = data.data.map(matchUser => {
+        
+         const enriched = data.data
+        // Filter out current user's profile
+        .filter(matchUser => matchUser._id !== currentUserData.id)
+        .map(matchUser => {
           const compatibility = calculateCompatibility(currentUserData, {
             ...matchUser,
             age: calculateAge(matchUser.dob)
@@ -224,7 +217,6 @@ const fetchSentInterests = async (senderId) => {
 
   const filteredMatches = matches.filter(match => {
     if (match.compatibility <= 0) return false;
-<<<<<<< HEAD
     // Always show all matches by default
   let shouldShow = true;
     // Only apply filters if they have values
@@ -233,14 +225,11 @@ const fetchSentInterests = async (senderId) => {
   }
 
     
-=======
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
     if (activeTab !== 'all') {
       if (activeTab === 'preferred' && match.compatibility < 70) return false;
       if (activeTab === 'new' && !match.isNew) return false;
       if (activeTab === 'nearby' && !isSameCity(match.currentCity, user?.currentCity)) return false;
     }
-<<<<<<< HEAD
     // Quick filters - only apply if they have values
   if (quickFilters.withPhoto !== null) {
     shouldShow = shouldShow && (quickFilters.withPhoto === !!match.hasPhoto);
@@ -281,15 +270,12 @@ const fetchSentInterests = async (senderId) => {
 if (quickFilters.education) {
   shouldShow = shouldShow && (match.education === quickFilters.education);
 }
+// Income filter
+  if (quickFilters.income) {
+    shouldShow = shouldShow && (match.income === quickFilters.income);
+  }
   
   return shouldShow;
-=======
-    if (quickFilters.withPhoto && !match.hasPhoto) return false;
-    if (quickFilters.verified && !match.isVerified) return false;
-    if (quickFilters.activeRecently && match.lastActive.includes('day')) return false;
-    if (quickFilters.sameCity && !isSameCity(match.currentCity, user?.currentCity)) return false;
-    return true;
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
   }).sort((a, b) => {
     if (sortBy === 'compatibility') return b.compatibility - a.compatibility;
     if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
@@ -298,14 +284,16 @@ if (quickFilters.education) {
     if (sortBy === 'age_high') return b.age - a.age;
     return 0;
   });
-<<<<<<< HEAD
    
   console.log("fi = ",filteredMatches)
-=======
-
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
    const handleSendInterest = async (senderId, receiverId) => {
     console.log('Sending interest from', senderId, 'to', receiverId);
+    
+ // Prevent sending interest to yourself (extra safety)
+  if (senderId === receiverId) {
+    toast.error("You can't send interest to yourself");
+    return;
+  }
 
     const alreadySent = matches.find(m => m._id === receiverId)?.interestSent;
      if (alreadySent) return;
@@ -583,6 +571,10 @@ if (quickFilters.education) {
               <GraduationCap className="w-2.5 h-2.5 mr-1" />
               <span className="truncate">{match.education}</span>
             </div>
+            <div className="flex items-center">
+              <Briefcase className="w-2.5 h-2.5 mr-1" />
+              <span className="truncate">{match.income}</span>
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -660,7 +652,6 @@ if (quickFilters.education) {
   );
 
   return (
-<<<<<<< HEAD
   <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
     <Toaster position="top-right" />
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -694,26 +685,6 @@ if (quickFilters.education) {
 
           {/* Match Type Tabs */}
           <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-1 sm:p-2 flex-1">
-=======
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
-      <Toaster position="top-right" />
-      <div className="max-w-6xl mx-auto p-4 sm:p-6">
-        
-        {/* Header Section */}
-        <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-gradient-to-r from-rose-500 to-rose-600 rounded-xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden mb-4 sm:mb-6">
-            <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-2xl"></div>
-            <div className="relative z-10">
-              <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Your Personalized Matches</h1>
-              <p className="text-rose-100 text-sm sm:text-base">Discover profiles selected just for you</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Match Type Tabs */}
-        <div className={`transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-1 sm:p-2 mb-4 sm:mb-6">
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
             <div className="flex overflow-x-auto space-x-1">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
@@ -742,7 +713,6 @@ if (quickFilters.education) {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
       </div>
 
       {/* Quick Filters & Sorting */}
@@ -895,9 +865,7 @@ if (quickFilters.education) {
   </div>
 </div>
                   
-                  
-                  {/* education */}
-                  {/* Education */}
+{/* Education */}
 <div className="col-span-2">
   <label className="block text-xs sm:text-sm text-gray-600 mb-1">Education</label>
   <select
@@ -915,6 +883,25 @@ if (quickFilters.education) {
     <option value="Medical">Medical</option>
     <option value="Law">Law</option>
     <option value="Other">Other</option>
+  </select>
+</div>
+{/* Income Filter */}
+<div className="col-span-2">
+  <label className="block text-xs sm:text-sm text-gray-600 mb-1">Annual Income</label>
+  <select
+    value={quickFilters.income || ''}
+    onChange={(e) => setQuickFilters(prev => ({ 
+      ...prev, 
+      income: e.target.value || null 
+    }))}
+    className="w-full px-2 py-1 border border-gray-300 rounded-md text-xs sm:text-sm"
+  >
+    <option value="">Any Income</option>
+    <option value="₹5-10 Lakhs">₹5-10 Lakhs</option>
+    <option value="₹10-15 Lakhs">₹10-15 Lakhs</option>
+    <option value="₹15-20 Lakhs">₹15-20 Lakhs</option>
+    <option value="₹20-25 Lakhs">₹20-25 Lakhs</option>
+    <option value="₹25+ Lakhs">₹25+ Lakhs</option>
   </select>
 </div>
                  
@@ -963,93 +950,6 @@ if (quickFilters.education) {
                   Clear Filters
                 </button>
               )}
-=======
-
-        {/* Quick Filters & Sorting */}
-        <div className={`transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-3 sm:p-4 mb-4 sm:mb-6">
-            <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
-              
-              {/* Quick Filters */}
-              <div className="flex-1">
-                <button
-                  onClick={() => setShowQuickFilters(!showQuickFilters)}
-                  className="flex items-center text-gray-700 hover:text-rose-600 transition-colors text-sm"
-                >
-                  <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  <span className="font-medium">Quick Filters</span>
-                  <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 ml-0.5 sm:ml-1 transition-transform ${showQuickFilters ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {showQuickFilters && (
-                  <div className="mt-2 sm:mt-3 flex flex-wrap gap-2 sm:gap-3">
-                    <label className="flex items-center text-xs sm:text-sm">
-                      <input
-                        type="checkbox"
-                        checked={quickFilters.withPhoto}
-                        onChange={(e) => setQuickFilters(prev => ({ ...prev, withPhoto: e.target.checked }))}
-                        className="rounded border-gray-300 text-rose-600 focus:ring-rose-500 mr-1 sm:mr-2"
-                      />
-                      <span>With Photo</span>
-                    </label>
-                    
-                    <label className="flex items-center text-xs sm:text-sm">
-                      <input
-                        type="checkbox"
-                        checked={quickFilters.verified}
-                        onChange={(e) => setQuickFilters(prev => ({ ...prev, verified: e.target.checked }))}
-                        className="rounded border-gray-300 text-rose-600 focus:ring-rose-500 mr-1 sm:mr-2"
-                      />
-                      <span>Verified Only</span>
-                    </label>
-                    
-                    <label className="flex items-center text-xs sm:text-sm">
-                      <input
-                        type="checkbox"
-                        checked={quickFilters.activeRecently}
-                        onChange={(e) => setQuickFilters(prev => ({ ...prev, activeRecently: e.target.checked }))}
-                        className="rounded border-gray-300 text-rose-600 focus:ring-rose-500 mr-1 sm:mr-2"
-                      />
-                      <span>Active Recently</span>
-                    </label>
-                    
-                    <label className="flex items-center text-xs sm:text-sm">
-                      <input
-                        type="checkbox"
-                        checked={quickFilters.sameCity}
-                        onChange={(e) => setQuickFilters(prev => ({ ...prev, sameCity: e.target.checked }))}
-                        className="rounded border-gray-300 text-rose-600 focus:ring-rose-500 mr-1 sm:mr-2"
-                      />
-                      <span>Same City</span>
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {/* Sort Dropdown */}
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <ArrowUpDown className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded-md sm:rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-xs sm:text-sm"
-                >
-                  <option value="compatibility">Most Compatible</option>
-                  <option value="newest">Newest First</option>
-                  <option value="recently_active">Recently Active</option>
-                  <option value="age_low">Age: Low to High</option>
-                  <option value="age_high">Age: High to Low</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Results Count */}
-            <div className="flex items-center justify-between mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
-              <div className="flex items-center text-xs sm:text-sm text-gray-600">
-                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5 sm:mr-1" />
-                <span>{filteredMatches.length} matches found</span>
-              </div>
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
               <div className="flex items-center text-xs sm:text-sm text-rose-600">
                 <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-0.5 sm:mr-1" />
                 <span>Upgrade to see more</span>
@@ -1057,7 +957,6 @@ if (quickFilters.education) {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
       </div>
 
       {/* Match Results */}
@@ -1095,40 +994,4 @@ if (quickFilters.education) {
     )}
   </div>
 );
-=======
-
-        {/* Match Results */}
-        <div className={`transform transition-all duration-1000 delay-400 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          {filteredMatches.length === 0 ? (
-            <EmptyState isLoading={isLoading} />
-          ) : (
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredMatches.map((match) => (
-                <MatchCard key={match._id } match={match} />
-              ))}
-            </div>
-          )}
-
-          {/* Load More Button */}
-          {filteredMatches.length > 0 && (
-            <div className="text-center mt-6 sm:mt-8">
-              <button
-                onClick={() => setIsLoading(true)}
-                disabled={isLoading}
-                className="bg-white border border-rose-300 text-rose-600 px-6 py-2 sm:px-8 sm:py-3 rounded-lg font-medium hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-              >
-                {isLoading ? 'Loading...' : 'Load More Matches'}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Profile Popup */}
-      {selectedProfile && (
-        <ProfilePopup profile={selectedProfile} onClose={closeProfilePopup} />
-      )}
-    </div>
-  );
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
 }

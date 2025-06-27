@@ -2,17 +2,11 @@
 import { useState, useEffect } from 'react';
 import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
-<<<<<<< HEAD
-
-export default function MyProfilePage() {
-  const { user } = useSession();
-=======
 import { CldUploadWidget } from 'next-cloudinary';
 //sample
 export default function MyProfilePage() {
   const { user } = useSession();
   
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -23,11 +17,7 @@ export default function MyProfilePage() {
   const [showCompletionUpdate, setShowCompletionUpdate] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('Unverified');
   const [photos, setPhotos] = useState([
-<<<<<<< HEAD
-    { id: 1, url: null, isPrimary: true },
-=======
     { id: 1, url: user?.profilePhoto || null, isPrimary: true },
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
     { id: 2, url: null, isPrimary: false },
     { id: 3, url: null, isPrimary: false },
     { id: 4, url: null, isPrimary: false },
@@ -86,10 +76,7 @@ console.log("User Data", user)
     birthTime: '',
     gotraDevak: '',
     // Expectations
-<<<<<<< HEAD
-=======
     profilePhoto:"",
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
     expectedCaste: '',
     preferredCity: '',
     expectedAgeDifference: '',
@@ -106,11 +93,7 @@ console.log("User Data", user)
     };
     
     loadData();
-<<<<<<< HEAD
-  }, []);
-=======
   }, [user]);
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
 
   useEffect(() => {
     if (user?.user?.id) {
@@ -229,11 +212,7 @@ console.log("User Data", user)
         permanentAddress: data.permanentAddress || '',
         userId: user?.user?.id || '',
         verificationStatus: data?.verificationStatus || 'Unverified',
-<<<<<<< HEAD
-
-=======
 profilePhoto:data?.profilePhoto || "",
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
          // Relative Info
         fatherName: data.fatherName || '',
         parentResidenceCity: data.parentResidenceCity || '',
@@ -352,15 +331,6 @@ profilePhoto:data?.profilePhoto || "",
     }
   };
 
-<<<<<<< HEAD
-  const handlePhotoUpload = (photoId) => {
-    setPhotos(photos.map(photo =>
-      photo.id === photoId
-        ? { ...photo, url: `https://via.placeholder.com/200x250/f43f5e/white?text=Photo+${photoId}` }
-        : photo
-    ));
-  };
-=======
 const handlePhotoUploadSuccess = (result, photoId) => {
   const url = result.info.secure_url;
   
@@ -381,7 +351,6 @@ const handlePhotoUploadSuccess = (result, photoId) => {
     }));
   }
 };
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
 
   const handleMakePrimary = (photoId) => {
     setPhotos(photos.map(photo => ({
@@ -457,26 +426,37 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                   <input
-  type="date"
-  value={formatDateToYYYYMMDD(formData.dob)}
-  onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-/>
+                   type="date"
+                   value={formatDateToYYYYMMDD(formData.dob)}
+                   onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                   />
 
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
-                  <select
-                    value={formData.height}
-                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  >
-                    <option value="">Select Height</option>
-                    <option>5'4" (162 cm)</option>
-                    <option>5'3" (160 cm)</option>
-                    <option>5'5" (165 cm)</option>
+               <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
+                 <select
+                  value={formData.height}
+                  onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                 >
+                 <option value="">Select Height</option>
+                   {Array.from({ length: 24 }, (_, i) => {
+                   // Starting from 4'6" (138cm) to 6'5" (196cm)
+                     const feet = 4 + Math.floor((i + 6) / 12);
+                      const inches = (i + 6) % 12;
+                      const cm = Math.round((feet * 30.48) + (inches * 2.54));
+                      return (
+                          <option 
+                             key={i} 
+                              value={`${feet}'${inches}" (${cm} cm)`}
+                           >
+                           {feet}'{inches}" ({cm} cm)
+                            </option>
+                            );
+                        })}
                   </select>
-                </div>
+                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
                   <input 
@@ -749,45 +729,6 @@ const handlePhotoUploadSuccess = (result, photoId) => {
               </div>
             </div>
 
-<<<<<<< HEAD
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {photos.map((photo) => (
-                <div key={photo.id} className="relative">
-                  <div className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden">
-                    {photo.url ? (
-                      <img src={photo.url} alt={`Photo ${photo.id}`} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="text-center">
-                        <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-xs text-gray-500">Add Photo</p>
-                      </div>
-                    )}
-                    {photo.isPrimary && photo.url && (
-                      <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
-                        Primary
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-2 space-y-1">
-                    <button
-                      onClick={() => handlePhotoUpload(photo.id)}
-                      className="w-full bg-rose-50 text-rose-600 py-1 px-2 rounded text-xs font-medium hover:bg-rose-100 transition-colors"
-                    >
-                      {photo.url ? 'Change' : 'Upload'}
-                    </button>
-                    {photo.url && !photo.isPrimary && (
-                      <button
-                        onClick={() => handleMakePrimary(photo.id)}
-                        className="w-full bg-gray-50 text-gray-600 py-1 px-2 rounded text-xs font-medium hover:bg-gray-100 transition-colors"
-                      >
-                        Make Primary
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-=======
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
   {photos.map((photo) => (
     <div key={photo.id} className="relative">
@@ -847,7 +788,6 @@ const handlePhotoUploadSuccess = (result, photoId) => {
     </div>
   ))}
 </div>
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
           </div>
         );
 case 'relative':
@@ -1258,20 +1198,6 @@ case 'relative':
             <div className="relative z-10">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
                 <div className="flex items-center space-x-6 mb-6 lg:mb-0">
-<<<<<<< HEAD
-                  <div className="relative">
-                    <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
-                      <User className="w-12 h-12 text-rose-500" />
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                      <CheckCircle className="w-3 h-3 text-white" />
-                    </div>
-                    <button className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors">
-                      <Camera className="w-3 h-3 text-white" />
-                    </button>
-                  </div>
-
-=======
                <div className="relative">
   <CldUploadWidget 
     uploadPreset="shivbandhan" 
@@ -1315,7 +1241,6 @@ case 'relative':
     <CheckCircle className="w-3 h-3 text-white" />
   </div>
 </div>
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
                       <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
@@ -1365,11 +1290,7 @@ case 'relative':
                       ></div>
                     </div>
                     <button 
-<<<<<<< HEAD
-                      onClick={profileCompletion === 100 ? handleVerificationSubmit : handleProfileUpdate}
-=======
                       onClick={handleVerificationSubmit}
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
                       className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
                       disabled={verificationStatus === 'Pending' || isSaving}
                     >

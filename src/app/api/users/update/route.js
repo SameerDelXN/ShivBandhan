@@ -57,11 +57,7 @@ const {
   complexion,
   wearsLens,
   permanentAddress,
-<<<<<<< HEAD
-  
-=======
   profilePhoto,
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
   // Relative Info
   fatherName,
   parentResidenceCity,
@@ -144,10 +140,7 @@ const updateData = {
   relativeSurname,
   parentOccupation,
   mamaSurname,
-<<<<<<< HEAD
-=======
   profilePhoto,
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
   
   // Horoscope Info
   rashi,

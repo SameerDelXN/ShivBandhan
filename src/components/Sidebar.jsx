@@ -20,7 +20,7 @@ export default function Sidebar() {
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/profile/me", label: "My Profile", icon: User },
-    { href: "/dashboard/search", label: "Search", icon: Search },
+    // { href: "/dashboard/search", label: "Search", icon: Search },
     { href: "/dashboard/matches", label: "Matches", icon: Heart },
     { href: "/dashboard/interests", label: "Interests", icon: UserPlus },
     { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },

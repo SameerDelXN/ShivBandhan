@@ -10,7 +10,7 @@ export default function Verification() {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const res = await fetch("/api/admin/pending-profiles");
+        const res = await fetch("/api/admin/pendingProfile");
         const data = await res.json();
         if (res.ok) {
           setVerifiedProfiles(data.users);
@@ -26,27 +26,22 @@ export default function Verification() {
   }, []);
 
   // Accept or Reject verification
-  const handleVerification = async (id, action) => {
-    try {
-      const res = await fetch("/api/admin/verify-profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: id, action }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setVerifiedProfiles((prev) => prev.filter((u) => u._id !== id));
-        setSelectedProfile(null);
-        alert(data.message);
-      } else {
-        alert(data.error || "Failed to update verification status.");
-      }
-    } catch (err) {
-      console.error("Verification error:", err);
-      alert("Server error");
-    }
-  };
+  const handleVerification = async (userId, action) => {
+  try {
+    const res = await fetch('/api/admin/verifyProfile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, action }),
+    });
 
+    if (res.ok) {
+      setPendingProfiles(prev => prev.filter(user => user._id !== userId));
+      alert(`User ${action.toLowerCase()} successfully!`);
+    }
+  } catch (error) {
+    alert('Failed to update verification status');
+  }
+};
   return (
     <div className="space-y-6 relative">
       {verifiedProfiles.length === 0 && (

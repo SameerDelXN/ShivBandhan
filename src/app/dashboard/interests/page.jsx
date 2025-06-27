@@ -108,8 +108,16 @@ export default function InterestsPage() {
             Declined
           </span>
         );
-      default:
-        return null;
+        default:
+        return (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Settings className="w-8 h-8 text-rose-500" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
+            <p className="text-gray-600">This section is under development</p>
+          </div>
+        );;
     }
   };
 
@@ -128,8 +136,21 @@ export default function InterestsPage() {
     }
   };
 
-  const InterestCard = ({ person, type }) => (
+  const formatName = (name, status) => {
+    if (!name) return '';
+    if (status === 'accepted') return name;
+    
+    // Split name into parts
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) return '****'; // If only one name
+    
+    // Mask first name and show last name
+    const maskedFirstName = '****';
+    const lastName = nameParts[nameParts.length - 1];
+    return `${maskedFirstName} ${lastName}`;
+  };
 
+  const InterestCard = ({ person, type }) => (
     console.log('Rendering InterestCard for:', person),
     <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300 hover:border-rose-200">
       <div className="flex items-start space-x-4">
@@ -150,7 +171,11 @@ export default function InterestsPage() {
           <div className="flex items-start justify-between mb-2">
             <div>
               <div className="flex items-center space-x-2 mb-1">
-                <h3 className="text-lg font-bold text-gray-900">{type==="sent" ? person?.receiver?.name : person?.sender?.name}</h3>
+                <h3 className="text-lg font-bold text-gray-900">
+                  {type === "sent" 
+                    ? formatName(person?.receiver?.name, person.status) 
+                    : formatName(person?.sender?.name, person.status)}
+                </h3>
                 {person.badges?.includes('Verified') && (
                   <Shield className="w-4 h-4 text-green-500" />
                 )}
@@ -225,7 +250,7 @@ export default function InterestsPage() {
                 </button>
               )}
               
-              {(type === 'sent' || type === 'received') && person.status !== 'pending' && (
+              {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
                 <button className="flex items-center px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg text-sm font-medium hover:bg-rose-100 transition-colors">
                   <Eye className="w-4 h-4 mr-1" />
                   View Profile
@@ -306,11 +331,9 @@ export default function InterestsPage() {
               
               <div className="flex space-x-6">
                 <div className="text-center">
-                  {/* <div className="text-2xl font-bold text-rose-600">{stats.pendingReceived}</div> */}
                   <div className="text-xs text-gray-500">Pending Received</div>
                 </div>
                 <div className="text-center">
-                  {/* <div className="text-2xl font-bold text-blue-600">{stats.pendingSent}</div> */}
                   <div className="text-xs text-gray-500">Pending Sent</div>
                 </div>
               </div>
@@ -383,12 +406,12 @@ export default function InterestsPage() {
             ) : (
               <div className="space-y-4">
                 {getTabData()?.length > 0 ? (
-  getTabData()?.map((person) => (
-    <InterestCard key={person.id} person={person} type={activeTab} />
-  ))
-) : (
-  <div>No data available</div> // or any fallback UI
-)}
+                  getTabData()?.map((person) => (
+                    <InterestCard key={person.id} person={person} type={activeTab} />
+                  ))
+                ) : (
+                  <div>No data available</div>
+                )}
               </div>
             )}
           </div>
