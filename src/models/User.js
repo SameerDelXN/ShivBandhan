@@ -165,11 +165,11 @@ const UserSchema = new mongoose.Schema({
   },
 
   // Subscription
-  subscription: {
+ subscription: {
   plan: {
     type: String,
-   
-    default: null
+    enum: ['free', 'premium', 'gold', 'silver'],
+    default: 'free'
   },
   isSubscribed: {
     type: Boolean,

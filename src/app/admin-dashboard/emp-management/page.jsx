@@ -371,10 +371,7 @@ export default function EmployeeManagement() {
               <UserPlus className="w-4 h-4 mr-2" />
               Add Employee
             </button>
-            <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </button>
+            
           </div>
         </div>
 
@@ -406,14 +403,9 @@ export default function EmployeeManagement() {
             onChange={handleRoleFilterChange}
           >
             <option>All Roles</option>
-            <option>Admin</option>
-            <option>Manager</option>
             <option>Employee</option>
           </select>
-          <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
-            More Filters
-          </button>
+          
         </div>
       </div>
 
@@ -490,12 +482,7 @@ export default function EmployeeManagement() {
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
-                      <button 
-                        className="text-red-600 hover:text-red-700 p-1"
-                        onClick={() => handleBanEmployee(employee._id)}
-                      >
-                        <Ban className="w-4 h-4" />
-                      </button>
+                      
                     </div>
                   </td>
                 </tr>
@@ -644,8 +631,8 @@ export default function EmployeeManagement() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                     >
                       <option value="Employee">Employee</option>
-                      <option value="Manager">Manager</option>
-                      <option value="Admin">Admin</option>
+                      {/* <option value="Manager">Manager</option>
+                      <option value="Admin">Admin</option> */}
                     </select>
                   </div>
                   <div>
