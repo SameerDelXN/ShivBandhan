@@ -322,24 +322,24 @@ export default function UserManagement() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button 
+                      {/* <button 
                         className="text-gray-600 hover:text-gray-700 p-1"
                         onClick={() => handleEditUser(user)}
                       >
                         <Edit3 className="w-4 h-4" />
-                      </button>
+                      </button> */}
                        <button 
       className="text-green-600 hover:text-green-700 p-1"
       onClick={() => handleExportUser(user)}
     >
       <Download className="w-4 h-4" />
     </button>
-                      <button 
+                      {/* <button 
                         className="text-red-600 hover:text-red-700 p-1"
                         onClick={() => handleBanUser(user.name)}
                       >
                         <Ban className="w-4 h-4" />
-                      </button>
+                      </button> */}
                     </div>
                   </td>
                 </tr>

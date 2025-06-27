@@ -136,8 +136,11 @@ export default function InterestsPage() {
     }
   };
 
-  const formatName = (name, status) => {
+  const formatName = (name, type, status) => {
     if (!name) return '';
+    // Always show full name in received section
+    if (type === 'received') return name;
+    // For sent section, show full name only if accepted
     if (status === 'accepted') return name;
     
     // Split name into parts
@@ -173,8 +176,8 @@ export default function InterestsPage() {
               <div className="flex items-center space-x-2 mb-1">
                 <h3 className="text-lg font-bold text-gray-900">
                   {type === "sent" 
-                    ? formatName(person?.receiver?.name, person.status) 
-                    : formatName(person?.sender?.name, person.status)}
+                    ? formatName(person?.receiver?.name, type, person.status) 
+                    : formatName(person?.sender?.name, type, person.status)}
                 </h3>
                 {person.badges?.includes('Verified') && (
                   <Shield className="w-4 h-4 text-green-500" />

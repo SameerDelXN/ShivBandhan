@@ -13,8 +13,10 @@ import {
   Flag
 } from 'lucide-react';
 import { FaRupeeSign } from 'react-icons/fa6';   
-
+import { useAuth } from '@/context/AuthContext';
 export default function AdminDashboard() {
+  const {user } = useAuth()
+  console.log("user = ",user)
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
   

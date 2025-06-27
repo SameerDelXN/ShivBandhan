@@ -2,11 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, Shield, RotateCcw, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/context/SessionContext';
-<<<<<<< HEAD
-=======
-
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
+import { useSession } from '@/context/SessionContext'
 export default function MatrimonialLogin() {
   const router = useRouter()
   const [step, setStep] = useState(1); // 1: Phone Number, 2: OTP
@@ -17,24 +13,22 @@ export default function MatrimonialLogin() {
   const [resendTimer, setResendTimer] = useState(0);
   const [error, setError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
-<<<<<<< HEAD
-  const {login} = useSession()
-=======
   const { login, user } = useSession()
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
+
+
+
 
   useEffect(() => {
     setIsLoaded(true);
     
-<<<<<<< HEAD
-  }, []);
-=======
+
+
     // Check if user is already logged in
     if (user) {
       router.push(`/dashboard`);
     }
   }, [user, router]);
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
+
 
   // Resend timer countdown
   useEffect(() => {
@@ -107,52 +101,6 @@ export default function MatrimonialLogin() {
     }
   };
 
-<<<<<<< HEAD
- const handleVerifyOTP = async () => {
-  const otpString = otp.join('');
-  
-  if (otpString.length !== 6) {
-    setError('Please enter complete 6-digit OTP');
-    return;
-  }
-
-  setIsLoading(true);
-  setError(''); // Clear previous errors
-  
-  try {
-    const response = await fetch('/api/verify-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        phoneNumber: phoneNumber.replace(/\s/g, ''),
-        otp: otpString
-      }),
-    });
-
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || 'OTP verification failed');
-    }
-
-    if (data.success) {
-       await login(data.userId);
-      console.log(data)
-      // Redirect based on user status
-      router.push(`/dashboard/${data.userId}`);
-    } else {
-      setError(data.error || 'OTP verification failed');
-    }
-  } catch (error) {
-    console.error('Verification error:', error);
-    setError(error.message || 'Network error. Please try again.');
-  } finally {
-    setIsLoading(false);
-  }
-};
-=======
   const handleVerifyOTP = async () => {
     const otpString = otp.join('');
     
@@ -197,7 +145,6 @@ export default function MatrimonialLogin() {
       setIsLoading(false);
     }
   };
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
 
   const handleResendOTP = async () => {
     setOtp(['', '', '', '', '', '']);
@@ -231,15 +178,13 @@ export default function MatrimonialLogin() {
     return phone.replace(/(\d{5})(\d{5})/, '$1 $2');
   };
 
-<<<<<<< HEAD
-=======
+
+
   // If user exists and component is loaded, don't render the login form
   if (user && isLoaded) {
     return null; // or a loading spinner
   }
-
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
-  return (
+return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center px-4 py-8">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
