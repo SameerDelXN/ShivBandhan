@@ -33,7 +33,23 @@ export default function DynamicSubscriptionPlans() {
   const [currentSubscription, setCurrentSubscription] = useState(null);
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [activeButtonId, setActiveButtonId] = useState(null);
-
+  const fetchUserDatanew = async () => {
+    console.log("hello");
+    try {
+      const res = await fetch(`/api/users/${user?.id}`);
+      const darta = await res.json();
+      console.log("Response from API:", darta.subscription);
+      setCurrentSubscription({
+        subscriptionId: darta.subscription.subscriptionId,
+        plan: darta.subscription.plan,
+      });
+    } catch (err) {
+      console.log("Error fetching user data:", err);
+    }
+  };
+  useEffect(() => {
+    fetchUserDatanew();
+  }, []);
   // Fetch plans and current subscription
   useEffect(() => {
     const fetchPlans = async () => {
@@ -72,193 +88,100 @@ export default function DynamicSubscriptionPlans() {
 
     fetchPlans();
   }, [user]);
-const handleSubscription = async (plan, e) => {
-  e.stopPropagation();
-  e.preventDefault();
-  
-  try {
-    setActiveButtonId(plan._id);
-    setIsSubscribing(true);
+  const handleSubscription = async (plan, e) => {
+    e.stopPropagation();
+    e.preventDefault();
 
-    // 1. Create Razorpay Order
-    const res = await fetch("/api/payment/create-order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        amount: plan.price * 100,
-        userId: user?.user?.id,
-        planId: plan._id,
-        currentSubscriptionId: currentSubscription?.subscriptionId || null
-      }),
-    });
+    try {
+      setActiveButtonId(plan._id);
+      setIsSubscribing(true);
+      console.log(user.id, "user id");
+      // 1. Create Razorpay Order
+      const res = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: plan.price * 100,
+          userId: user?.id,
+          planId: plan._id,
+          currentSubscriptionId: currentSubscription?.subscriptionId || null,
+        }),
+      });
 
-    const order = await res.json();
+      const order = await res.json();
 
-    // 2. Configure Razorpay checkout
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: "ShivBandhan Subscription",
-      description: plan.name,
-      order_id: order.id,
-      handler: async function (response) {
-        console.log("✅ Payment response:", response);
-        
-        // ✅ 3. Update subscription on success
-        const updateRes = await fetch("/api/users/update-plan", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: user?.user?.id,
-            plan: plan.name,
-            razorpay_payment_id: response.razorpay_payment_id,
-            planId: plan._id,
-            currentSubscriptionId: currentSubscription?.subscriptionId || null
-          }),
-        });
+      // 2. Configure Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "ShivBandhan Subscription",
+        description: plan.name,
+        order_id: order.id,
+        handler: async function (response) {
+          console.log("✅ Payment response:", response);
 
-        const updateResult = await updateRes.json();
-        if (updateRes.ok) {
-          setCurrentSubscription({
-            subscriptionId: plan._id,
-            plan: plan.name,
+          // ✅ 3. Update subscription on success
+          const updateRes = await fetch("/api/users/update-plan", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: user.id,
+              plan: plan.name,
+              razorpay_payment_id: response.razorpay_payment_id,
+              planId: plan._id,
+              currentSubscriptionId:
+                currentSubscription?.subscriptionId || null,
+            }),
           });
-          router.push("/payment-success");
-        } else {
-          throw new Error(updateResult.message || "Failed to update subscription");
-        }
-      },
-      prefill: {
-        name: user?.user?.name || "Aniket Dahire",
-        email: user?.user?.email || "aniket@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#3399cc",
-      },
-    };
 
-    // Initialize Razorpay
-    const razorpay = new window.Razorpay(options);
+          const updateResult = await updateRes.json();
+          if (updateRes.ok) {
+            setCurrentSubscription({
+              subscriptionId: plan._id,
+              plan: plan.name,
+            });
+            router.push("/payment-success");
+          } else {
+            throw new Error(
+              updateResult.message || "Failed to update subscription"
+            );
+          }
+        },
+        prefill: {
+          name: user?.name || "Aniket Dahire",
+          email: user?.email || "aniket@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
 
-    // Handle Payment Failure (IMPORTANT: Close the modal)
-    razorpay.on('payment.failed', function (response) {
-      console.error("❌ Payment failed:", response.error);
-      razorpay.close(); // <-- THIS CLOSES THE POPUP IMMEDIATELY
-      window.location.href = "/payment-failure"; 
-    });
+      // Initialize Razorpay
+      const razorpay = new window.Razorpay(options);
 
-    // Open Razorpay modal
-    razorpay.open();
+      // Handle Payment Failure (IMPORTANT: Close the modal)
+      razorpay.on("payment.failed", function (response) {
+        console.error("❌ Payment failed:", response.error);
+        razorpay.close(); // <-- THIS CLOSES THE POPUP IMMEDIATELY
+        window.location.href = "/payment-failure";
+      });
 
-  } catch (err) {
-    console.error("❌ Error in handleSubscription:", err);
-    alert(err.message || "Something went wrong. Please try again.");
-  } finally {
-    setActiveButtonId(null);
-    setIsSubscribing(false);
-  }
-};
-  // const handleSubscription = async (plan, e) => {
-  //   e.stopPropagation();
-  //   e.preventDefault();
-    
-  //   try {
-  //     setActiveButtonId(plan._id);
-  //     setIsSubscribing(true);
-
-  //     // 1. Create Razorpay Order from your backend
-  //     const res = await fetch("/api/payment/create-order", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         amount: plan.price * 100,
-  //         userId: user?.user?.id,
-  //         planId: plan._id,
-  //         currentSubscriptionId: currentSubscription?.subscriptionId || null
-  //       }),
-  //     });
-
-  //     const order = await res.json();
-
-  //     // 2. Configure Razorpay checkout
-  //     const options = {
-  //       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-  //       amount: order.amount,
-  //       currency: order.currency,
-  //       name: "ShivBandhan Subscription",
-  //       description: plan.name,
-  //       order_id: order.id,
-  //       handler: async function (response) {
-  //         console.log("✅ Payment response:", response);
-          
-  //         // ✅ 3. Call your update API to store the plan after successful payment
-  //         const updateRes = await fetch("/api/users/update-plan", {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             userId: user?.user?.id,
-  //             plan: plan.name,
-  //             razorpay_payment_id: response.razorpay_payment_id,
-  //             planId: plan._id,
-  //             currentSubscriptionId: currentSubscription?.subscriptionId || null
-  //           }),
-  //         });
-
-  //         const updateResult = await updateRes.json();
-  //         if (updateRes.ok) {
-  //           // Update local state with new subscription
-  //           setCurrentSubscription({
-  //             subscriptionId: plan._id,
-  //             plan: plan.name,
-  //           });
-  //           router.push("/payment-success");
-            
-  //         } else {
-            
-  //           // Handle error from update API
-  //           console.error(updateResult.error);
-  //           throw new Error(updateResult.message || "Failed to update subscription");
-  //         }
-  //       },
-  //       prefill: {
-  //         name: user?.user?.name || "Aniket Dahire",
-  //         email: user?.user?.email || "aniket@example.com",
-  //         contact: "9999999999",
-  //       },
-  //       theme: {
-  //         color: "#3399cc",
-  //       },
-  //     };
-
-  //     const razorpay = new window.Razorpay(options);
-  //     razorpay.on('payment.failed', function (response) {
-  //        razorpay.close();
-  //       router.push("/payment-failure");
-  //       console.error("❌ Payment failed:", response.error);
-  //       // alert("Payment failed. Please try again.");
-        
-  //     });
-  //     razorpay.open();
-      
-  //   } catch (err) {
-  //     console.error("❌ Error in handleSubscription:", err);
-  //     alert(err.message || "Something went wrong. Please try again.");
-  //   } finally {
-  //     setActiveButtonId(null);
-  //     setIsSubscribing(false);
-  //   }
-  // };
-  
+      // Open Razorpay modal
+      razorpay.open();
+    } catch (err) {
+      console.error("❌ Error in handleSubscription:", err);
+      alert(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setActiveButtonId(null);
+      setIsSubscribing(false);
+    }
+  };
 
   // Get plan configuration based on name
   const getPlanConfig = (planName) => {
@@ -349,8 +272,8 @@ const handleSubscription = async (plan, e) => {
             Choose Your Perfect Plan
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Unlock premium features and find your perfect match faster with
-            our subscription plans
+            Unlock premium features and find your perfect match faster with our
+            subscription plans
           </p>
         </div>
 
@@ -393,8 +316,8 @@ const handleSubscription = async (plan, e) => {
                     disabled
                     className="w-full bg-gradient-to-r from-gray-400 to-gray-600 text-white py-4 rounded-xl font-bold text-lg cursor-not-allowed"
                   >
-                    {currentSubscription?.subscriptionId === freePlan._id 
-                      ? "🎉 Currently Active" 
+                    {currentSubscription?.subscriptionId === freePlan._id
+                      ? "🎉 Currently Active"
                       : "Free Plan"}
                   </button>
                 </div>
@@ -406,26 +329,36 @@ const handleSubscription = async (plan, e) => {
           {plans.map((plan) => {
             const config = getPlanConfig(plan.name);
             const IconComponent = config.icon;
-            const isCurrentPlan = currentSubscription?.subscriptionId === plan._id;
-            const isButtonLoading = isSubscribing && activeButtonId === plan._id;
+            const isCurrentPlan =
+              currentSubscription?.subscriptionId === plan._id;
+            const isButtonLoading =
+              isSubscribing && activeButtonId === plan._id;
 
             return (
               <div key={plan._id} className="relative">
-                <div className={`bg-white rounded-2xl p-8 shadow-2xl border border-rose-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
-                  !plan.isActive ? "opacity-70" : ""
-                }`}>
+                <div
+                  className={`bg-white rounded-2xl p-8 shadow-2xl border border-rose-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
+                    !plan.isActive ? "opacity-70" : ""
+                  }`}
+                >
                   <div className="relative z-10 pt-6">
                     <div className="text-center mb-8">
                       <div className="flex justify-center mb-4">
-                        <div className={`w-16 h-16 ${config.bgColor} rounded-full flex items-center justify-center`}>
-                          <IconComponent className={`w-8 h-8 ${config.textColor}`} />
+                        <div
+                          className={`w-16 h-16 ${config.bgColor} rounded-full flex items-center justify-center`}
+                        >
+                          <IconComponent
+                            className={`w-8 h-8 ${config.textColor}`}
+                          />
                         </div>
                       </div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2">
                         {config.emoji} {plan.name}
                       </h3>
                       <div className="flex items-center justify-center space-x-2">
-                        <span className={`text-4xl font-bold ${config.textColor}`}>
+                        <span
+                          className={`text-4xl font-bold ${config.textColor}`}
+                        >
                           ₹{formatPrice(plan.price)}
                         </span>
                         <span className="text-gray-600">
@@ -437,31 +370,45 @@ const handleSubscription = async (plan, e) => {
                     <div className="space-y-4 mb-8">
                       {plan.features?.map((feature, idx) => (
                         <div key={idx} className="flex items-center space-x-3">
-                          <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${config.bgColor}`}>
+                          <div
+                            className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${config.bgColor}`}
+                          >
                             <Check className={`w-4 h-4 ${config.textColor}`} />
                           </div>
-                          <span className="text-gray-900 font-medium">{feature}</span>
+                          <span className="text-gray-900 font-medium">
+                            {feature}
+                          </span>
                         </div>
                       ))}
                     </div>
 
                     <div className="mb-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        plan.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                      }`}>
-                        <div className={`w-2 h-2 rounded-full mr-2 ${
-                          plan.isActive ? "bg-green-500" : "bg-red-500"
-                        }`}></div>
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                          plan.isActive
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full mr-2 ${
+                            plan.isActive ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        ></div>
                         {plan.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
 
                     <button
                       onClick={(e) => handleSubscription(plan, e)}
-                      disabled={!plan.isActive || isButtonLoading || isCurrentPlan}
-                      className={`w-full bg-gradient-to-r ${config.color} text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all duration-200 shadow-lg ${
-                        !plan.isActive || isButtonLoading || isCurrentPlan 
-                          ? "opacity-50 cursor-not-allowed" 
+                      disabled={
+                        !plan.isActive || isButtonLoading || isCurrentPlan
+                      }
+                      className={`w-full bg-gradient-to-r ${
+                        config.color
+                      } text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all duration-200 shadow-lg ${
+                        !plan.isActive || isButtonLoading || isCurrentPlan
+                          ? "opacity-50 cursor-not-allowed"
                           : ""
                       }`}
                     >
@@ -491,7 +438,8 @@ const handleSubscription = async (plan, e) => {
                 Can I change my subscription plan?
               </h3>
               <p className="text-gray-600">
-                Yes! When you subscribe to a new plan, your current subscription will be automatically replaced.
+                Yes! When you subscribe to a new plan, your current subscription
+                will be automatically replaced.
               </p>
             </div>
             <div className="border-b border-gray-200 pb-4">
@@ -499,7 +447,8 @@ const handleSubscription = async (plan, e) => {
                 Is my payment information secure?
               </h3>
               <p className="text-gray-600">
-                Absolutely! We use industry-standard encryption and work with trusted payment providers.
+                Absolutely! We use industry-standard encryption and work with
+                trusted payment providers.
               </p>
             </div>
             <div>
@@ -507,7 +456,8 @@ const handleSubscription = async (plan, e) => {
                 What happens when I change plans?
               </h3>
               <p className="text-gray-600">
-                Your new plan will take effect immediately, replacing your current subscription.
+                Your new plan will take effect immediately, replacing your
+                current subscription.
               </p>
             </div>
           </div>

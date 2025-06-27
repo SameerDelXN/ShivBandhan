@@ -24,67 +24,7 @@ export default function MyProfilePage() {
   ]);
   
 console.log("User Data", user)
-  const [formData, setFormData] = useState({
-    name: '',
-    dob: '',
-    height: '', 
-    gender: '',
-    maritalStatus: '',
-    motherTongue: '',
-    currentCity: '',
-    weight: '',
-    religion: '',
-    caste: '',
-    subCaste: '',
-    gothra: '',
-    education: '',
-    fieldOfStudy: '',
-    college: '',
-    occupation: '',
-    company: '',
-    income: '',
-    email: '',
-    bloodGroup: '',
-    complexion: '',
-    wearsLens: false,
-    permanentAddress: '',
-    userId: user?.id || '',
-    verificationStatus:"",
-    
-    // Relative Info
-    fatherName: '',
-    parentResidenceCity: '',
-    mother: '',
-    brothers: '',
-    marriedBrothers: '',
-    sisters: '',
-    marriedSisters: '',
-    nativeDistrict: '',
-    nativeCity: '',
-    familyWealth: '',
-    relativeSurname: '',
-    parentOccupation: '',
-    mamaSurname: '',
-    // Horoscope Info
-    rashi: '',
-    nakshira: '',
-    charan: '',
-    gan: '',
-    nadi: '',
-    mangal: '',
-    birthPlace: '',
-    birthTime: '',
-    gotraDevak: '',
-    // Expectations
-    profilePhoto:"",
-    expectedCaste: '',
-    preferredCity: '',
-    expectedAgeDifference: '',
-    expectedEducation: '',
-    divorcee: false,
-    expectedHeight: '',
-    expectedIncome: ''
-  });
+  const [formData, setFormData] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -93,7 +33,7 @@ console.log("User Data", user)
     };
     
     loadData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (user?.user?.id) {
@@ -108,6 +48,7 @@ console.log("User Data", user)
  
     
   const calculateCompletion = (section) => {
+    if (!formData) return 0; 
     const fields = {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
       religious: ['religion', 'caste', 'subCaste', 'gothra'],
@@ -129,43 +70,43 @@ console.log("User Data", user)
     return Math.round((filledFields / sectionFields.length) * 100);
   };
 
-  const getProfileSections = () => {
+  const getProfileSections = (formData) => {
     return [
       { 
         id: 'basic', 
         label: 'Basic Information', 
         icon: User,
-        completion: calculateCompletion('basic')
+        completion: calculateCompletion('basic',formData)
       },
       { 
         id: 'religious', 
         label: 'Religious & Community', 
         icon: Star,
-        completion: calculateCompletion('religious') 
+        completion: calculateCompletion('religious',formData) 
       },
       { 
         id: 'education', 
         label: 'Education & Profession', 
         icon: GraduationCap,
-        completion: calculateCompletion('education') 
+        completion: calculateCompletion('education',formData) 
       },
        { 
         id: 'relative', 
         label: 'Relative Info', 
         icon: Users,
-        completion: calculateCompletion('relative') 
+        completion: calculateCompletion('relative',formData) 
       },
       { 
         id: 'horoscope', 
         label: 'Horoscope Info', 
         icon: Sparkles,
-        completion: calculateCompletion('horoscope') 
+        completion: calculateCompletion('horoscope',formData) 
       },
       { 
         id: 'expectations', 
         label: 'Expectations', 
         icon: Heart,
-        completion: calculateCompletion('expectations') 
+        completion: calculateCompletion('expectations',formData) 
       },
     ];
   };
@@ -186,7 +127,7 @@ console.log("User Data", user)
       setVerificationStatus(data.verificationStatus || 'Unverified');
      
 
-      setFormData({
+      const InitailFormData = {
         name: data.name || '',
         dob: data.dob || '',
         height: data.height || '',
@@ -246,17 +187,17 @@ profilePhoto:data?.profilePhoto || "",
         divorcee: data.divorcee || false,
         expectedHeight: data.expectedHeight || '',
         expectedIncome: data.expectedIncome || '',
-      });
-
+      };
+      setFormData(InitailFormData)
       // Calculate initial profile completion
-      const sections = getProfileSections();
+      const sections = getProfileSections(InitailFormData);
       const totalCompletion = sections.reduce(
         (sum, section) => sum + section.completion, 
         0
       ) / sections.length;
       
       setProfileCompletion(Math.round(totalCompletion));
-
+      setIsLoaded(true);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -417,7 +358,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input 
                     type="text"
-                    value={formData.name}
+                    value={formData?.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder='Enter your full name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -461,7 +402,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
                   <input 
                     type="text"
-                    value={formData.weight}
+                    value={formData?.weight}
                     onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                     placeholder="Enter your weight"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -470,7 +411,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                   <select
-                    value={formData.gender}
+                    value={formData?.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -483,7 +424,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Blood Group</label>
                 <select
-                  value={formData.bloodGroup}
+                  value={formData?.bloodGroup}
                   onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
@@ -502,7 +443,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Complexion</label>
                 <input
                   type="text"
-                  value={formData.complexion}
+                  value={formData?.complexion}
                   onChange={(e) => setFormData({ ...formData, complexion: e.target.value })}
                   placeholder="E.g. Fair, Wheatish, etc."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -513,7 +454,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
                   <select
-                    value={formData.maritalStatus}
+                    value={formData?.maritalStatus}
                     onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -526,7 +467,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Mother Tongue</label>
                   <select
-                    value={formData.motherTongue}
+                    value={formData?.motherTongue}
                     onChange={(e) => setFormData({ ...formData, motherTongue: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -540,7 +481,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Current City</label>
                   <input 
                     type="text"
-                    value={formData.currentCity}
+                    value={formData?.currentCity}
                     onChange={(e) => setFormData({ ...formData, currentCity: e.target.value })}
                     placeholder="Enter your city"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -550,7 +491,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <input 
                   type="email"
-                  value={formData.email}
+                  value={formData?.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter your email"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -560,7 +501,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Permanent Address</label>
                   <input 
                     type="text"
-                    value={formData.permanentAddress}
+                    value={formData?.permanentAddress}
                     onChange={(e) => setFormData({ ...formData, permanentAddress: e.target.value })}
                     placeholder='Enter your permanent address'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -569,7 +510,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Wears Lens</label>
                 <select
-                  value={formData.wearsLens ? 'Yes' : 'No'}
+                  value={formData?.wearsLens ? 'Yes' : 'No'}
                   onChange={(e) => setFormData({ ...formData, wearsLens: e.target.value === 'Yes' })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
@@ -590,7 +531,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Religion</label>
                   <select
-                    value={formData.religion}
+                    value={formData?.religion}
                     onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -605,7 +546,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Caste</label>
                   <input 
                     type="text"
-                    value={formData.caste}
+                    value={formData?.caste}
                     onChange={(e) => setFormData({ ...formData, caste: e.target.value })}
                     placeholder="Enter your caste" 
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -617,7 +558,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Sub-caste</label>
                   <input
                     type="text"
-                    value={formData.subCaste || ""}
+                    value={formData?.subCaste || ""}
                     onChange={(e) => setFormData({ ...formData, subCaste: e.target.value })}
                     placeholder="Enter your sub-caste"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -627,7 +568,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gothra</label>
                   <input 
                     type="text"
-                    value={formData.gothra}
+                    value={formData?.gothra}
                     onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
                     placeholder="Enter your gothra" 
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -646,7 +587,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Highest Education</label>
                   <select
-                    value={formData.education}
+                    value={formData?.education}
                     onChange={(e) => setFormData({ ...formData, education: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -660,7 +601,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
                   <input 
                     type="text"
-                    value={formData.fieldOfStudy}
+                    value={formData?.fieldOfStudy}
                     onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
                     placeholder='Enter your study field'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -670,7 +611,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">College/University</label>
                   <input 
                     type="text"
-                    value={formData.college}
+                    value={formData?.college}
                     onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                     placeholder='Enter your college name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -682,7 +623,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
                   <input 
                     type="text"
-                    value={formData.occupation}
+                    value={formData?.occupation}
                     onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
                     placeholder='Enter your occupation'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -692,7 +633,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
                   <input 
                     type="text"
-                    value={formData.company}
+                    value={formData?.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     placeholder='Enter your company name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -701,7 +642,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Annual Income</label>
                   <select
-                    value={formData.income}
+                    value={formData?.income}
                     onChange={(e) => setFormData({ ...formData, income: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -1186,9 +1127,9 @@ case 'relative':
         );
     }
   };
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+   !isLoaded ? <div>loading</div> : <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Profile Header */}
@@ -1243,7 +1184,7 @@ case 'relative':
 </div>
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
-                      <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
+                      <h1 className="text-2xl font-bold text-gray-900">{formData?.name || 'Your Name'}</h1>
                       {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
                     </div>
                     <div className="space-y-1 text-gray-600">
@@ -1254,18 +1195,18 @@ case 'relative':
                             {new Date().getFullYear() - new Date(formData.dob).getFullYear()} years
                           </span>
                         )} */}
-                        {formData.height && <span>{formData.height}</span>}
-                        {formData.religion && <span>{formData.religion}</span>}
+                        {formData?.height && <span>{formData?.height}</span>}
+                        {formData?.religion && <span>{formData?.religion}</span>}
                       </div>
-                      {formData.currentCity && (
+                      {formData?.currentCity && (
                         <div className="flex items-center text-sm">
                           <MapPin className="w-4 h-4 mr-1" />
-                          {formData.currentCity}
+                          {formData?.currentCity}
                         </div>
                       )}
                     </div>
                     <div className="flex items-center mt-2">
-                      <VerificationBadge status={formData.verificationStatus} />
+                      <VerificationBadge status={formData?.verificationStatus} />
                     </div>
                   </div>
                 </div>
