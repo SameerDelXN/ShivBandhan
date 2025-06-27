@@ -145,6 +145,23 @@ export default function InterestsPage() {
     }
   };
 
+  const formatName = (name, type, status) => {
+    if (!name) return '';
+    // Always show full name in received section
+    if (type === 'received') return name;
+    // For sent section, show full name only if accepted
+    if (status === 'accepted') return name;
+    
+    // Split name into parts
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) return '****'; // If only one name
+    
+    // Mask first name and show last name
+    const maskedFirstName = '****';
+    const lastName = nameParts[nameParts.length - 1];
+    return `${maskedFirstName} ${lastName}`;
+  };
+
   const InterestCard = ({ person, type }) => {
     const profile = type === 'sent' ? person.receiver : person.sender;
     const profileImage = profile.profilePhoto || profile.image;

@@ -94,8 +94,16 @@
                 |-- route.js
                 |-- [id]
                     |-- route.js
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
             |-- upload
                 |-- route.js
+>>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
+=======
+            |-- upload
+                |-- route.js
+>>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
             |-- users
                 |-- delete
                     |-- route.js
@@ -172,7 +180,10 @@
         |-- UserTestimonials.jsx
         |-- WhyChooseUs.jsx
     |-- context
+<<<<<<< HEAD
+=======
         |-- AuthContext.jsx
+>>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
         |-- SessionContext.jsx
     |-- layouts
         |-- UserLayout.jsx
@@ -183,7 +194,10 @@
         |-- otpStore.js
     |-- models
         |-- admin.js
+<<<<<<< HEAD
+=======
         |-- Employee.js
+>>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
         |-- Interest.js
         |-- Subscription.js
         |-- User.js

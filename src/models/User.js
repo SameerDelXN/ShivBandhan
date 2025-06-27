@@ -41,6 +41,12 @@ const UserSchema = new mongoose.Schema({
     enum: ["Unverified", "Pending", "Verified", "Rejected"],
     default: "Unverified",
   },
+  profileCompletion: { 
+  type: Number, 
+  default: 0,
+  min: 0,
+  max: 100 
+},
   // Profile information
   gender: {
     type: String,

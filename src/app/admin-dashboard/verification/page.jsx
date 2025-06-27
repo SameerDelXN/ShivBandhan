@@ -6,47 +6,52 @@ export default function Verification() {
   const [verifiedProfiles, setVerifiedProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
 
+  // Fetch profiles from API
   useEffect(() => {
-    setVerifiedProfiles([
-      {
-        id: 101,
-        name: "Sneha Gupta",
-        email: "sneha@example.com",
-        age: 28,
-        gender: "Female",
-        location: "Pune",
-        photo: "https://randomuser.me/api/portraits/women/62.jpg",
-        profileCompletion: 100,
-      },
-      {
-        id: 102,
-        name: "Arjun Mehta",
-        email: "arjun@example.com",
-        age: 30,
-        gender: "Male",
-        location: "Mumbai",
-        photo: "https://randomuser.me/api/portraits/men/46.jpg",
-        profileCompletion: 100,
-      },
-    ]);
+    const fetchProfiles = async () => {
+      try {
+        const res = await fetch("/api/admin/pendingProfile");
+        const data = await res.json();
+        if (res.ok) {
+          setVerifiedProfiles(data.users);
+        } else {
+          console.error("Fetch failed:", data.error);
+        }
+      } catch (err) {
+        console.error("Error fetching profiles:", err);
+      }
+    };
+
+    fetchProfiles();
   }, []);
 
-  const handleVerification = (id, action) => {
-    setVerifiedProfiles((prev) => prev.filter((u) => u.id !== id));
-    setSelectedProfile(null);
-    alert(`Profile ${action === "accept" ? "accepted" : "rejected"}`);
-  };
+  // Accept or Reject verification
+  const handleVerification = async (userId, action) => {
+  try {
+    const res = await fetch('/api/admin/verifyProfile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, action }),
+    });
 
+    if (res.ok) {
+      setPendingProfiles(prev => prev.filter(user => user._id !== userId));
+      alert(`User ${action.toLowerCase()} successfully!`);
+    }
+  } catch (error) {
+    alert('Failed to update verification status');
+  }
+};
   return (
     <div className="space-y-6 relative">
       {verifiedProfiles.length === 0 && (
         <p className="text-gray-500">No profiles ready for verification.</p>
       )}
 
-      {/* Profile Cards (unchanged layout) */}
+      {/* Profile Cards */}
       {verifiedProfiles.map((u) => (
         <div
-          key={u.id}
+          key={u._id}
           className="bg-white shadow-lg rounded-xl p-6 flex flex-col md:flex-row items-center gap-4 relative"
         >
           <div
@@ -54,7 +59,7 @@ export default function Verification() {
             onClick={() => setSelectedProfile(u)}
           >
             <img
-              src={u.photo}
+              src={u.photo || "/images/default-user.jpg"}
               alt={u.name}
               className="w-24 h-24 rounded-full object-cover border-2 border-rose-400"
             />
@@ -72,13 +77,13 @@ export default function Verification() {
 
           <div className="flex space-x-3 mt-4 md:mt-0">
             <button
-              onClick={() => handleVerification(u.id, "accept")}
+              onClick={() => handleVerification(u._id, "Verified")}
               className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
             >
               <CheckCircle size={18} /> Accept
             </button>
             <button
-              onClick={() => handleVerification(u.id, "reject")}
+              onClick={() => handleVerification(u._id, "Rejected")}
               className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
             >
               <XCircle size={18} /> Reject
@@ -100,7 +105,7 @@ export default function Verification() {
 
             <div className="text-center">
               <img
-                src={selectedProfile.photo}
+                src={selectedProfile.photo || "/images/default-user.jpg"}
                 alt={selectedProfile.name}
                 className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-rose-500"
               />
@@ -111,11 +116,22 @@ export default function Verification() {
             </div>
 
             <div className="mt-4 text-sm text-gray-700 space-y-1">
-              <p><strong>User ID:</strong> {selectedProfile.id}</p>
-              <p><strong>Age:</strong> {selectedProfile.age}</p>
-              <p><strong>Gender:</strong> {selectedProfile.gender}</p>
-              <p><strong>Location:</strong> {selectedProfile.location}</p>
-              <p><strong>Profile Completion:</strong> {selectedProfile.profileCompletion}%</p>
+              <p>
+                <strong>User ID:</strong> {selectedProfile._id}
+              </p>
+              <p>
+                <strong>Age:</strong> {selectedProfile.age}
+              </p>
+              <p>
+                <strong>Gender:</strong> {selectedProfile.gender}
+              </p>
+              <p>
+                <strong>Location:</strong> {selectedProfile.location}
+              </p>
+              <p>
+                <strong>Profile Completion:</strong>{" "}
+                {selectedProfile.profileCompletion}%
+              </p>
             </div>
           </div>
         </div>

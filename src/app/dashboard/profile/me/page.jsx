@@ -367,26 +367,37 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                   <input
-  type="date"
-  value={formatDateToYYYYMMDD(formData?.dob)}
-  onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-/>
+                   type="date"
+                   value={formatDateToYYYYMMDD(formData.dob)}
+                   onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                   />
 
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
-                  <select
-                    value={formData?.height}
-                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  >
-                    <option value="">Select Height</option>
-                    <option>5'4" (162 cm)</option>
-                    <option>5'3" (160 cm)</option>
-                    <option>5'5" (165 cm)</option>
+               <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
+                 <select
+                  value={formData.height}
+                  onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                 >
+                 <option value="">Select Height</option>
+                   {Array.from({ length: 24 }, (_, i) => {
+                   // Starting from 4'6" (138cm) to 6'5" (196cm)
+                     const feet = 4 + Math.floor((i + 6) / 12);
+                      const inches = (i + 6) % 12;
+                      const cm = Math.round((feet * 30.48) + (inches * 2.54));
+                      return (
+                          <option 
+                             key={i} 
+                              value={`${feet}'${inches}" (${cm} cm)`}
+                           >
+                           {feet}'{inches}" ({cm} cm)
+                            </option>
+                            );
+                        })}
                   </select>
-                </div>
+                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
                   <input 

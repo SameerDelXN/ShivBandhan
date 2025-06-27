@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, Shield, RotateCcw, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/context/SessionContext';
-
+import { useSession } from '@/context/SessionContext'
 export default function MatrimonialLogin() {
   const router = useRouter()
   const [step, setStep] = useState(1); // 1: Phone Number, 2: OTP
@@ -16,14 +15,20 @@ export default function MatrimonialLogin() {
   const [isLoaded, setIsLoaded] = useState(false);
   const { login, user } = useSession()
 
+
+
+
   useEffect(() => {
     setIsLoaded(true);
     
+
+
     // Check if user is already logged in
     if (user) {
       router.push(`/dashboard`);
     }
   }, [user, router]);
+
 
   // Resend timer countdown
   useEffect(() => {
@@ -173,12 +178,13 @@ export default function MatrimonialLogin() {
     return phone.replace(/(\d{5})(\d{5})/, '$1 $2');
   };
 
+
+
   // If user exists and component is loaded, don't render the login form
   if (user && isLoaded) {
     return null; // or a loading spinner
   }
-
-  return (
+return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center px-4 py-8">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
