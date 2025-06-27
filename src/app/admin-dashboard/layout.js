@@ -13,7 +13,7 @@ import {
 import { FaRupeeSign } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
-
+//sample
 export default function AdminLayout({ children }) {
   const [activeTab, setActiveTab] = useState('');
   const Router = useRouter();
