@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
-import { verifyToken } from '@/lib/auth'; // Adjust path if needed
+import { verifyToken } from '@/lib/auth'; 
 
 // Accept/Reject user profile
 export async function POST(req) {

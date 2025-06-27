@@ -6,45 +6,35 @@ export default function Verification() {
   const [verifiedProfiles, setVerifiedProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
 
-  // Fetch profiles from API
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const res = await fetch("/api/admin/pending-profiles");
-        const data = await res.json();
-        if (res.ok) {
-          setVerifiedProfiles(data.users);
-        } else {
-          console.error("Fetch failed:", data.error);
-        }
-      } catch (err) {
-        console.error("Error fetching profiles:", err);
-      }
-    };
-
-    fetchProfiles();
+    setVerifiedProfiles([
+      {
+        id: 101,
+        name: "Sneha Gupta",
+        email: "sneha@example.com",
+        age: 28,
+        gender: "Female",
+        location: "Pune",
+        photo: "https://randomuser.me/api/portraits/women/62.jpg",
+        profileCompletion: 100,
+      },
+      {
+        id: 102,
+        name: "Arjun Mehta",
+        email: "arjun@example.com",
+        age: 30,
+        gender: "Male",
+        location: "Mumbai",
+        photo: "https://randomuser.me/api/portraits/men/46.jpg",
+        profileCompletion: 100,
+      },
+    ]);
   }, []);
 
-  // Accept or Reject verification
-  const handleVerification = async (id, action) => {
-    try {
-      const res = await fetch("/api/admin/verify-profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: id, action }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setVerifiedProfiles((prev) => prev.filter((u) => u._id !== id));
-        setSelectedProfile(null);
-        alert(data.message);
-      } else {
-        alert(data.error || "Failed to update verification status.");
-      }
-    } catch (err) {
-      console.error("Verification error:", err);
-      alert("Server error");
-    }
+  const handleVerification = (id, action) => {
+    setVerifiedProfiles((prev) => prev.filter((u) => u.id !== id));
+    setSelectedProfile(null);
+    alert(`Profile ${action === "accept" ? "accepted" : "rejected"}`);
   };
 
   return (
@@ -53,10 +43,10 @@ export default function Verification() {
         <p className="text-gray-500">No profiles ready for verification.</p>
       )}
 
-      {/* Profile Cards */}
+      {/* Profile Cards (unchanged layout) */}
       {verifiedProfiles.map((u) => (
         <div
-          key={u._id}
+          key={u.id}
           className="bg-white shadow-lg rounded-xl p-6 flex flex-col md:flex-row items-center gap-4 relative"
         >
           <div
@@ -64,7 +54,7 @@ export default function Verification() {
             onClick={() => setSelectedProfile(u)}
           >
             <img
-              src={u.photo || "/images/default-user.jpg"}
+              src={u.photo}
               alt={u.name}
               className="w-24 h-24 rounded-full object-cover border-2 border-rose-400"
             />
@@ -82,13 +72,13 @@ export default function Verification() {
 
           <div className="flex space-x-3 mt-4 md:mt-0">
             <button
-              onClick={() => handleVerification(u._id, "Verified")}
+              onClick={() => handleVerification(u.id, "accept")}
               className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
             >
               <CheckCircle size={18} /> Accept
             </button>
             <button
-              onClick={() => handleVerification(u._id, "Rejected")}
+              onClick={() => handleVerification(u.id, "reject")}
               className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg flex items-center gap-2"
             >
               <XCircle size={18} /> Reject
@@ -110,7 +100,7 @@ export default function Verification() {
 
             <div className="text-center">
               <img
-                src={selectedProfile.photo || "/images/default-user.jpg"}
+                src={selectedProfile.photo}
                 alt={selectedProfile.name}
                 className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-rose-500"
               />
@@ -121,22 +111,11 @@ export default function Verification() {
             </div>
 
             <div className="mt-4 text-sm text-gray-700 space-y-1">
-              <p>
-                <strong>User ID:</strong> {selectedProfile._id}
-              </p>
-              <p>
-                <strong>Age:</strong> {selectedProfile.age}
-              </p>
-              <p>
-                <strong>Gender:</strong> {selectedProfile.gender}
-              </p>
-              <p>
-                <strong>Location:</strong> {selectedProfile.location}
-              </p>
-              <p>
-                <strong>Profile Completion:</strong>{" "}
-                {selectedProfile.profileCompletion}%
-              </p>
+              <p><strong>User ID:</strong> {selectedProfile.id}</p>
+              <p><strong>Age:</strong> {selectedProfile.age}</p>
+              <p><strong>Gender:</strong> {selectedProfile.gender}</p>
+              <p><strong>Location:</strong> {selectedProfile.location}</p>
+              <p><strong>Profile Completion:</strong> {selectedProfile.profileCompletion}%</p>
             </div>
           </div>
         </div>

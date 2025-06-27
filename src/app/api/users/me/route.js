@@ -67,6 +67,10 @@ export async function GET(request) {
   occupation: user.occupation,
   company: user.company,
   income: user.income,
+<<<<<<< HEAD
+=======
+  profilePhoto:user.profilePhoto,
+>>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
   
   // Location
   currentCity: user.currentCity,

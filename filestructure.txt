@@ -88,6 +88,11 @@
                 |-- route.js
                 |-- [id]
                     |-- route.js
+<<<<<<< HEAD
+=======
+            |-- upload
+                |-- route.js
+>>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
             |-- users
                 |-- delete
                     |-- route.js
