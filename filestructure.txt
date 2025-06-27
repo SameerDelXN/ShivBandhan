@@ -59,10 +59,13 @@
                 |-- page.jsx
             |-- verification
                 |-- page.jsx
-                |-- verification.jsx
         |-- api
             |-- admin
                 |-- login
+                    |-- route.js
+                |-- pendingProfile
+                    |-- route.js
+                |-- verifyProfile
                     |-- route.js
             |-- auth
                 |-- route.js
@@ -94,16 +97,8 @@
                 |-- route.js
                 |-- [id]
                     |-- route.js
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
             |-- upload
                 |-- route.js
->>>>>>> 44e97e46939fe1b3f4251ad37b4bcdc1bdce2288
-=======
-            |-- upload
-                |-- route.js
->>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
             |-- users
                 |-- delete
                     |-- route.js
@@ -122,6 +117,8 @@
                 |-- update
                     |-- route.js
                 |-- update-plan
+                    |-- route.js
+                |-- verify-request
                     |-- route.js
                 |-- [id]
                     |-- route.js
@@ -180,10 +177,7 @@
         |-- UserTestimonials.jsx
         |-- WhyChooseUs.jsx
     |-- context
-<<<<<<< HEAD
-=======
         |-- AuthContext.jsx
->>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
         |-- SessionContext.jsx
     |-- layouts
         |-- UserLayout.jsx
@@ -194,10 +188,7 @@
         |-- otpStore.js
     |-- models
         |-- admin.js
-<<<<<<< HEAD
-=======
         |-- Employee.js
->>>>>>> 232723bb36127fb79efb83058e3eb845806d958c
         |-- Interest.js
         |-- Subscription.js
         |-- User.js
