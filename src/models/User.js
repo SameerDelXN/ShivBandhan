@@ -41,6 +41,12 @@ const UserSchema = new mongoose.Schema({
     enum: ["Unverified", "Pending", "Verified", "Rejected"],
     default: "Unverified",
   },
+  profileCompletion: { 
+  type: Number, 
+  default: 0,
+  min: 0,
+  max: 100 
+},
   // Profile information
   gender: {
     type: String,
@@ -159,11 +165,10 @@ const UserSchema = new mongoose.Schema({
   },
 
   // Subscription
-  subscription: {
+ subscription: {
   plan: {
     type: String,
-   
-    default: null
+    default: 'free'
   },
   isSubscribed: {
     type: Boolean,

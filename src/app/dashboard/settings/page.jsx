@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 export default function SettingsLayout() {
-  const { logout } = useSession(); 
+  const { logout,user } = useSession(); 
   const [currentView, setCurrentView] = useState('account');
   const [isLoaded, setIsLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -94,35 +94,14 @@ export default function SettingsLayout() {
 };
   const navigationItems = [
     { id: 'account', label: 'Account', icon: User },
-    { id: 'privacy', label: 'Privacy', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'delete-account', label: 'Delete Account', icon: Trash2 },
+   
     { id: 'log-out', label: 'Log Out', icon: LogOut, action: () => setShowLogoutModal(true) }
   ];
 
   const renderAccountSettings = () => (
     <div className="space-y-6">
       {/* Email Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
-        <div className="flex items-center space-x-3 mb-4">
-          <Mail className="w-5 h-5 text-rose-500" />
-          <h3 className="text-lg font-bold text-gray-900">Email Address</h3>
-        </div>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Current Email</label>
-            <input
-              type="email"
-              value={accountData.email}
-              onChange={(e) => setAccountData({...accountData, email: e.target.value})}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            />
-          </div>
-          <button className="px-4 py-2 bg-rose-100 text-rose-700 rounded-lg hover:bg-rose-200 transition-colors text-sm font-medium">
-            Verify Email
-          </button>
-        </div>
-      </div>
+    
 
       {/* Phone Section */}
       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
@@ -135,82 +114,16 @@ export default function SettingsLayout() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
               type="tel"
-              value={accountData.phone}
-              onChange={(e) => setAccountData({...accountData, phone: e.target.value})}
+              value={user?.phone}
+              disabled
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
             />
           </div>
-          <button className="px-4 py-2 bg-rose-100 text-rose-700 rounded-lg hover:bg-rose-200 transition-colors text-sm font-medium">
-            Verify with OTP
-          </button>
+        
         </div>
       </div>
 
-      {/* Password Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
-        <div className="flex items-center space-x-3 mb-4">
-          <Lock className="w-5 h-5 text-rose-500" />
-          <h3 className="text-lg font-bold text-gray-900">Change Password</h3>
-        </div>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={accountData.currentPassword}
-                onChange={(e) => setAccountData({...accountData, currentPassword: e.target.value})}
-                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-            <div className="relative">
-              <input
-                type={showNewPassword ? "text" : "password"}
-                value={accountData.newPassword}
-                onChange={(e) => setAccountData({...accountData, newPassword: e.target.value})}
-                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-              <button
-                type="button"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-              >
-                {showNewPassword ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                value={accountData.confirmPassword}
-                onChange={(e) => setAccountData({...accountData, confirmPassword: e.target.value})}
-                className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2"
-              >
-                {showConfirmPassword ? <EyeOff className="w-4 h-4 text-gray-400" /> : <Eye className="w-4 h-4 text-gray-400" />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+     
     </div>
   );
 
@@ -434,75 +347,68 @@ export default function SettingsLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+  <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
-        
         {/* Header */}
-        <div className={`transform transition-all duration-1000 mb-6 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
+        <div className={`transform transition-all duration-1000 mb-4 sm:mb-6 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-rose-100/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
             <div className="relative z-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <button className="p-2 hover:bg-rose-50 rounded-lg transition-colors">
-                    <ArrowLeft className="w-6 h-6 text-gray-600" />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <button className="p-1 sm:p-2 hover:bg-rose-50 rounded-lg transition-colors">
+                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
                   </button>
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">⚙️ Settings</h1>
-                    <p className="text-gray-600">Manage your account preferences and privacy</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">⚙️ Settings</h1>
+                    <p className="text-sm sm:text-base text-gray-600">Manage your account preferences and privacy</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={handleSave}
-                    className="px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors font-medium flex items-center space-x-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Save Changes</span>
-                  </button>
-                </div>
+               
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Navigation Sidebar */}
-          <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-6">
-              <h2 className="font-bold text-gray-900 mb-4">Navigation</h2>
-             <nav className="space-y-2">
-  {navigationItems.map((item) => {
-    const Icon = item.icon;
-    return (
-      <button
-        key={item.id}
-        onClick={() => {
-          if (item.action) {
-            item.action(); // This will handle the logout modal
-          } else {
-            setCurrentView(item.id); // This handles other navigation items
-          }
-        }}
-        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-left ${
-          currentView === item.id && !item.action
-            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-            : 'text-gray-600 hover:bg-gray-50'
-        }`}
-      >
-        <Icon className="w-5 h-5" />
-        <span className="font-medium">{item.label}</span>
-      </button>
-    );
-  })}
-</nav>
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+          {/* Navigation Sidebar - Horizontal scroll on mobile */}
+          <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} lg:w-64`}>
+            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+              <h2 className="font-bold text-gray-900 mb-3 sm:mb-4">Navigation</h2>
+              <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+                {navigationItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        if (item.action) {
+                          item.action();
+                        } else {
+                          setCurrentView(item.id);
+                        }
+                      }}
+                      className={`min-w-max lg:w-full flex items-center space-x-3 px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-colors text-left ${
+                        currentView === item.id && !item.action
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="font-medium text-sm sm:text-base">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className={`lg:col-span-3 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            {renderContent()}
+          <div className={`flex-1 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+              {renderContent()}
+            </div>
           </div>
         </div>
       </div>
@@ -510,13 +416,13 @@ export default function SettingsLayout() {
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full">
-            <div className="flex items-center space-x-3 mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-500" />
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full">
+            <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
               <h3 className="text-lg font-bold text-gray-900">Confirm Account Deletion</h3>
             </div>
             
-            <p className="text-gray-600 mb-4">
+            <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
               This action cannot be undone. To confirm, please type <strong>DELETE</strong> in the box below.
             </p>
             
@@ -525,64 +431,55 @@ export default function SettingsLayout() {
               value={deleteConfirmation}
               onChange={(e) => setDeleteConfirmation(e.target.value)}
               placeholder="Type DELETE to confirm"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent mb-4"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent mb-3 sm:mb-4 text-sm sm:text-base"
             />
             
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleteConfirmation !== 'DELETE'}
-                className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex-1 px-3 py-2 sm:px-4 sm:py-2 rounded-lg transition-colors text-sm sm:text-base ${
                   deleteConfirmation === 'DELETE'
                     ? 'bg-red-600 text-white hover:bg-red-700'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
                 Delete Account
-              </button> 
-              <button
-               onClick={() => {
-                if (confirm("Are you sure you want to log out? You’ll need to log in again to continue.")) {
-                handleLogout();
-                }
-}}
-                className="flex-1 px-4 py-2 rounded-lg bg-rose-500 text-white hover:bg-rose-600 transition-colors"
-              >
-              Logout
-             </button>
+              </button>
             </div>
           </div>
         </div>
       )}
+
       {/* Logout Modal */}
       {showLogoutModal && (
-       <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-600/50">
-         <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-xl border border-rose-100/50">
-            <div className="flex items-center space-x-3 mb-4">
-              <LogOut className="w-6 h-6 text-rose-500" />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full">
+            <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+              <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-rose-500" />
               <h3 className="text-lg font-bold text-gray-900">Confirm Logout</h3>
             </div>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
               Are you sure you want to log out now?
             </p>
             
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => setShowLogoutModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-3 py-2 sm:px-4 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors"
+                className="flex-1 px-3 py-2 sm:px-4 sm:py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors text-sm sm:text-base"
               >
                 Log Out
               </button>

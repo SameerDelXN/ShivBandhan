@@ -20,11 +20,17 @@ import {
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); // Store all users for filtering
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   
+  // Filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [planFilter, setPlanFilter] = useState("All Plans");
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -79,6 +85,7 @@ export default function UserManagement() {
         }));
         
         setUsers(transformedUsers);
+        setAllUsers(transformedUsers); // Store all users for client-side filtering
         setTotalUsers(data.pagination.total);
         setTotalPages(data.pagination.totalPages);
         setCurrentPage(data.pagination.page);
@@ -93,10 +100,47 @@ export default function UserManagement() {
     }
   };
 
+  // Apply filters
+  const applyFilters = () => {
+    let filtered = [...allUsers];
+
+    // Apply search filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(user => 
+        user.name.toLowerCase().includes(term) || 
+        user.email.toLowerCase().includes(term) ||
+        user.phone.toLowerCase().includes(term)
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== "All Status") {
+      filtered = filtered.filter(user => user.status === statusFilter);
+    }
+
+    // Apply plan filter
+    if (planFilter !== "All Plans") {
+      filtered = filtered.filter(user => user.plan === planFilter);
+    }
+
+    setUsers(filtered);
+    setTotalUsers(filtered.length);
+    setTotalPages(Math.ceil(filtered.length / usersPerPage));
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
   // Load users on component mount
   useEffect(() => {
     fetchUsers(currentPage);
   }, [currentPage]);
+
+  // Apply filters when filter criteria change
+  useEffect(() => {
+    if (allUsers.length > 0) {
+      applyFilters();
+    }
+  }, [searchTerm, statusFilter, planFilter]);
 
   // Pagination handlers
   const handlePrevious = () => {
@@ -135,48 +179,45 @@ export default function UserManagement() {
     ));
     setEditingUser(null);
   };
+
   const handleExportUser = async (user) => {
-  try {
-    const response = await fetch('/api/users/generatePdf', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userData: user }),
-    });
+    try {
+      const response = await fetch('/api/users/generatePdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userData: user }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      // Create a download link
-      const link = document.createElement('a');
-      link.href = `data:application/pdf;base64,${data.pdf}`;
-      link.download = data.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } else {
-      console.error('Failed to generate PDF');
+      if (data.success) {
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = `data:application/pdf;base64,${data.pdf}`;
+        link.download = data.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        console.error('Failed to generate PDF');
+      }
+    } catch (error) {
+      console.error('Error exporting user:', error);
     }
-  } catch (error) {
-    console.error('Error exporting user:', error);
-  }
-};
+  };
+
   // Handle ban/suspend user
   const handleBanUser = (userName) => {
     setUsers(users.map(user => 
       user.name === userName ? { ...user, status: "Suspended" } : user
     ));
   };
-  console.log("ShivBandhan")
-  // Handle input change in edit form
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData({
-      ...editFormData,
-      [name]: value
-    });
-  };
+
+  // Get unique statuses and plans for filter dropdowns
+  const uniqueStatuses = ["All Status", ...new Set(allUsers.map(user => user.status))];
+  const uniquePlans = ["All Plans", ...new Set(allUsers.map(user => user.plan))];
 
   // Calculate display range for pagination
   const startIndex = (currentPage - 1) * usersPerPage;
@@ -214,16 +255,6 @@ export default function UserManagement() {
             <h2 className="text-xl font-bold text-gray-900">User Management</h2>
             <p className="text-gray-600">Manage all registered users and their profiles ({totalUsers} total users)</p>
           </div>
-          <div className="flex items-center space-x-3">
-            <button className="bg-rose-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors flex items-center">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Add User
-            </button>
-            <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </button>
-          </div>
         </div>
 
         {/* Filters */}
@@ -234,25 +265,28 @@ export default function UserManagement() {
               type="text"
               placeholder="Search users..."
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Inactive</option>
-            <option>Suspended</option>
-            <option>Pending</option>
+          <select 
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            {uniqueStatuses.map(status => (
+              <option key={status} value={status}>{status}</option>
+            ))}
           </select>
-          <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
-            <option>All Plans</option>
-            <option>Free</option>
-            <option>Premium</option>
-            <option>Gold</option>
+          <select 
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            value={planFilter}
+            onChange={(e) => setPlanFilter(e.target.value)}
+          >
+            {uniquePlans.map(plan => (
+              <option key={plan} value={plan}>{plan}</option>
+            ))}
           </select>
-          <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center">
-            <Filter className="w-4 h-4 mr-2" />
-            More Filters
-          </button>
         </div>
       </div>
 
@@ -271,7 +305,7 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+              {users.slice(startIndex, endIndex).map((user, index) => (
                 <tr key={user.id} className="border-b border-gray-100 hover:bg-rose-50/30 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
@@ -323,22 +357,10 @@ export default function UserManagement() {
                         <Eye className="w-4 h-4" />
                       </button>
                       <button 
-                        className="text-gray-600 hover:text-gray-700 p-1"
-                        onClick={() => handleEditUser(user)}
+                        className="text-green-600 hover:text-green-700 p-1"
+                        onClick={() => handleExportUser(user)}
                       >
-                        <Edit3 className="w-4 h-4" />
-                      </button>
-                       <button 
-      className="text-green-600 hover:text-green-700 p-1"
-      onClick={() => handleExportUser(user)}
-    >
-      <Download className="w-4 h-4" />
-    </button>
-                      <button 
-                        className="text-red-600 hover:text-red-700 p-1"
-                        onClick={() => handleBanUser(user.name)}
-                      >
-                        <Ban className="w-4 h-4" />
+                        <Download className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -404,6 +426,7 @@ export default function UserManagement() {
           </div>
         </div>
       </div>
+
 
       {/* View User Modal */}
       {selectedUser && (

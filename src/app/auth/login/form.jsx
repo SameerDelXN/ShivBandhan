@@ -1,48 +1,58 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, Shield, Lock, Mail } from 'lucide-react'
+import { ArrowRight, Lock, Mail, User } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
+export default function EmployeeLoginForm() {
+  const { login } = useAuth()
 
-export default function AdminLoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState('admin')
+  const [role, setRole] = useState('employee')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
-    try {
-      const res = await fetch('/api/admin-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role })
-      })
+ const handleSubmit = async (e) => {
+  e.preventDefault()
+  setIsLoading(true)
+  setError('')
+  
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, role })
+    })
 
-      if (res.ok) {
-        router.push(role === 'super-admin' ? '/super-admin' : '/admin')
+    const data = await res.json()
+
+    if (res.ok) {
+      login(data.user) // Store user in context
+      // Redirect based on role
+      if (data.role === 'Admin' || data.role === 'Manager') {
+        router.push('/admin-dashboard')
       } else {
-        setError('Invalid credentials. Please try again.')
+        router.push('/admin-dashboard')
       }
-    } catch (err) {
-      setError('Login failed. Please check your connection.')
-    } finally {
-      setIsLoading(false)
+    } else {
+      setError(data.message || 'Invalid credentials. Please try again.')
     }
+  } catch (err) {
+    setError('Login failed. Please check your connection.')
+  } finally {
+    setIsLoading(false)
   }
+}
 
   return (
-    <div className="w-full max-w-md mx-auto p-8 bg-white rounded-2xl border border-gray-100 shadow-xl shadow-red-50 transition-all duration-300 hover:shadow-red-100">
+    <div className="w-full max-w-md mx-auto p-8 bg-white rounded-2xl border border-gray-100 shadow-xl shadow-blue-50 transition-all duration-300 hover:shadow-blue-100">
       {/* Header with animated icon */}
       <div className="text-center mb-8">
-        <div className="w-22 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform ">
-          <img src="/logo.png" alt="" />
+        <div className="w-22 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform ">
+          <User className="h-10 w-10 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Employee Portal</h2>
         <p className="text-gray-500">Select your access level</p>
       </div>
 
@@ -50,6 +60,17 @@ export default function AdminLoginForm() {
         {/* Role selection - modern toggle */}
         <div className="relative bg-gray-50 p-1 rounded-xl">
           <div className="grid grid-cols-2 gap-1">
+            <button
+              type="button"
+              onClick={() => setRole('employee')}
+              className={`relative z-10 py-3 px-4 rounded-lg transition-all duration-300 ${
+                role === 'employee' 
+                  ? 'text-white' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Employee
+            </button>
             <button
               type="button"
               onClick={() => setRole('admin')}
@@ -61,21 +82,10 @@ export default function AdminLoginForm() {
             >
               Admin
             </button>
-            <button
-              type="button"
-              onClick={() => setRole('super-admin')}
-              className={`relative z-10 py-3 px-4 rounded-lg transition-all duration-300 ${
-                role === 'super-admin' 
-                  ? 'text-white' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              Super Admin
-            </button>
           </div>
           <div 
-            className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-gradient-to-r from-red-500 to-red-600 rounded-lg transition-all duration-300 ${
-              role === 'admin' ? 'left-1' : 'left-[calc(50%+0.25rem)]'
+            className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg transition-all duration-300 ${
+              role === 'employee' ? 'left-1' : 'left-[calc(50%+0.25rem)]'
             }`}
           />
         </div>
@@ -93,8 +103,8 @@ export default function AdminLoginForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
-              placeholder="admin@example.com"
+              className="block w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
+              placeholder="employee@example.com"
               required
             />
           </div>
@@ -113,7 +123,7 @@ export default function AdminLoginForm() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
+              className="block w-full pl-10 pr-3 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300"
               placeholder="••••••••"
               required
             />
@@ -131,7 +141,7 @@ export default function AdminLoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full group relative flex justify-center py-3 px-4 border border-transparent rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-medium hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-lg hover:shadow-red-400/30 transition-all duration-300 overflow-hidden"
+          className="w-full group relative flex justify-center py-3 px-4 border border-transparent rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-blue-400/30 transition-all duration-300 overflow-hidden"
         >
           <span className={`relative z-10 flex items-center gap-2 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
             Sign In <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -141,13 +151,13 @@ export default function AdminLoginForm() {
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             </div>
           )}
-          <span className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <span className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </button>
       </form>
 
       {/* Subtle footer */}
       <div className="mt-6 text-center text-sm text-gray-400">
-        Secure admin portal • v2.4.1
+        Secure employee portal • v2.4.1
       </div>
     </div>
   )

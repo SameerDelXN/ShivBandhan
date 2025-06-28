@@ -1,9 +1,28 @@
 "use client";
 import { useState } from "react";
-import { User, Shield, Bell, Trash2, Mail, Phone, Lock, Eye, MessageCircle, Info } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { 
+  User, 
+  Shield, 
+  Bell, 
+  Trash2, 
+  Mail, 
+  Phone, 
+  Lock, 
+  Eye, 
+  MessageCircle, 
+  Info, 
+  LogOut,
+  AlertTriangle,
+  Check,
+  X
+} from "lucide-react";
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('account');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const router = useRouter();
 
   const [accountData, setAccountData] = useState({
     email: "admin@shivbandhan.com",
@@ -30,6 +49,54 @@ export default function AdminSettings() {
   });
 
   const [deleteReason, setDeleteReason] = useState("");
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+
+  const handleAdminLogout = async () => {
+    try {
+      const response = await fetch('/api/admin/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        router.push('/admin-login');
+      } else {
+        throw new Error('Admin logout failed');
+      }
+    } catch (error) {
+      console.error('Admin logout error:', error);
+      // You might want to show an error toast here
+    } finally {
+      setShowLogoutModal(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation === 'DELETE') {
+      try {
+        // Call your admin account deletion API here
+        const response = await fetch('/api/admin/delete-account', {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify({ reason: deleteReason }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          router.push('/admin-login');
+        } else {
+          throw new Error('Account deletion failed');
+        }
+      } catch (error) {
+        console.error('Account deletion error:', error);
+        // You might want to show an error toast here
+      } finally {
+        setShowDeleteModal(false);
+      }
+    }
+  };
 
   const handlePrivacyToggle = (key) => {
     setPrivacySettings(prev => ({
@@ -57,55 +124,50 @@ export default function AdminSettings() {
     </div>
   );
 
+  const navigationItems = [
+    { id: 'account', label: 'Account', icon: User },
+    { id: 'privacy', label: 'Privacy', icon: Shield },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'delete', label: 'Delete\nAccount', icon: Trash2, action: () => setActiveTab('delete') },
+    { id: 'logout', label: 'Log Out', icon: LogOut, action: () => setShowLogoutModal(true) }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Fixed Sidebar - Added flex-shrink-0 to prevent shrinking */}
+      {/* Fixed Sidebar */}
       <div className="flex-shrink-0 w-80 h-screen overflow-y-auto bg-gray-50 p-6 border-r border-gray-200">
         {/* Settings Navigation Card */}
         <div className="bg-white rounded-lg shadow-sm p-4 sticky top-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h3>
           <div className="space-y-2">
-            <button
-              onClick={() => setActiveTab('account')}
-              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
-                activeTab === 'account' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <User size={20} />
-              <span>Account</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('privacy')}
-              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
-                activeTab === 'privacy' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <Shield size={20} />
-              <span>Privacy</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('notifications')}
-              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
-                activeTab === 'notifications' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <Bell size={20} />
-              <span>Notifications</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('delete')}
-              className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
-                activeTab === 'delete' ? 'bg-red-50 text-red-600 border border-red-200' : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <Trash2 size={20} />
-              <span className="text-sm">Delete<br />Account</span>
-            </button>
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    if (item.action) {
+                      item.action();
+                    } else {
+                      setActiveTab(item.id);
+                    }
+                  }}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                    activeTab === item.id && !item.action
+                      ? 'bg-red-50 text-red-600 border border-red-200'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span className="whitespace-pre-line">{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Main Content with flex-grow to take remaining space */}
+      {/* Main Content */}
       <div className="flex-grow overflow-auto">
         <div className="p-8 max-w-4xl mx-auto">
           {/* Account Tab */}
@@ -188,8 +250,8 @@ export default function AdminSettings() {
                   </div>
                   
                   <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
-                  Update Password
-                </button>
+                    Update Password
+                  </button>
                 </div>
               </div>
             </div>
@@ -379,6 +441,7 @@ export default function AdminSettings() {
 
                 <div className="space-y-3">
                   <button 
+                    onClick={() => setShowDeleteModal(true)}
                     className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors font-semibold"
                     disabled={!deleteReason}
                   >
@@ -390,6 +453,79 @@ export default function AdminSettings() {
           )}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-gray-600/50 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="flex items-center space-x-3 mb-4">
+              <LogOut className="text-red-500" size={24} />
+              <h3 className="text-xl font-bold text-gray-800">Confirm Logout</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-6">Are you sure you want to log out from the admin dashboard?</p>
+            
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAdminLogout}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="flex items-center space-x-3 mb-4">
+              <AlertTriangle className="text-red-500" size={24} />
+              <h3 className="text-xl font-bold text-gray-800">Confirm Account Deletion</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-4">
+              This action cannot be undone. To confirm, please type <strong>DELETE</strong> in the box below.
+            </p>
+            
+            <input
+              type="text"
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              placeholder="Type DELETE to confirm"
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+            
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmation !== 'DELETE'}
+                className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+                  deleteConfirmation === 'DELETE'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

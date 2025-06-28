@@ -43,6 +43,8 @@
             |-- layout.jsx
             |-- page.jsx
         |-- admin-dashboard
+            |-- emp-management
+                |-- page.jsx
             |-- layout.js
             |-- page.jsx
             |-- payment
@@ -57,13 +59,24 @@
                 |-- page.jsx
             |-- verification
                 |-- page.jsx
-                |-- verification.jsx
         |-- api
             |-- admin
+                |-- dashboard
+                    |-- route.js
                 |-- login
+                    |-- route.js
+                |-- logout
+                    |-- route.js
+                |-- pendingProfile
+                    |-- route.js
+                |-- verifyProfile
                     |-- route.js
             |-- auth
                 |-- route.js
+            |-- employees
+                |-- route.js
+                |-- [id]
+                    |-- route.js
             |-- interest
                 |-- received
                     |-- route.js
@@ -108,6 +121,8 @@
                 |-- update
                     |-- route.js
                 |-- update-plan
+                    |-- route.js
+                |-- verify-request
                     |-- route.js
                 |-- [id]
                     |-- route.js
@@ -166,6 +181,7 @@
         |-- UserTestimonials.jsx
         |-- WhyChooseUs.jsx
     |-- context
+        |-- AuthContext.jsx
         |-- SessionContext.jsx
     |-- layouts
         |-- UserLayout.jsx
@@ -174,8 +190,10 @@
         |-- db.js
         |-- dbConnect.js
         |-- otpStore.js
+        |-- profileCompletion.js
     |-- models
         |-- admin.js
+        |-- Employee.js
         |-- Interest.js
         |-- Subscription.js
         |-- User.js

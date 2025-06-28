@@ -1,6 +1,7 @@
 "use client"
-import Verification from '../verification/verification';
+import Verification from '../verification/page';
 import { useState, useEffect } from 'react';
+//sample
 import { 
   Users, 
   Heart, 

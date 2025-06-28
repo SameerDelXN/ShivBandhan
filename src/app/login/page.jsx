@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Phone, Shield, RotateCcw, Edit } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useSession } from '@/context/SessionContext';
+import { useSession } from '@/context/SessionContext'
 
 export default function MatrimonialLogin() {
   const router = useRouter()
@@ -179,41 +179,41 @@ export default function MatrimonialLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center px-4 py-8 sm:px-6">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-rose-100 blur-2xl opacity-30"></div>
-        <div className="absolute bottom-20 right-10 w-56 h-56 rounded-full bg-amber-100 blur-2xl opacity-40"></div>
+        <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-24 h-24 sm:w-40 sm:h-40 rounded-full bg-rose-100 blur-xl sm:blur-2xl opacity-30"></div>
+        <div className="absolute bottom-10 sm:bottom-20 right-4 sm:right-10 w-32 h-32 sm:w-56 sm:h-56 rounded-full bg-amber-100 blur-xl sm:blur-2xl opacity-40"></div>
       </div>
 
       <div className={`relative w-full max-w-md transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
         {/* Main Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl border border-white/50 overflow-hidden">
           {/* Header */}
-          <div className="text-center px-8 pt-12 pb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3 hover:rotate-0 transition-all duration-300">
-              <span className="text-white text-2xl font-bold">💕</span>
+          <div className="text-center px-6 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3 hover:rotate-0 transition-all duration-300">
+              <span className="text-white text-xl sm:text-2xl font-bold">💕</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Find your perfect match</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">Welcome Back</h1>
+            <p className="text-sm sm:text-base text-gray-600">Find your perfect match</p>
           </div>
 
           {/* Content */}
-          <div className="px-8 pb-12">
+          <div className="px-6 sm:px-8 pb-8 sm:pb-12">
             {step === 1 ? (
               // Phone Number Step
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
-                    <Phone size={16} className="mr-2 text-rose-500" />
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3 flex items-center">
+                    <Phone size={14} className="mr-2 text-rose-500" />
                     Enter Mobile Number
                   </label>
                   
-                  <div className="flex space-x-3">
+                  <div className="flex space-x-2 sm:space-x-3">
                     <select 
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      className="w-24 px-3 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                      className="w-20 sm:w-24 px-2 sm:px-3 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                     >
                       <option value="+91">🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>
@@ -225,14 +225,14 @@ export default function MatrimonialLogin() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="98765 43210"
-                      className="flex-1 px-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-lg"
+                      className="flex-1 px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg"
                       maxLength={10}
                     />
                   </div>
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+                  <div className="text-red-500 text-xs sm:text-sm bg-red-50 p-2 sm:p-3 rounded-md sm:rounded-lg border border-red-100">
                     {error}
                   </div>
                 )}
@@ -240,37 +240,37 @@ export default function MatrimonialLogin() {
                 <button
                   onClick={handleSendOTP}
                   disabled={isLoading}
-                  className="w-full py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg sm:rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
                 >
                   {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   ) : (
                     <>
-                      <span className="font-medium">Send OTP</span>
-                      <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
+                      <span className="text-sm sm:text-base font-medium">Send OTP</span>
+                      <ArrowRight size={16} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}
                 </button>
               </div>
             ) : (
               // OTP Step
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Shield size={24} className="text-green-600" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <Shield size={18} className="text-green-600 sm:text-xl" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Verify OTP</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 sm:mb-2">Verify OTP</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">
                     OTP sent to {countryCode} {formatPhoneDisplay(phoneNumber)}
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3 text-center">
                     Enter 6-digit OTP
                   </label>
                   
-                  <div className="flex justify-center space-x-3">
+                  <div className="flex justify-center space-x-2 sm:space-x-3">
                     {otp.map((digit, index) => (
                       <input
                         key={index}
@@ -279,7 +279,7 @@ export default function MatrimonialLogin() {
                         value={digit}
                         onChange={(e) => handleOTPChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
-                        className="w-12 h-12 text-center text-lg font-bold border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                        className="w-10 h-10 sm:w-12 sm:h-12 text-center text-base sm:text-lg font-bold border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
                         maxLength={1}
                       />
                     ))}
@@ -287,7 +287,7 @@ export default function MatrimonialLogin() {
                 </div>
 
                 {error && (
-                  <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100 text-center">
+                  <div className="text-red-500 text-xs sm:text-sm bg-red-50 p-2 sm:p-3 rounded-md sm:rounded-lg border border-red-100 text-center">
                     {error}
                   </div>
                 )}
@@ -295,25 +295,25 @@ export default function MatrimonialLogin() {
                 <button
                   onClick={handleVerifyOTP}
                   disabled={isLoading}
-                  className="w-full py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg sm:rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
                 >
                   {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   ) : (
                     <>
-                      <span className="font-medium">Verify OTP</span>
-                      <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
+                      <span className="text-sm sm:text-base font-medium">Verify OTP</span>
+                      <ArrowRight size={16} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
                     </>
                   )}
                 </button>
 
-                <div className="flex flex-col space-y-3 pt-4">
+                <div className="flex flex-col space-y-2 sm:space-y-3 pt-2 sm:pt-4">
                   <button
                     onClick={handleResendOTP}
                     disabled={resendTimer > 0}
-                    className="text-rose-600 hover:text-rose-700 text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="text-rose-600 hover:text-rose-700 text-xs sm:text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                   >
-                    <RotateCcw size={16} className="mr-2" />
+                    <RotateCcw size={14} className="mr-1 sm:mr-2" />
                     {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
                   </button>
                   
@@ -323,9 +323,9 @@ export default function MatrimonialLogin() {
                       setOtp(['', '', '', '', '', '']);
                       setError('');
                     }}
-                    className="text-gray-600 hover:text-gray-700 text-sm font-medium flex items-center justify-center"
+                    className="text-gray-600 hover:text-gray-700 text-xs sm:text-sm font-medium flex items-center justify-center"
                   >
-                    <Edit size={16} className="mr-2" />
+                    <Edit size={14} className="mr-1 sm:mr-2" />
                     Change Number
                   </button>
                 </div>
@@ -335,14 +335,14 @@ export default function MatrimonialLogin() {
         </div>
 
         {/* Trust Indicators */}
-        <div className="mt-8 text-center">
-          <div className="flex items-center justify-center space-x-6 text-sm text-gray-600">
+        <div className="mt-6 sm:mt-8 text-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-gray-600">
             <div className="flex items-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-1 sm:mr-2"></div>
               Secure Login
             </div>
             <div className="flex items-center">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-1 sm:mr-2"></div>
               Trusted by 10,000+
             </div>
           </div>

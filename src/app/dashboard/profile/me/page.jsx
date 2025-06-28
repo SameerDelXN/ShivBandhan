@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 import { CldUploadWidget } from 'next-cloudinary';
+import Link from 'next/link';
 //sample
 export default function MyProfilePage() {
   const { user } = useSession();
@@ -24,67 +25,7 @@ export default function MyProfilePage() {
   ]);
   
 console.log("User Data", user)
-  const [formData, setFormData] = useState({
-    name: '',
-    dob: '',
-    height: '', 
-    gender: '',
-    maritalStatus: '',
-    motherTongue: '',
-    currentCity: '',
-    weight: '',
-    religion: '',
-    caste: '',
-    subCaste: '',
-    gothra: '',
-    education: '',
-    fieldOfStudy: '',
-    college: '',
-    occupation: '',
-    company: '',
-    income: '',
-    email: '',
-    bloodGroup: '',
-    complexion: '',
-    wearsLens: false,
-    permanentAddress: '',
-    userId: user?.id || '',
-    verificationStatus:"",
-    
-    // Relative Info
-    fatherName: '',
-    parentResidenceCity: '',
-    mother: '',
-    brothers: '',
-    marriedBrothers: '',
-    sisters: '',
-    marriedSisters: '',
-    nativeDistrict: '',
-    nativeCity: '',
-    familyWealth: '',
-    relativeSurname: '',
-    parentOccupation: '',
-    mamaSurname: '',
-    // Horoscope Info
-    rashi: '',
-    nakshira: '',
-    charan: '',
-    gan: '',
-    nadi: '',
-    mangal: '',
-    birthPlace: '',
-    birthTime: '',
-    gotraDevak: '',
-    // Expectations
-    profilePhoto:"",
-    expectedCaste: '',
-    preferredCity: '',
-    expectedAgeDifference: '',
-    expectedEducation: '',
-    divorcee: false,
-    expectedHeight: '',
-    expectedIncome: ''
-  });
+  const [formData, setFormData] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -93,7 +34,7 @@ console.log("User Data", user)
     };
     
     loadData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (user?.user?.id) {
@@ -108,6 +49,7 @@ console.log("User Data", user)
  
     
   const calculateCompletion = (section) => {
+    if (!formData) return 0; 
     const fields = {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
       religious: ['religion', 'caste', 'subCaste', 'gothra'],
@@ -129,43 +71,43 @@ console.log("User Data", user)
     return Math.round((filledFields / sectionFields.length) * 100);
   };
 
-  const getProfileSections = () => {
+  const getProfileSections = (formData) => {
     return [
       { 
         id: 'basic', 
         label: 'Basic Information', 
         icon: User,
-        completion: calculateCompletion('basic')
+        completion: calculateCompletion('basic',formData)
       },
       { 
         id: 'religious', 
         label: 'Religious & Community', 
         icon: Star,
-        completion: calculateCompletion('religious') 
+        completion: calculateCompletion('religious',formData) 
       },
       { 
         id: 'education', 
         label: 'Education & Profession', 
         icon: GraduationCap,
-        completion: calculateCompletion('education') 
+        completion: calculateCompletion('education',formData) 
       },
        { 
         id: 'relative', 
         label: 'Relative Info', 
         icon: Users,
-        completion: calculateCompletion('relative') 
+        completion: calculateCompletion('relative',formData) 
       },
       { 
         id: 'horoscope', 
         label: 'Horoscope Info', 
         icon: Sparkles,
-        completion: calculateCompletion('horoscope') 
+        completion: calculateCompletion('horoscope',formData) 
       },
       { 
         id: 'expectations', 
         label: 'Expectations', 
         icon: Heart,
-        completion: calculateCompletion('expectations') 
+        completion: calculateCompletion('expectations',formData) 
       },
     ];
   };
@@ -186,7 +128,7 @@ console.log("User Data", user)
       setVerificationStatus(data.verificationStatus || 'Unverified');
      
 
-      setFormData({
+      const InitailFormData = {
         name: data.name || '',
         dob: data.dob || '',
         height: data.height || '',
@@ -246,17 +188,17 @@ profilePhoto:data?.profilePhoto || "",
         divorcee: data.divorcee || false,
         expectedHeight: data.expectedHeight || '',
         expectedIncome: data.expectedIncome || '',
-      });
-
+      };
+      setFormData(InitailFormData)
       // Calculate initial profile completion
-      const sections = getProfileSections();
+      const sections = getProfileSections(InitailFormData);
       const totalCompletion = sections.reduce(
         (sum, section) => sum + section.completion, 
         0
       ) / sections.length;
       
       setProfileCompletion(Math.round(totalCompletion));
-
+      setIsLoaded(true);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -417,7 +359,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input 
                     type="text"
-                    value={formData.name}
+                    value={formData?.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder='Enter your full name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -426,31 +368,42 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                   <input
-  type="date"
-  value={formatDateToYYYYMMDD(formData.dob)}
-  onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-/>
+                   type="date"
+                   value={formatDateToYYYYMMDD(formData.dob)}
+                   onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                   />
 
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
-                  <select
-                    value={formData.height}
-                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  >
-                    <option value="">Select Height</option>
-                    <option>5'4" (162 cm)</option>
-                    <option>5'3" (160 cm)</option>
-                    <option>5'5" (165 cm)</option>
+               <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-2">Height</label>
+                 <select
+                  value={formData.height}
+                  onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                 >
+                 <option value="">Select Height</option>
+                   {Array.from({ length: 24 }, (_, i) => {
+                   // Starting from 4'6" (138cm) to 6'5" (196cm)
+                     const feet = 4 + Math.floor((i + 6) / 12);
+                      const inches = (i + 6) % 12;
+                      const cm = Math.round((feet * 30.48) + (inches * 2.54));
+                      return (
+                          <option 
+                             key={i} 
+                              value={`${feet}'${inches}" (${cm} cm)`}
+                           >
+                           {feet}'{inches}" ({cm} cm)
+                            </option>
+                            );
+                        })}
                   </select>
-                </div>
+                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">weight</label>
                   <input 
                     type="text"
-                    value={formData.weight}
+                    value={formData?.weight}
                     onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                     placeholder="Enter your weight"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -459,7 +412,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                   <select
-                    value={formData.gender}
+                    value={formData?.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -472,7 +425,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Blood Group</label>
                 <select
-                  value={formData.bloodGroup}
+                  value={formData?.bloodGroup}
                   onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
@@ -491,7 +444,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Complexion</label>
                 <input
                   type="text"
-                  value={formData.complexion}
+                  value={formData?.complexion}
                   onChange={(e) => setFormData({ ...formData, complexion: e.target.value })}
                   placeholder="E.g. Fair, Wheatish, etc."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -502,7 +455,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
                   <select
-                    value={formData.maritalStatus}
+                    value={formData?.maritalStatus}
                     onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -515,7 +468,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Mother Tongue</label>
                   <select
-                    value={formData.motherTongue}
+                    value={formData?.motherTongue}
                     onChange={(e) => setFormData({ ...formData, motherTongue: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -529,7 +482,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Current City</label>
                   <input 
                     type="text"
-                    value={formData.currentCity}
+                    value={formData?.currentCity}
                     onChange={(e) => setFormData({ ...formData, currentCity: e.target.value })}
                     placeholder="Enter your city"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -539,7 +492,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <input 
                   type="email"
-                  value={formData.email}
+                  value={formData?.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter your email"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -549,7 +502,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Permanent Address</label>
                   <input 
                     type="text"
-                    value={formData.permanentAddress}
+                    value={formData?.permanentAddress}
                     onChange={(e) => setFormData({ ...formData, permanentAddress: e.target.value })}
                     placeholder='Enter your permanent address'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -558,7 +511,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Wears Lens</label>
                 <select
-                  value={formData.wearsLens ? 'Yes' : 'No'}
+                  value={formData?.wearsLens ? 'Yes' : 'No'}
                   onChange={(e) => setFormData({ ...formData, wearsLens: e.target.value === 'Yes' })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                 >
@@ -579,7 +532,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Religion</label>
                   <select
-                    value={formData.religion}
+                    value={formData?.religion}
                     onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -594,7 +547,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Caste</label>
                   <input 
                     type="text"
-                    value={formData.caste}
+                    value={formData?.caste}
                     onChange={(e) => setFormData({ ...formData, caste: e.target.value })}
                     placeholder="Enter your caste" 
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -606,7 +559,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Sub-caste</label>
                   <input
                     type="text"
-                    value={formData.subCaste || ""}
+                    value={formData?.subCaste || ""}
                     onChange={(e) => setFormData({ ...formData, subCaste: e.target.value })}
                     placeholder="Enter your sub-caste"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -616,7 +569,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Gothra</label>
                   <input 
                     type="text"
-                    value={formData.gothra}
+                    value={formData?.gothra}
                     onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
                     placeholder="Enter your gothra" 
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -635,7 +588,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Highest Education</label>
                   <select
-                    value={formData.education}
+                    value={formData?.education}
                     onChange={(e) => setFormData({ ...formData, education: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -649,7 +602,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Field of Study</label>
                   <input 
                     type="text"
-                    value={formData.fieldOfStudy}
+                    value={formData?.fieldOfStudy}
                     onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
                     placeholder='Enter your study field'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -659,7 +612,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">College/University</label>
                   <input 
                     type="text"
-                    value={formData.college}
+                    value={formData?.college}
                     onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                     placeholder='Enter your college name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -671,7 +624,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
                   <input 
                     type="text"
-                    value={formData.occupation}
+                    value={formData?.occupation}
                     onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
                     placeholder='Enter your occupation'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -681,7 +634,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
                   <input 
                     type="text"
-                    value={formData.company}
+                    value={formData?.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     placeholder='Enter your company name'
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
@@ -690,7 +643,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Annual Income</label>
                   <select
-                    value={formData.income}
+                    value={formData?.income}
                     onChange={(e) => setFormData({ ...formData, income: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
@@ -718,7 +671,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
               </div>
             </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
   {photos.map((photo) => (
     <div key={photo.id} className="relative">
       <CldUploadWidget
@@ -731,20 +684,19 @@ const handlePhotoUploadSuccess = (result, photoId) => {
         onSuccess={(result) => handlePhotoUploadSuccess(result, photo.id)}
       >
         {({ open }) => (
-          <>
-            <div className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer">
+          <div>
+            <div 
+              className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer"
+              onClick={() => open()}
+            >
               {photo.url ? (
                 <img 
                   src={photo.url} 
                   alt={`Photo ${photo.id}`} 
                   className="w-full h-full object-cover"
-                  onClick={() => open()}
                 />
               ) : (
-                <div 
-                  className="text-center"
-                  onClick={() => open()}
-                >
+                <div className="text-center">
                   <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs text-gray-500">Add Photo</p>
                 </div>
@@ -771,7 +723,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 </button>
               )}
             </div>
-          </>
+          </div>
         )}
       </CldUploadWidget>
     </div>
@@ -1175,9 +1127,17 @@ case 'relative':
         );
     }
   };
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+   !isLoaded ?<div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        {/* Simple Spinner */}
+        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        
+        {/* Loading Text */}
+        <p className="text-gray-600 text-lg">Loading...</p>
+      </div>
+    </div> : <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Profile Header */}
@@ -1185,54 +1145,55 @@ case 'relative':
           <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
             <div className="relative z-10">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
-                <div className="flex items-center space-x-6 mb-6 lg:mb-0">
-               <div className="relative">
+              <div className="flex flex-col  lg:flex-row items-start lg:items-center justify-between">
+                <div className="xs:flex-col lg:flex-row flex items-center space-x-6 mb-6 lg:mb-0">
+              <div className="relative">
   <CldUploadWidget 
-    uploadPreset="shivbandhan" 
-    options={{ 
-      multiple: false,
-      sources: ['local', 'camera'],
-      maxFiles: 1
-    }}
-    onSuccess={(result) => handlePhotoUploadSuccess(result, 1)}
-  >
-    {({ open }) => (
-      <>
-        {formData?.profilePhoto ? (
+  uploadPreset="shivbandhan" 
+  options={{ 
+    multiple: false,
+    sources: ['local', 'camera'],
+    maxFiles: 1
+  }}
+  onSuccess={(result) => handlePhotoUploadSuccess(result, 1)}
+>
+  {({ open }) => (
+    <>
+      {formData?.profilePhoto ? (
+        <div onClick={() => open()}>
           <img 
-            src={formData?.profilePhoto} 
+            src={formData.profilePhoto} 
             alt="Profile" 
-            className="w-24 h-24 rounded-full object-cover cursor-pointer"
-            onClick={() => open()}
+            className="w-24 h-24 rounded-full object-cover cursor-pointer border-2 border-white shadow-md"
           />
-        ) : (
-          <div 
-            className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer"
-            onClick={() => open()}
-          >
-            <User className="w-12 h-12 text-rose-500" />
-          </div>
-        )}
-        <button 
-          className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            open();
-          }}
+        </div>
+      ) : (
+        <div 
+          className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
+          onClick={() => open()}
         >
-          <Camera className="w-3 h-3 text-white" />
-        </button>
-      </>
-    )}
-  </CldUploadWidget>
-  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+          <User className="w-12 h-12 text-rose-500" />
+        </div>
+      )}
+      <button 
+        className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          open();
+        }}
+      >
+        <Camera className="w-3 h-3 text-white" />
+      </button>
+    </>
+  )}
+</CldUploadWidget>
+  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
     <CheckCircle className="w-3 h-3 text-white" />
   </div>
 </div>
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
-                      <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Your Name'}</h1>
+                      <h1 className="text-2xl font-bold text-gray-900">{formData?.name || 'Your Name'}</h1>
                       {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
                     </div>
                     <div className="space-y-1 text-gray-600">
@@ -1243,18 +1204,18 @@ case 'relative':
                             {new Date().getFullYear() - new Date(formData.dob).getFullYear()} years
                           </span>
                         )} */}
-                        {formData.height && <span>{formData.height}</span>}
-                        {formData.religion && <span>{formData.religion}</span>}
+                        {formData?.height && <span>{formData?.height}</span>}
+                        {formData?.religion && <span>{formData?.religion}</span>}
                       </div>
-                      {formData.currentCity && (
+                      {formData?.currentCity && (
                         <div className="flex items-center text-sm">
                           <MapPin className="w-4 h-4 mr-1" />
-                          {formData.currentCity}
+                          {formData?.currentCity}
                         </div>
                       )}
                     </div>
                     <div className="flex items-center mt-2">
-                      <VerificationBadge status={formData.verificationStatus} />
+                      <VerificationBadge status={formData?.verificationStatus} />
                     </div>
                   </div>
                 </div>
@@ -1345,26 +1306,33 @@ case 'relative':
             {/* Subscription Info */}
             <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">Premium Plan</h3>
+                <h3 className="font-semibold">{user?.subscription?.plan}</h3>
                 <Crown className="w-5 h-5 text-yellow-200" />
               </div>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-4 text-sm w-full">
                 <div className="flex justify-between">
                   <span className="text-white/80">Status:</span>
                   <span className="font-medium">Active</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/80">Expires:</span>
-                  <span className="font-medium">Dec 15, 2024</span>
+                 <span className="font-medium">
+  {new Date(user?.subscription?.expiresAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })}
+</span>
                 </div>
-              </div>
-              <button className="w-full bg-white/20 text-white py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors mt-3">
+                 <Link href={"/dashboard/subscription"} className="w-full cursor-pointer  bg-white/20 text-white p-3 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors mt-3">
                 Manage Plan
-              </button>
+              </Link>
+              </div>
+             
             </div>
 
             {/* Profile Settings */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
+            {/* <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
               <h3 className="font-bold text-gray-900 mb-4">Profile Settings</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -1393,7 +1361,7 @@ case 'relative':
                   Deactivate Temporarily
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Main Profile Content */}
