@@ -168,7 +168,6 @@ const UserSchema = new mongoose.Schema({
  subscription: {
   plan: {
     type: String,
-    enum: ['free', 'premium', 'gold', 'silver'],
     default: 'free'
   },
   isSubscribed: {

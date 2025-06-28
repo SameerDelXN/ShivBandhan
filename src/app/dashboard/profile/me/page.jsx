@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, UserCheck, Upload, Briefcase, GraduationCap, Home, Users, Search, Clock, Bell, Shield, ChevronRight, Plus, X, AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 import { CldUploadWidget } from 'next-cloudinary';
+import Link from 'next/link';
 //sample
 export default function MyProfilePage() {
   const { user } = useSession();
@@ -670,7 +671,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
               </div>
             </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
   {photos.map((photo) => (
     <div key={photo.id} className="relative">
       <CldUploadWidget
@@ -683,20 +684,19 @@ const handlePhotoUploadSuccess = (result, photoId) => {
         onSuccess={(result) => handlePhotoUploadSuccess(result, photo.id)}
       >
         {({ open }) => (
-          <>
-            <div className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer">
+          <div>
+            <div 
+              className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer"
+              onClick={() => open()}
+            >
               {photo.url ? (
                 <img 
                   src={photo.url} 
                   alt={`Photo ${photo.id}`} 
                   className="w-full h-full object-cover"
-                  onClick={() => open()}
                 />
               ) : (
-                <div 
-                  className="text-center"
-                  onClick={() => open()}
-                >
+                <div className="text-center">
                   <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs text-gray-500">Add Photo</p>
                 </div>
@@ -723,7 +723,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 </button>
               )}
             </div>
-          </>
+          </div>
         )}
       </CldUploadWidget>
     </div>
@@ -1129,7 +1129,15 @@ case 'relative':
   };
   
   return (
-   !isLoaded ? <div>loading</div> : <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+   !isLoaded ?<div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        {/* Simple Spinner */}
+        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        
+        {/* Loading Text */}
+        <p className="text-gray-600 text-lg">Loading...</p>
+      </div>
+    </div> : <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Profile Header */}
@@ -1137,48 +1145,49 @@ case 'relative':
           <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
             <div className="relative z-10">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
-                <div className="flex items-center space-x-6 mb-6 lg:mb-0">
-               <div className="relative">
+              <div className="flex flex-col  lg:flex-row items-start lg:items-center justify-between">
+                <div className="xs:flex-col lg:flex-row flex items-center space-x-6 mb-6 lg:mb-0">
+              <div className="relative">
   <CldUploadWidget 
-    uploadPreset="shivbandhan" 
-    options={{ 
-      multiple: false,
-      sources: ['local', 'camera'],
-      maxFiles: 1
-    }}
-    onSuccess={(result) => handlePhotoUploadSuccess(result, 1)}
-  >
-    {({ open }) => (
-      <>
-        {formData?.profilePhoto ? (
+  uploadPreset="shivbandhan" 
+  options={{ 
+    multiple: false,
+    sources: ['local', 'camera'],
+    maxFiles: 1
+  }}
+  onSuccess={(result) => handlePhotoUploadSuccess(result, 1)}
+>
+  {({ open }) => (
+    <>
+      {formData?.profilePhoto ? (
+        <div onClick={() => open()}>
           <img 
-            src={formData?.profilePhoto} 
+            src={formData.profilePhoto} 
             alt="Profile" 
-            className="w-24 h-24 rounded-full object-cover cursor-pointer"
-            onClick={() => open()}
+            className="w-24 h-24 rounded-full object-cover cursor-pointer border-2 border-white shadow-md"
           />
-        ) : (
-          <div 
-            className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer"
-            onClick={() => open()}
-          >
-            <User className="w-12 h-12 text-rose-500" />
-          </div>
-        )}
-        <button 
-          className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            open();
-          }}
+        </div>
+      ) : (
+        <div 
+          className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
+          onClick={() => open()}
         >
-          <Camera className="w-3 h-3 text-white" />
-        </button>
-      </>
-    )}
-  </CldUploadWidget>
-  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+          <User className="w-12 h-12 text-rose-500" />
+        </div>
+      )}
+      <button 
+        className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          open();
+        }}
+      >
+        <Camera className="w-3 h-3 text-white" />
+      </button>
+    </>
+  )}
+</CldUploadWidget>
+  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
     <CheckCircle className="w-3 h-3 text-white" />
   </div>
 </div>
@@ -1297,26 +1306,33 @@ case 'relative':
             {/* Subscription Info */}
             <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">Premium Plan</h3>
+                <h3 className="font-semibold">{user?.subscription?.plan}</h3>
                 <Crown className="w-5 h-5 text-yellow-200" />
               </div>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-4 text-sm w-full">
                 <div className="flex justify-between">
                   <span className="text-white/80">Status:</span>
                   <span className="font-medium">Active</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/80">Expires:</span>
-                  <span className="font-medium">Dec 15, 2024</span>
+                 <span className="font-medium">
+  {new Date(user?.subscription?.expiresAt).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })}
+</span>
                 </div>
-              </div>
-              <button className="w-full bg-white/20 text-white py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors mt-3">
+                 <Link href={"/dashboard/subscription"} className="w-full cursor-pointer  bg-white/20 text-white p-3 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors mt-3">
                 Manage Plan
-              </button>
+              </Link>
+              </div>
+             
             </div>
 
             {/* Profile Settings */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
+            {/* <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
               <h3 className="font-bold text-gray-900 mb-4">Profile Settings</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -1345,7 +1361,7 @@ case 'relative':
                   Deactivate Temporarily
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Main Profile Content */}

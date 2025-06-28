@@ -1,30 +1,45 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User';
-import { verifyToken } from '@/lib/auth'; 
+import dbConnect from "@/lib/db";
+import User from "@/models/User";
 
-
-export async function POST(req) {
+export const POST = async (request) => {
   try {
-    await dbConnect();
-    const { userId, action } = await req.json();
+    const { userId, action } = await request.json();
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    await dbConnect();
+
+    let updateData = {};
+    if (action === "Verified") {
+      updateData = {
+        isVerified: true,
+        verificationStatus: "Verified",
+        verificationRequested: false
+      };
+    } else if (action === "Rejected") {
+      updateData = {
+        isVerified: false,
+        verificationStatus: "Rejected",
+        verificationRequested: false
+      };
     }
 
-    user.verificationStatus = action;
-    user.isVerified = (action === 'Verified');
-    await user.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true }
+    );
 
-    return NextResponse.json({ 
-      message: `User ${action.toLowerCase()} successfully` 
+    if (!updatedUser) {
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify({ message: `User ${action} successfully` }), {
+      status: 200,
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Server error during verification' },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: "Failed to update verification status" }), {
+      status: 500,
+    });
   }
-}
+};

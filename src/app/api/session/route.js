@@ -32,10 +32,7 @@ console.log('User found:', user);
         name: user.name,
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
-        subscription: {
-
-          isSubscribed: user.subscription?.isSubscribed || false, // Assuming subscription is a field in User
-        },
+        subscription: user?.subscription,
         profilePhoto: user.profilePhoto,
       }
     });

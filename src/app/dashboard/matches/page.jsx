@@ -684,34 +684,45 @@ if (quickFilters.education) {
           </div>
 
           {/* Match Type Tabs */}
-          <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-1 sm:p-2 flex-1">
-            <div className="flex overflow-x-auto space-x-1">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                      activeTab === tab.id
-                        ? 'bg-rose-500 text-white shadow-sm sm:shadow-md'
-                        : 'text-gray-600 hover:bg-rose-50 hover:text-rose-600'
-                    }`}
-                  >
-                    <IconComponent className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                    <span>{tab.label}</span>
-                    <span className={`ml-1 sm:ml-2 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-[10px] sm:text-xs ${
-                      activeTab === tab.id
-                        ? 'bg-white/20 text-white'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+     <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-1 sm:p-2 w-full max-w-full overflow-hidden">
+  <div className="flex overflow-x-auto pb-2 -mx-1 sm:-mx-2 px-1 sm:px-2 hide-scrollbar">
+    {tabs.map((tab) => {
+      const IconComponent = tab.icon;
+      return (
+        <button
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id)}
+          className={`flex items-center px-3 py-2 sm:px-4 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 mx-1 ${
+            activeTab === tab.id
+              ? 'bg-rose-500 text-white shadow-sm sm:shadow-md'
+              : 'text-gray-600 hover:bg-rose-50 hover:text-rose-600'
+          }`}
+        >
+          <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+          <span>{tab.label}</span>
+          <span className={`ml-1.5 sm:ml-2 px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs flex-shrink-0 ${
+            activeTab === tab.id
+              ? 'bg-white/20 text-white'
+              : 'bg-gray-100 text-gray-600'
+          }`}>
+            {tab.count}
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+{/* Add this to your global CSS or style tag */}
+<style jsx>{`
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`}</style>
         </div>
       </div>
 

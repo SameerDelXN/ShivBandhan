@@ -1,21 +1,37 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User';
-import { verifyToken } from '@/lib/auth';
+import dbConnect from "@/lib/db";
+import User from "@/models/User";
+import { calculateProfileCompletion } from "@/lib/profileCompletion";
 
-export async function GET() {
+export const GET = async (request) => {
   try {
     await dbConnect();
-    const pendingUsers = await User.find({
-      verificationRequested: true,
-      verificationStatus: 'Pending'
-    }).select('name email profilePhoto profileCompletion verificationStatus');
 
-    return NextResponse.json({ users: pendingUsers });
+    // Find all users who have requested verification or are pending
+    const potentialUsers = await User.find({
+      isVerified: false,
+      verificationStatus: { $in: ["Pending", "Unverified"] }
+    }).select('-password');
+
+    // Calculate completion percentage for each user and filter
+    const pendingUsers = potentialUsers.map(user => {
+      const userObj = user.toObject();
+      userObj.profileCompletion = calculateProfileCompletion(userObj);
+      return userObj;
+    }).filter(user => user.profileCompletion >= 80); // Only include users with 80%+ completion
+
+    if (!pendingUsers.length) {
+      return new Response(JSON.stringify({ error: "No pending profiles found" }), {
+        status: 404,
+      });
+    }
+
+    return new Response(JSON.stringify({ users: pendingUsers }), {
+      status: 200,
+    });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch pending verifications' },
-      { status: 500 }
-    );
+    console.error("Error in pendingProfile API:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch pending profiles" }), {
+      status: 500,
+    });
   }
-}
+};

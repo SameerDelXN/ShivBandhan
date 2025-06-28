@@ -61,7 +61,11 @@
                 |-- page.jsx
         |-- api
             |-- admin
+                |-- dashboard
+                    |-- route.js
                 |-- login
+                    |-- route.js
+                |-- logout
                     |-- route.js
                 |-- pendingProfile
                     |-- route.js
@@ -186,6 +190,7 @@
         |-- db.js
         |-- dbConnect.js
         |-- otpStore.js
+        |-- profileCompletion.js
     |-- models
         |-- admin.js
         |-- Employee.js

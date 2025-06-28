@@ -237,12 +237,15 @@ export default function DynamicSubscriptionPlans() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-rose-500 mx-auto mb-4" />
-          <p className="text-gray-600">Loading subscription plans...</p>
-        </div>
+     <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        {/* Simple Spinner */}
+        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        
+        {/* Loading Text */}
+        <p className="text-gray-600 text-lg">Loading Subscription Plans</p>
       </div>
+    </div>
     );
   }
 

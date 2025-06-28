@@ -162,149 +162,159 @@ export default function InterestsPage() {
     return `${maskedFirstName} ${lastName}`;
   };
 
-  const InterestCard = ({ person, type }) => {
-    const profile = type === 'sent' ? person.receiver : person.sender;
-    const profileImage = profile.profilePhoto || profile.image;
-    
-    return (
-      <motion.div 
-        className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300 hover:border-rose-200"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="flex items-start space-x-4">
-          <div className="relative flex-shrink-0">
-            <motion.div 
-              className="w-16 h-16 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-300 transition-all"
-              onClick={() => profileImage && setExpandedImage(profileImage)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {profileImage ? (
-                <img src={profileImage} alt={profile.name} className="w-full h-full object-cover" />
-              ) : (
-                <User className="w-8 h-8 text-rose-500" />
-              )}
-            </motion.div>
-            {profile.isOnline && (
-              <motion.div 
-                className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring" }}
-              />
+ const InterestCard = ({ person, type }) => {
+  const profile = type === 'sent' ? person.receiver : person.sender;
+  const profileImage = profile.profilePhoto || profile.image;
+  
+  return (
+    <motion.div 
+      className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-rose-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-rose-200"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
+        {/* Profile Image */}
+        <div className="relative flex-shrink-0 self-center sm:self-start">
+          <motion.div 
+            className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-300 transition-all"
+            onClick={() => profileImage && setExpandedImage(profileImage)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {profileImage ? (
+              <img src={profileImage} alt={profile.name} className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
             )}
+          </motion.div>
+          {profile.isOnline && (
+            <motion.div 
+              className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring" }}
+            />
+          )}
+        </div>
+
+        {/* Profile Details */}
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 space-y-2 sm:space-y-0">
+            <div className="space-y-1">
+              <div className="flex items-center justify-center sm:justify-start space-x-2 mb-1">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">{profile.name}</h3>
+                {profile.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
+              </div>
+              <div className="flex flex-wrap justify-center sm:justify-start items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-2 gap-y-1">
+                <span className="flex items-center">
+                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                  {calculateAge(profile.dob)} years
+                </span>
+                {profile.caste && <span>{profile.caste}</span>}
+              </div>
+              <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
+                {profile.currentCity && (
+                  <span className="flex items-center">
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                    {profile.currentCity}
+                  </span>
+                )}
+                {(profile.occupation || profile.education) && (
+                  <span className="flex items-center">
+                    <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                    {profile.occupation}{profile.occupation && profile.education && ' • '}{profile.education}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="self-center sm:self-start">{getStatusBadge(person.status)}</div>
           </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <div className="flex items-center space-x-2 mb-1">
-                  <h3 className="text-lg font-bold text-gray-900">{profile.name}</h3>
-                  {profile.badges?.includes('Verified') && <Shield className="w-4 h-4 text-green-500" />}
-                </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
-                  <span className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {calculateAge(profile.dob)} years
-                  </span>
-                  <span>{profile.caste}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {profile.currentCity}
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Briefcase className="w-4 h-4 mr-1" />
-                  {profile.occupation} • {profile.education}
-                </div>
-              </div>
-              <div className="text-right">{getStatusBadge(person.status)}</div>
+          {/* Badges */}
+          {profile.badges?.length > 0 && (
+            <motion.div 
+              className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {profile.badges.map((badge, index) => (
+                <motion.span 
+                  key={index} 
+                  className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ 
+                    delay: 0.2 + (index * 0.1),
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 15
+                  }}
+                >
+                  {badge}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Footer with Date and Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-gray-100 space-y-2 sm:space-y-0">
+            <div className="text-xs text-gray-500">
+              {type === 'sent' ? `Sent: ${new Date(person.createdAt).toLocaleDateString()}` : 
+               `Received: ${new Date(person.createdAt).toLocaleDateString()}`}
             </div>
-
-            {profile.badges?.length > 0 && (
-              <motion.div 
-                className="flex flex-wrap gap-1 mb-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                {profile.badges.map((badge, index) => (
-                  <motion.span 
-                    key={index} 
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ 
-                      delay: 0.2 + (index * 0.1),
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 15
-                    }}
-                  >
-                    {badge}
-                  </motion.span>
-                ))}
-              </motion.div>
-            )}
-
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-              <div className="text-xs text-gray-500">
-                {type === 'sent' ? `Sent: ${new Date(person.createdAt).toLocaleDateString()}` : 
-                 `Received: ${new Date(person.createdAt).toLocaleDateString()}`}
-              </div>
-              
-              <div className="flex space-x-2">
-                {type === 'received' && person.status === 'pending' && (
-                  <>
-                    <motion.button 
-                      onClick={() => handleInterestAction('declined', person._id)}
-                      className="flex items-center px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      <ThumbsDown className="w-4 h-4 mr-1" /> Decline
-                    </motion.button>
-                    <motion.button 
-                      onClick={() => handleInterestAction('accepted', person._id)}
-                      className="flex items-center px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      <ThumbsUp className="w-4 h-4 mr-1" /> Accept
-                    </motion.button>
-                  </>
-                )}
-                
-                {type === 'sent' && person.status === 'pending' && (
+            
+            <div className="flex flex-wrap justify-center gap-2">
+              {type === 'received' && person.status === 'pending' && (
+                <>
                   <motion.button 
-                    onClick={() => handleInterestAction('cancel', person._id)}
-                    className="flex items-center px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
+                    onClick={() => handleInterestAction('declined', person._id)}
+                    className="flex items-center px-2 sm:px-3 py-1 bg-red-50 text-red-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-red-100 transition-colors"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <X className="w-4 h-4 mr-1" /> Cancel
+                    <ThumbsDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Decline
                   </motion.button>
-                )}
-                
-                {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
                   <motion.button 
-                    onClick={() => handleViewProfile(person, type)}
-                    className="flex items-center px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg text-sm font-medium hover:bg-rose-100 transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleInterestAction('accepted', person._id)}
+                    className="flex items-center px-2 sm:px-3 py-1 bg-green-50 text-green-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-green-100 transition-colors"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    <Eye className="w-4 h-4 mr-1" /> View Profile
+                    <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Accept
                   </motion.button>
-                )}
-              </div>
+                </>
+              )}
+              
+              {type === 'sent' && person.status === 'pending' && (
+                <motion.button 
+                  onClick={() => handleInterestAction('cancel', person._id)}
+                  className="flex items-center px-2 sm:px-3 py-1 bg-gray-50 text-gray-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-100 transition-colors"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <X className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Cancel
+                </motion.button>
+              )}
+              
+              {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
+                <motion.button 
+                  onClick={() => handleViewProfile(person, type)}
+                  className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> View Profile
+                </motion.button>
+              )}
             </div>
           </div>
         </div>
-      </motion.div>
-    );
-  };
+      </div>
+    </motion.div>
+  );
+};
 
   const ProfileDetailItem = ({ icon: Icon, label, value }) => (
     <motion.div 
@@ -360,12 +370,15 @@ export default function InterestsPage() {
 
   if (isLoading && !isRefreshing) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-rose-500 animate-spin mx-auto" />
-          <p className="mt-4 text-gray-600">Loading your interests...</p>
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        {/* Simple Spinner */}
+        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        
+        {/* Loading Text */}
+        <p className="text-gray-600 text-lg">Loading your Interests</p>
       </div>
+    </div>
     );
   }
 
@@ -447,41 +460,41 @@ export default function InterestsPage() {
       </AnimatePresence>
 
       <div className="max-w-5xl mx-auto space-y-6">
-        <motion.div 
-          className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden"
+       <motion.div 
+          className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-rose-100/50 relative overflow-hidden"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-rose-50 rounded-full blur-xl sm:blur-2xl opacity-50"></div>
           <div className="relative z-10">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">💌 Interests</h1>
-                <p className="text-gray-600">Manage your sent and received interests</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">💌 Interests</h1>
+                <p className="text-sm sm:text-base text-gray-600">Manage your sent and received interests</p>
               </div>
               
-              <div className="flex space-x-6">
+              <div className="flex justify-between sm:justify-start sm:space-x-6">
                 <div className="text-center">
                   <div className="text-xs text-gray-500">Pending Received</div>
-                  <div className="text-lg font-bold">{stats.pendingReceived || 0}</div>
+                  <div className="text-base sm:text-lg font-bold">{stats.pendingReceived || 0}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-xs text-gray-500">Pending Sent</div>
-                  <div className="text-lg font-bold">{stats.pendingSent || 0}</div>
+                  <div className="text-base sm:text-lg font-bold">{stats.pendingSent || 0}</div>
                 </div>
               </div>
             </div>
 
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-2 right-2 sm:top-4 sm:right-4">
               <motion.button 
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="p-2 text-gray-500 hover:text-rose-600 transition-colors"
+                className="p-1 sm:p-2 text-gray-500 hover:text-rose-600 transition-colors"
                 whileHover={{ rotate: 180 }}
                 whileTap={{ scale: 0.8 }}
               >
-                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
               </motion.button>
             </div>
           </div>
@@ -577,248 +590,250 @@ export default function InterestsPage() {
       </div>
 
       {/* Profile Modal with Framer Motion */}
-      <AnimatePresence>
-        {showModal && selectedProfile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4"
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 50, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+   <AnimatePresence>
+  {showModal && selectedProfile && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4"
+      onClick={() => setShowModal(false)}
+    >
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <motion.div 
+          className="sticky top-0 bg-gradient-to-r from-rose-500 to-amber-500 p-4 z-10"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="flex justify-between items-center">
+            <motion.h2 
+              className="text-xl font-bold text-white"
+              initial={{ x: -10 }}
+              animate={{ x: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              {/* Modal Header */}
-              <motion.div 
-                className="sticky top-0 bg-gradient-to-r from-rose-500 to-amber-500 p-4 z-10"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                <div className="flex justify-between items-center">
-                  <motion.h2 
-                    className="text-xl font-bold text-white"
-                    initial={{ x: -10 }}
-                    animate={{ x: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {selectedProfile.name}'s Profile
-                  </motion.h2>
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setShowModal(false)}
-                    className="p-1 rounded-full hover:bg-white/20 transition-colors"
-                  >
-                    <X className="w-6 h-6 text-white" />
-                  </motion.button>
-                </div>
-              </motion.div>
-              
-              {/* Modal Content */}
-              <div className="overflow-y-auto p-6">
-                {/* Profile Header with Animation */}
+              {selectedProfile.name}'s Profile
+            </motion.h2>
+            <motion.button 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setShowModal(false)}
+              className="p-1 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <X className="w-6 h-6 text-white" />
+            </motion.button>
+          </div>
+        </motion.div>
+        
+        {/* Scrollable Content Area */}
+        <div className="overflow-y-auto flex-1">
+          {/* Custom Scrollbar Styling */}
+          <style jsx global>{`
+            .overflow-y-auto::-webkit-scrollbar {
+              width: 6px;
+            }
+            .overflow-y-auto::-webkit-scrollbar-track {
+              background: #f1f1f1;
+              border-radius: 10px;
+            }
+            .overflow-y-auto::-webkit-scrollbar-thumb {
+              background: #e5e5e5;
+              border-radius: 10px;
+            }
+            .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+              background: #d4d4d4;
+            }
+          `}</style>
+
+          <div className="p-6">
+            {/* Profile Header with Animation */}
+            <motion.div 
+              className="flex items-start mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="relative mr-6">
                 <motion.div 
-                  className="flex items-start mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                  className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-rose-200 transition-all"
+                  onClick={() => (selectedProfile.profilePhoto || selectedProfile.image) && setExpandedImage(selectedProfile.profilePhoto || selectedProfile.image)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <div className="relative mr-6">
-                    <motion.div 
-                      className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-rose-200 transition-all"
-                      onClick={() => (selectedProfile.profilePhoto || selectedProfile.image) && setExpandedImage(selectedProfile.profilePhoto || selectedProfile.image)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {selectedProfile.profilePhoto ? (
-                        <img 
-                          src={selectedProfile.profilePhoto} 
-                          alt={selectedProfile.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : selectedProfile.image ? (
-                        <img 
-                          src={selectedProfile.image} 
-                          alt={selectedProfile.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-12 h-12 text-rose-500" />
-                      )}
-                    </motion.div>
-                    {selectedProfile.isOnline && (
-                      <motion.div 
-                        className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.5, type: "spring" }}
-                      />
-                    )}
-                  </div>
-                  
-                  <div>
-                    <motion.h3 
-                      className="text-xl font-bold text-gray-900 mb-1"
-                      initial={{ x: -10 }}
-                      animate={{ x: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      {selectedProfile.name}
-                    </motion.h3>
-                    <motion.div 
-                      className="flex items-center text-gray-600 mb-2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <span className="mr-3">{calculateAge(selectedProfile.dob)} years</span>
-                      <span>{selectedProfile.height}</span>
-                    </motion.div>
-                    <motion.div 
-                      className="flex flex-wrap gap-2"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 }}
-                    >
-                      {selectedProfile.badges?.map((badge, index) => (
-                        <motion.span
-                          key={index}
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ 
-                            delay: 0.6 + (index * 0.1),
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 15
-                          }}
-                        >
-                          {badge}
-                        </motion.span>
-                      ))}
-                    </motion.div>
-                  </div>
+                  {selectedProfile.profilePhoto ? (
+                    <img 
+                      src={selectedProfile.profilePhoto} 
+                      alt={selectedProfile.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : selectedProfile.image ? (
+                    <img 
+                      src={selectedProfile.image} 
+                      alt={selectedProfile.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-12 h-12 text-rose-500" />
+                  )}
                 </motion.div>
-                
-                {/* Sections with Accordion Animation */}
-                <motion.div
+                {selectedProfile.isOnline && (
+                  <motion.div 
+                    className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5, type: "spring" }}
+                  />
+                )}
+              </div>
+              
+              <div>
+                <motion.h3 
+                  className="text-xl font-bold text-gray-900 mb-1"
+                  initial={{ x: -10 }}
+                  animate={{ x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  {selectedProfile.name}
+                </motion.h3>
+                <motion.div 
+                  className="flex items-center text-gray-600 mb-2"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
+                  transition={{ delay: 0.5 }}
                 >
-                  <ProfileSection title="Basic Information" sectionKey="basic">
-                    <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.8 }}
-                    >
-                      <ProfileDetailItem icon={User} label="Gender" value={selectedProfile.gender} />
-                      <ProfileDetailItem 
-                        icon={Calendar} 
-                        label="Date of Birth" 
-                        value={selectedProfile.dob ? new Date(selectedProfile.dob).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        }) : 'Not specified'}
-                      />
-                      <ProfileDetailItem icon={MapPin} label="Current City" value={selectedProfile.currentCity} />
-                      <ProfileDetailItem icon={MapPin} label="Hometown" value={selectedProfile.hometown} />
-                      <ProfileDetailItem icon={Shield} label="Religion" value={selectedProfile.religion} />
-                      <ProfileDetailItem icon={Shield} label="Caste" value={selectedProfile.caste} />
-                      <ProfileDetailItem icon={Shield} label="Subcaste" value={selectedProfile.subcaste} />
-                      <ProfileDetailItem icon={Shield} label="Marital Status" value={selectedProfile.maritalStatus} />
-                    </motion.div>
-                  </ProfileSection>
-                  
-                  <ProfileSection title="Professional Information" sectionKey="professional">
-                    <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.9 }}
-                    >
-                      <ProfileDetailItem icon={Briefcase} label="Occupation" value={selectedProfile.occupation} />
-                      <ProfileDetailItem icon={Briefcase} label="Employer" value={selectedProfile.employer} />
-                      <ProfileDetailItem icon={Briefcase} label="Annual Income" value={selectedProfile.income} />
-                      <ProfileDetailItem icon={Briefcase} label="Education" value={selectedProfile.education} />
-                      <ProfileDetailItem icon={Briefcase} label="Degree" value={selectedProfile.degree} />
-                      <ProfileDetailItem icon={Briefcase} label="College" value={selectedProfile.college} />
-                    </motion.div>
-                  </ProfileSection>
-                  
-                  <ProfileSection title="Family Details" sectionKey="family">
-                    <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1.0 }}
-                    >
-                      <ProfileDetailItem icon={User} label="Father's Occupation" value={selectedProfile.fatherOccupation} />
-                      <ProfileDetailItem icon={User} label="Mother's Occupation" value={selectedProfile.motherOccupation} />
-                      <ProfileDetailItem icon={User} label="Siblings" value={selectedProfile.siblings} />
-                      <ProfileDetailItem icon={User} label="Family Type" value={selectedProfile.familyType} />
-                      <ProfileDetailItem icon={User} label="Family Values" value={selectedProfile.familyValues} />
-                      <ProfileDetailItem icon={User} label="Family Status" value={selectedProfile.familyStatus} />
-                    </motion.div>
-                  </ProfileSection>
-                  
-                  <ProfileSection title="Lifestyle & Preferences" sectionKey="lifestyle">
-                    <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1.1 }}
-                    >
-                      <ProfileDetailItem icon={Heart} label="Diet" value={selectedProfile.diet} />
-                      <ProfileDetailItem icon={Heart} label="Drink" value={selectedProfile.drink} />
-                      <ProfileDetailItem icon={Heart} label="Smoke" value={selectedProfile.smoke} />
-                      <ProfileDetailItem icon={Heart} label="Hobbies" value={selectedProfile.hobbies} />
-                      <ProfileDetailItem icon={Heart} label="Languages" value={selectedProfile.languages} />
-                    </motion.div>
-                  </ProfileSection>
+                  <span className="mr-3">{calculateAge(selectedProfile.dob)} years</span>
+                  <span>{selectedProfile.height}</span>
                 </motion.div>
-                
-                {/* Action Buttons with Animation */}
                 <motion.div 
-                  className="mt-8 pt-6 border-t border-gray-200 flex justify-end space-x-3"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2 }}
+                  className="flex flex-wrap gap-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
                 >
-                  <motion.button 
-                    className="px-6 py-2 bg-gray-100 text-gray-800 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    Send Message
-                  </motion.button>
-                  <motion.button 
-                    className="px-6 py-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center"
-                    whileHover={{ 
-                      scale: 1.03,
-                      boxShadow: "0 4px 12px rgba(244, 63, 94, 0.3)"
-                    }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <Phone className="w-5 h-5 mr-2" />
-                    Request Contact
-                  </motion.button>
+                  {selectedProfile.badges?.map((badge, index) => (
+                    <motion.span
+                      key={index}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ 
+                        delay: 0.6 + (index * 0.1),
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 15
+                      }}
+                    >
+                      {badge}
+                    </motion.span>
+                  ))}
                 </motion.div>
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            
+            {/* Sections with Accordion Animation */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              <ProfileSection title="Basic Information" sectionKey="basic">
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <ProfileDetailItem icon={User} label="Gender" value={selectedProfile.gender} />
+                  <ProfileDetailItem 
+                    icon={Calendar} 
+                    label="Date of Birth" 
+                    value={selectedProfile.dob ? new Date(selectedProfile.dob).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }) : 'Not specified'}
+                  />
+                  <ProfileDetailItem icon={MapPin} label="Current City" value={selectedProfile.currentCity} />
+                  <ProfileDetailItem icon={MapPin} label="Hometown" value={selectedProfile.hometown} />
+                  <ProfileDetailItem icon={Shield} label="Religion" value={selectedProfile.religion} />
+                  <ProfileDetailItem icon={Shield} label="Caste" value={selectedProfile.caste} />
+                  <ProfileDetailItem icon={Shield} label="Subcaste" value={selectedProfile.subcaste} />
+                  <ProfileDetailItem icon={Shield} label="Marital Status" value={selectedProfile.maritalStatus} />
+                </motion.div>
+              </ProfileSection>
+              
+              <ProfileSection title="Professional Information" sectionKey="professional">
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9 }}
+                >
+                  <ProfileDetailItem icon={Briefcase} label="Occupation" value={selectedProfile.occupation} />
+                  <ProfileDetailItem icon={Briefcase} label="Employer" value={selectedProfile.employer} />
+                  <ProfileDetailItem icon={Briefcase} label="Annual Income" value={selectedProfile.income} />
+                  <ProfileDetailItem icon={Briefcase} label="Education" value={selectedProfile.education} />
+                  <ProfileDetailItem icon={Briefcase} label="Degree" value={selectedProfile.degree} />
+                  <ProfileDetailItem icon={Briefcase} label="College" value={selectedProfile.college} />
+                </motion.div>
+              </ProfileSection>
+              
+              <ProfileSection title="Family Details" sectionKey="family">
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.0 }}
+                >
+                  <ProfileDetailItem icon={User} label="Father's Occupation" value={selectedProfile.fatherOccupation} />
+                  <ProfileDetailItem icon={User} label="Mother's Occupation" value={selectedProfile.motherOccupation} />
+                  <ProfileDetailItem icon={User} label="Siblings" value={selectedProfile.siblings} />
+                  <ProfileDetailItem icon={User} label="Family Type" value={selectedProfile.familyType} />
+                  <ProfileDetailItem icon={User} label="Family Values" value={selectedProfile.familyValues} />
+                  <ProfileDetailItem icon={User} label="Family Status" value={selectedProfile.familyStatus} />
+                </motion.div>
+              </ProfileSection>
+              
+              <ProfileSection title="Lifestyle & Preferences" sectionKey="lifestyle">
+                <motion.div 
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  <ProfileDetailItem icon={Heart} label="Diet" value={selectedProfile.diet} />
+                  <ProfileDetailItem icon={Heart} label="Drink" value={selectedProfile.drink} />
+                  <ProfileDetailItem icon={Heart} label="Smoke" value={selectedProfile.smoke} />
+                  <ProfileDetailItem icon={Heart} label="Hobbies" value={selectedProfile.hobbies} />
+                  <ProfileDetailItem icon={Heart} label="Languages" value={selectedProfile.languages} />
+                </motion.div>
+              </ProfileSection>
+            </motion.div>
+            
+            {/* Action Buttons with Animation */}
+            <motion.div 
+              className="mt-8 pt-6 border-t border-gray-200 flex justify-end space-x-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2 }}
+            >
+             
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </div>
   );
 }
