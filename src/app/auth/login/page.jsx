@@ -9,7 +9,7 @@ export default function AdminLoginPage() {
       <AuthBanner />
       
       {/* Left side - Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+      <div className="w-full sm:w-full md:w-1/2 flex items-center justify-center p-8">
         <AdminLoginForm />
       </div>
     </div>

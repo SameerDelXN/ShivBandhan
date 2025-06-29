@@ -146,7 +146,7 @@ export default function AdminDashboard() {
                 <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
                 <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
                 <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {/* <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> */}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -183,9 +183,9 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                     {new Date(user.lastLogin || user.createdAt).toLocaleDateString('en-US')}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                     <button className="text-rose-600 hover:text-rose-900">Edit</button>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

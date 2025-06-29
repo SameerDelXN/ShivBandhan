@@ -15,17 +15,21 @@ import {
   LogOut,
   AlertTriangle,
   Check,
-  X
+  X,
+  Menu
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('account');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const router = useRouter();
+  const {user} = useAuth();
 
   const [accountData, setAccountData] = useState({
-    email: "admin@shivbandhan.com",
+    email: user?.email,
     phone: "+91 98765 43210"
   });
 
@@ -59,13 +63,12 @@ export default function AdminSettings() {
       });
 
       if (response.ok) {
-        router.push('/admin-login');
+        router.push('/auth/login');
       } else {
         throw new Error('Admin logout failed');
       }
     } catch (error) {
       console.error('Admin logout error:', error);
-      // You might want to show an error toast here
     } finally {
       setShowLogoutModal(false);
     }
@@ -74,7 +77,6 @@ export default function AdminSettings() {
   const handleDeleteAccount = async () => {
     if (deleteConfirmation === 'DELETE') {
       try {
-        // Call your admin account deletion API here
         const response = await fetch('/api/admin/delete-account', {
           method: 'POST',
           credentials: 'include',
@@ -91,7 +93,6 @@ export default function AdminSettings() {
         }
       } catch (error) {
         console.error('Account deletion error:', error);
-        // You might want to show an error toast here
       } finally {
         setShowDeleteModal(false);
       }
@@ -126,17 +127,73 @@ export default function AdminSettings() {
 
   const navigationItems = [
     { id: 'account', label: 'Account', icon: User },
-    { id: 'privacy', label: 'Privacy', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'delete', label: 'Delete\nAccount', icon: Trash2, action: () => setActiveTab('delete') },
     { id: 'logout', label: 'Log Out', icon: LogOut, action: () => setShowLogoutModal(true) }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Fixed Sidebar */}
-      <div className="flex-shrink-0 w-80 h-screen overflow-y-auto bg-gray-50 p-6 border-r border-gray-200">
-        {/* Settings Navigation Card */}
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
+        <h1 className="text-xl font-bold text-gray-800">Admin Settings</h1>
+        <button 
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          className="p-2 rounded-md text-gray-700 hover:bg-gray-100"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Sidebar - Mobile */}
+      {mobileNavOpen && (
+        <div className="md:hidden fixed inset-0 z-40">
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div className="relative z-50 w-72 h-full bg-white shadow-lg">
+            <div className="p-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Settings Menu</h2>
+                <button 
+                  onClick={() => setMobileNavOpen(false)}
+                  className="p-1 rounded-md hover:bg-gray-100"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (item.action) {
+                        item.action();
+                      } else {
+                        setActiveTab(item.id);
+                      }
+                      setMobileNavOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                      activeTab === item.id && !item.action
+                        ? 'bg-red-50 text-red-600 border border-red-200'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    } mb-2`}
+                  >
+                    <Icon size={20} />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sidebar - Desktop */}
+      <div className="hidden md:flex flex-shrink-0 w-72 h-screen overflow-y-auto bg-gray-50 p-6 border-r border-gray-200">
         <div className="bg-white rounded-lg shadow-sm p-4 sticky top-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h3>
           <div className="space-y-2">
@@ -159,7 +216,7 @@ export default function AdminSettings() {
                   }`}
                 >
                   <Icon size={20} />
-                  <span className="whitespace-pre-line">{item.label}</span>
+                  <span>{item.label}</span>
                 </button>
               );
             })}
@@ -169,14 +226,14 @@ export default function AdminSettings() {
 
       {/* Main Content */}
       <div className="flex-grow overflow-auto">
-        <div className="p-8 max-w-4xl mx-auto">
+        <div className="p-4 md:p-8 max-w-4xl mx-auto">
           {/* Account Tab */}
           {activeTab === 'account' && (
             <div>
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Mail className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Email Address</h2>
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
+                <div className="flex items-center space-x-2 mb-4 md:mb-6">
+                  <Mail className="text-red-500" size={20} />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">Email Address</h2>
                 </div>
                 
                 <div className="mb-4">
@@ -188,71 +245,6 @@ export default function AdminSettings() {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                 </div>
-                
-                <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
-                  Verify Email
-                </button>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Phone className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Phone Number</h2>
-                </div>
-                
-                <div className="mb-4">
-                  <label className="block text-gray-600 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={accountData.phone}
-                    onChange={(e) => setAccountData(prev => ({...prev, phone: e.target.value}))}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  />
-                </div>
-                
-                <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
-                  Verify with OTP
-                </button>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Lock className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Change Password</h2>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-600 mb-2">Current Password</label>
-                    <input
-                      type="password"
-                      placeholder="Enter your current password"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-gray-600 mb-2">New Password</label>
-                    <input
-                      type="password"
-                      placeholder="Enter your new password"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-gray-600 mb-2">Confirm New Password</label>
-                    <input
-                      type="password"
-                      placeholder="Confirm your new password"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <button className="bg-red-50 text-red-600 px-6 py-2 rounded-lg hover:bg-red-100 transition-colors">
-                    Update Password
-                  </button>
-                </div>
               </div>
             </div>
           )}
@@ -260,15 +252,15 @@ export default function AdminSettings() {
           {/* Privacy Tab */}
           {activeTab === 'privacy' && (
             <div>
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Eye className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Profile Visibility</h2>
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
+                <div className="flex items-center space-x-2 mb-4 md:mb-6">
+                  <Eye className="text-red-500" size={20} />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">Profile Visibility</h2>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">Admin Profile Visibility</h3>
                       <p className="text-gray-500 text-sm">Show admin profile to other admins only</p>
                     </div>
@@ -278,7 +270,7 @@ export default function AdminSettings() {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">Admin Dashboard Access</h3>
                       <p className="text-gray-500 text-sm">Require two-factor authentication for dashboard access</p>
                     </div>
@@ -288,7 +280,7 @@ export default function AdminSettings() {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">Admin Activity Logging</h3>
                       <p className="text-gray-500 text-sm">Log all admin actions and profile changes</p>
                     </div>
@@ -299,10 +291,10 @@ export default function AdminSettings() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <MessageCircle className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Contact Details Visibility</h2>
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                <div className="flex items-center space-x-2 mb-4 md:mb-6">
+                  <MessageCircle className="text-red-500" size={20} />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">Contact Details Visibility</h2>
                 </div>
                 
                 <div className="mb-4">
@@ -324,15 +316,15 @@ export default function AdminSettings() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Bell className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Notification Preferences</h2>
+              <div className="bg-white rounded-lg shadow-sm p-4 md:p-6">
+                <div className="flex items-center space-x-2 mb-4 md:mb-6">
+                  <Bell className="text-red-500" size={20} />
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">Notification Preferences</h2>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">Master Notifications</h3>
                       <p className="text-gray-500 text-sm">Enable or disable all notifications</p>
                     </div>
@@ -344,7 +336,7 @@ export default function AdminSettings() {
                   <hr className="border-gray-200" />
                   
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">Security & Login Alerts</h3>
                       <p className="text-gray-500 text-sm">Get notified of suspicious login activity and security threats</p>
                     </div>
@@ -354,7 +346,7 @@ export default function AdminSettings() {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">User Report Notifications</h3>
                       <p className="text-gray-500 text-sm">Immediate alerts when users report issues or policy violations</p>
                     </div>
@@ -364,7 +356,7 @@ export default function AdminSettings() {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="w-4/5">
                       <h3 className="font-semibold text-gray-800">System Status Alerts</h3>
                       <p className="text-gray-500 text-sm">Get notified when the platform experiences technical issues</p>
                     </div>
@@ -372,81 +364,6 @@ export default function AdminSettings() {
                       {renderCheckbox(notificationSettings.systemStatus)}
                     </button>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-gray-800">New User Registrations</h3>
-                      <p className="text-gray-500 text-sm">Stay informed about new users joining the platform</p>
-                    </div>
-                    <button onClick={() => handleNotificationToggle('newUserRegistrations')}>
-                      {renderCheckbox(notificationSettings.newUserRegistrations)}
-                    </button>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-gray-800">Admin Task Assignments</h3>
-                      <p className="text-gray-500 text-sm">Get notified when tasks are assigned or require immediate attention</p>
-                    </div>
-                    <button onClick={() => handleNotificationToggle('adminTasks')}>
-                      {renderCheckbox(notificationSettings.adminTasks)}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Delete Account Tab */}
-          {activeTab === 'delete' && (
-            <div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center space-x-2 mb-6">
-                  <Trash2 className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-bold text-gray-800">Delete Admin Account</h2>
-                </div>
-                
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Info className="text-red-500" size={20} />
-                    <h3 className="font-semibold text-red-800">Important Information</h3>
-                  </div>
-                  <ul className="text-red-700 text-sm space-y-1 ml-6">
-                    <li>• Your admin account will be permanently deleted</li>
-                    <li>• All admin privileges and access will be revoked</li>
-                    <li>• All pending admin tasks will be reassigned</li>
-                    <li>• Access to admin dashboard and user data will be immediately terminated</li>
-                    <li>• This action cannot be undone</li>
-                  </ul>
-                </div>
-                
-                <div className="mb-6">
-                  <label className="block text-gray-600 mb-2">Reason for leaving (required)</label>
-                  <select
-                    value={deleteReason}
-                    onChange={(e) => setDeleteReason(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    required
-                  >
-                    <option value="">Select a reason</option>
-                    <option value="leaving-organization">Leaving organization/company</option>
-                    <option value="role-transfer">Role transfer to another admin</option>
-                    <option value="security-breach">Security breach/compromise</option>
-                    <option value="policy-violation">Policy violation</option>
-                    <option value="end-of-contract">End of contract/employment</option>
-                    <option value="voluntary-resignation">Voluntary resignation from admin role</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div className="space-y-3">
-                  <button 
-                    onClick={() => setShowDeleteModal(true)}
-                    className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors font-semibold"
-                    disabled={!deleteReason}
-                  >
-                    Delete Admin Account
-                  </button>
                 </div>
               </div>
             </div>
@@ -454,10 +371,10 @@ export default function AdminSettings() {
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
+      {/* Modals */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-gray-600/50 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-gray-600/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex items-center space-x-3 mb-4">
               <LogOut className="text-red-500" size={24} />
               <h3 className="text-xl font-bold text-gray-800">Confirm Logout</h3>
@@ -465,7 +382,7 @@ export default function AdminSettings() {
             
             <p className="text-gray-600 mb-6">Are you sure you want to log out from the admin dashboard?</p>
             
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <button
                 onClick={() => setShowLogoutModal(false)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -483,10 +400,9 @@ export default function AdminSettings() {
         </div>
       )}
 
-      {/* Delete Account Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex items-center space-x-3 mb-4">
               <AlertTriangle className="text-red-500" size={24} />
               <h3 className="text-xl font-bold text-gray-800">Confirm Account Deletion</h3>
@@ -504,7 +420,7 @@ export default function AdminSettings() {
               className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
             
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
