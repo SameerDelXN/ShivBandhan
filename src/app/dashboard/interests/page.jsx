@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { 
   User, Heart, Eye, CheckCircle, X, Clock, MapPin, Calendar, 
   Briefcase, Shield, ThumbsUp, ThumbsDown, Send, Mail, 
-  Loader2, RefreshCw, Search, ChevronDown, ChevronUp, Phone, Globe, MessageSquare
+  Loader2, RefreshCw, Search, ChevronDown, ChevronUp, Droplet,Users,Home,GraduationCap,DollarSign ,Star,Phone, Globe, MessageSquare
 } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -162,10 +162,25 @@ export default function InterestsPage() {
     return `${maskedFirstName} ${lastName}`;
   };
 
- const InterestCard = ({ person, type }) => {
+const InterestCard = ({ person, type }) => {
   const profile = type === 'sent' ? person.receiver : person.sender;
   const profileImage = profile.profilePhoto || profile.image;
   
+  // Function to format name based on status
+  const formatName = (name, status) => {
+    if (!name) return 'Profile';
+    if (status === 'accepted') return name;
+    
+    // Split name into parts
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) return '****'; // If only one name
+    
+    // Mask first name and show last name
+    const maskedFirstName = '****';
+    const lastName = nameParts[nameParts.length - 1];
+    return `${maskedFirstName} ${lastName}`;
+  };
+
   return (
     <motion.div 
       className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-rose-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-rose-200"
@@ -183,7 +198,7 @@ export default function InterestsPage() {
             whileTap={{ scale: 0.95 }}
           >
             {profileImage ? (
-              <img src={profileImage} alt={profile.name} className="w-full h-full object-cover" />
+              <img src={profileImage} alt={formatName(profile.name, person.status)} className="w-full h-full object-cover" />
             ) : (
               <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
             )}
@@ -203,7 +218,9 @@ export default function InterestsPage() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 space-y-2 sm:space-y-0">
             <div className="space-y-1">
               <div className="flex items-center justify-center sm:justify-start space-x-2 mb-1">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">{profile.name}</h3>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">
+                  {formatName(profile.name, person.status)}
+                </h3>
                 {profile.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
               </div>
               <div className="flex flex-wrap justify-center sm:justify-start items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-2 gap-y-1">
@@ -211,28 +228,30 @@ export default function InterestsPage() {
                   <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   {calculateAge(profile.dob)} years
                 </span>
-                {profile.caste && <span>{profile.caste}</span>}
+                {person.status === 'accepted' && profile.caste && <span>{profile.caste}</span>}
               </div>
-              <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
-                {profile.currentCity && (
-                  <span className="flex items-center">
-                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                    {profile.currentCity}
-                  </span>
-                )}
-                {(profile.occupation || profile.education) && (
-                  <span className="flex items-center">
-                    <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                    {profile.occupation}{profile.occupation && profile.education && ' • '}{profile.education}
-                  </span>
-                )}
-              </div>
+              {person.status === 'accepted' && (
+                <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
+                  {profile.currentCity && (
+                    <span className="flex items-center">
+                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {profile.currentCity}
+                    </span>
+                  )}
+                  {(profile.occupation || profile.education) && (
+                    <span className="flex items-center">
+                      <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {profile.occupation}{profile.occupation && profile.education && ' • '}{profile.education}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="self-center sm:self-start">{getStatusBadge(person.status)}</div>
           </div>
 
-          {/* Badges */}
-          {profile.badges?.length > 0 && (
+          {/* Badges - Only show for accepted interests */}
+          {person.status === 'accepted' && profile.badges?.length > 0 && (
             <motion.div 
               className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3"
               initial={{ opacity: 0 }}
@@ -298,7 +317,7 @@ export default function InterestsPage() {
                 </motion.button>
               )}
               
-              {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
+              {person.status === 'accepted' && (
                 <motion.button 
                   onClick={() => handleViewProfile(person, type)}
                   className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"
@@ -315,7 +334,7 @@ export default function InterestsPage() {
     </motion.div>
   );
 };
-
+console.log("slee",selectedProfile)
   const ProfileDetailItem = ({ icon: Icon, label, value }) => (
     <motion.div 
       className="flex items-start mb-3"
@@ -590,7 +609,7 @@ export default function InterestsPage() {
       </div>
 
       {/* Profile Modal with Framer Motion */}
-   <AnimatePresence>
+  <AnimatePresence>
   {showModal && selectedProfile && (
     <motion.div
       initial={{ opacity: 0 }}
@@ -608,226 +627,115 @@ export default function InterestsPage() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <motion.div 
-          className="sticky top-0 bg-gradient-to-r from-rose-500 to-amber-500 p-4 z-10"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
+        <div className="sticky top-0 bg-gradient-to-r from-rose-500 to-amber-500 p-4 z-10">
           <div className="flex justify-between items-center">
-            <motion.h2 
-              className="text-xl font-bold text-white"
-              initial={{ x: -10 }}
-              animate={{ x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
+            <h2 className="text-xl font-bold text-white">
               {selectedProfile.name}'s Profile
-            </motion.h2>
-            <motion.button 
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            </h2>
+            <button 
               onClick={() => setShowModal(false)}
               className="p-1 rounded-full hover:bg-white/20 transition-colors"
             >
               <X className="w-6 h-6 text-white" />
-            </motion.button>
+            </button>
           </div>
-        </motion.div>
+        </div>
         
         {/* Scrollable Content Area */}
-        <div className="overflow-y-auto flex-1">
-          {/* Custom Scrollbar Styling */}
-          <style jsx global>{`
-            .overflow-y-auto::-webkit-scrollbar {
-              width: 6px;
-            }
-            .overflow-y-auto::-webkit-scrollbar-track {
-              background: #f1f1f1;
-              border-radius: 10px;
-            }
-            .overflow-y-auto::-webkit-scrollbar-thumb {
-              background: #e5e5e5;
-              border-radius: 10px;
-            }
-            .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-              background: #d4d4d4;
-            }
-          `}</style>
-
-          <div className="p-6">
-            {/* Profile Header with Animation */}
-            <motion.div 
-              className="flex items-start mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="relative mr-6">
-                <motion.div 
-                  className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-rose-200 transition-all"
-                  onClick={() => (selectedProfile.profilePhoto || selectedProfile.image) && setExpandedImage(selectedProfile.profilePhoto || selectedProfile.image)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {selectedProfile.profilePhoto ? (
-                    <img 
-                      src={selectedProfile.profilePhoto} 
-                      alt={selectedProfile.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : selectedProfile.image ? (
-                    <img 
-                      src={selectedProfile.image} 
-                      alt={selectedProfile.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User className="w-12 h-12 text-rose-500" />
-                  )}
-                </motion.div>
-                {selectedProfile.isOnline && (
-                  <motion.div 
-                    className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.5, type: "spring" }}
-                  />
-                )}
+        <div className="overflow-y-auto flex-1 p-6">
+          {/* Profile Header */}
+          <div className="flex items-start mb-6">
+            <div className="relative mr-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden">
+                <img 
+                  src={selectedProfile.image || selectedProfile.profilePhoto} 
+                  alt={selectedProfile.name} 
+                  className="w-full h-full object-cover"
+                />
               </div>
-              
-              <div>
-                <motion.h3 
-                  className="text-xl font-bold text-gray-900 mb-1"
-                  initial={{ x: -10 }}
-                  animate={{ x: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  {selectedProfile.name}
-                </motion.h3>
-                <motion.div 
-                  className="flex items-center text-gray-600 mb-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <span className="mr-3">{calculateAge(selectedProfile.dob)} years</span>
-                  <span>{selectedProfile.height}</span>
-                </motion.div>
-                <motion.div 
-                  className="flex flex-wrap gap-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  {selectedProfile.badges?.map((badge, index) => (
-                    <motion.span
-                      key={index}
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ 
-                        delay: 0.6 + (index * 0.1),
-                        type: "spring",
-                        stiffness: 500,
-                        damping: 15
-                      }}
-                    >
-                      {badge}
-                    </motion.span>
-                  ))}
-                </motion.div>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 mb-1">
+                {selectedProfile.name}
+              </h3>
+              <div className="flex items-center text-gray-600 mb-2">
+                <span className="mr-3">{calculateAge(selectedProfile.dob)} years</span>
+                <span>{selectedProfile.height}</span>
               </div>
-            </motion.div>
-            
-            {/* Sections with Accordion Animation */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              <ProfileSection title="Basic Information" sectionKey="basic">
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <ProfileDetailItem icon={User} label="Gender" value={selectedProfile.gender} />
-                  <ProfileDetailItem 
-                    icon={Calendar} 
-                    label="Date of Birth" 
-                    value={selectedProfile.dob ? new Date(selectedProfile.dob).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    }) : 'Not specified'}
-                  />
-                  <ProfileDetailItem icon={MapPin} label="Current City" value={selectedProfile.currentCity} />
-                  <ProfileDetailItem icon={MapPin} label="Hometown" value={selectedProfile.hometown} />
-                  <ProfileDetailItem icon={Shield} label="Religion" value={selectedProfile.religion} />
-                  <ProfileDetailItem icon={Shield} label="Caste" value={selectedProfile.caste} />
-                  <ProfileDetailItem icon={Shield} label="Subcaste" value={selectedProfile.subcaste} />
-                  <ProfileDetailItem icon={Shield} label="Marital Status" value={selectedProfile.maritalStatus} />
-                </motion.div>
-              </ProfileSection>
-              
-              <ProfileSection title="Professional Information" sectionKey="professional">
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.9 }}
-                >
-                  <ProfileDetailItem icon={Briefcase} label="Occupation" value={selectedProfile.occupation} />
-                  <ProfileDetailItem icon={Briefcase} label="Employer" value={selectedProfile.employer} />
-                  <ProfileDetailItem icon={Briefcase} label="Annual Income" value={selectedProfile.income} />
-                  <ProfileDetailItem icon={Briefcase} label="Education" value={selectedProfile.education} />
-                  <ProfileDetailItem icon={Briefcase} label="Degree" value={selectedProfile.degree} />
-                  <ProfileDetailItem icon={Briefcase} label="College" value={selectedProfile.college} />
-                </motion.div>
-              </ProfileSection>
-              
-              <ProfileSection title="Family Details" sectionKey="family">
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.0 }}
-                >
-                  <ProfileDetailItem icon={User} label="Father's Occupation" value={selectedProfile.fatherOccupation} />
-                  <ProfileDetailItem icon={User} label="Mother's Occupation" value={selectedProfile.motherOccupation} />
-                  <ProfileDetailItem icon={User} label="Siblings" value={selectedProfile.siblings} />
-                  <ProfileDetailItem icon={User} label="Family Type" value={selectedProfile.familyType} />
-                  <ProfileDetailItem icon={User} label="Family Values" value={selectedProfile.familyValues} />
-                  <ProfileDetailItem icon={User} label="Family Status" value={selectedProfile.familyStatus} />
-                </motion.div>
-              </ProfileSection>
-              
-              <ProfileSection title="Lifestyle & Preferences" sectionKey="lifestyle">
-                <motion.div 
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.1 }}
-                >
-                  <ProfileDetailItem icon={Heart} label="Diet" value={selectedProfile.diet} />
-                  <ProfileDetailItem icon={Heart} label="Drink" value={selectedProfile.drink} />
-                  <ProfileDetailItem icon={Heart} label="Smoke" value={selectedProfile.smoke} />
-                  <ProfileDetailItem icon={Heart} label="Hobbies" value={selectedProfile.hobbies} />
-                  <ProfileDetailItem icon={Heart} label="Languages" value={selectedProfile.languages} />
-                </motion.div>
-              </ProfileSection>
-            </motion.div>
-            
-            {/* Action Buttons with Animation */}
-            <motion.div 
-              className="mt-8 pt-6 border-t border-gray-200 flex justify-end space-x-3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2 }}
-            >
-             
-            </motion.div>
+            </div>
+          </div>
+          
+          {/* Basic Information */}
+          <div className="mb-6">
+            <h4 className="font-semibold text-lg mb-3 text-gray-800 border-b pb-2">Basic Information</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileDetailItem icon={Calendar} label="Date of Birth" 
+                value={new Date(selectedProfile.dob).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })} 
+              />
+              <ProfileDetailItem icon={MapPin} label="Birth Place" value={selectedProfile.birthPlace} />
+              <ProfileDetailItem icon={Droplet} label="Blood Group" value={selectedProfile.bloodGroup} />
+              <ProfileDetailItem icon={User} label="Gender" value={selectedProfile.gender} />
+              <ProfileDetailItem icon={Shield} label="Religion" value={selectedProfile.religion} />
+              <ProfileDetailItem icon={Shield} label="Caste" value={selectedProfile.caste} />
+              <ProfileDetailItem icon={Shield} label="Sub Caste" value={selectedProfile.subCaste} />
+              <ProfileDetailItem icon={Shield} label="Marital Status" value={selectedProfile.maritalStatus} />
+            </div>
+          </div>
+          
+          {/* Family Details */}
+          <div className="mb-6">
+            <h4 className="font-semibold text-lg mb-3 text-gray-800 border-b pb-2">Family Details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileDetailItem icon={User} label="Father's Name" value={selectedProfile.fatherName} />
+              <ProfileDetailItem icon={User} label="Mother's Name" value={selectedProfile.mother} />
+              <ProfileDetailItem icon={Users} label="Brothers" value={selectedProfile.brothers} />
+              <ProfileDetailItem icon={Users} label="Sisters" value={selectedProfile.sisters} />
+              <ProfileDetailItem icon={Home} label="Native City" value={selectedProfile.nativeCity} />
+            </div>
+          </div>
+          
+          {/* Professional Information */}
+          <div className="mb-6">
+            <h4 className="font-semibold text-lg mb-3 text-gray-800 border-b pb-2">Professional Information</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileDetailItem icon={Briefcase} label="Occupation" value={selectedProfile.occupation} />
+              <ProfileDetailItem icon={Briefcase} label="Company" value={selectedProfile.company} />
+              <ProfileDetailItem icon={GraduationCap} label="Education" value={selectedProfile.education} />
+              <ProfileDetailItem icon={GraduationCap} label="College" value={selectedProfile.college} />
+              <ProfileDetailItem icon={DollarSign} label="Income" value={selectedProfile.income} />
+            </div>
+          </div>
+          
+          {/* Astrological Details */}
+          <div className="mb-6">
+            <h4 className="font-semibold text-lg mb-3 text-gray-800 border-b pb-2">Astrological Details</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileDetailItem icon={Star} label="Rashi" value={selectedProfile.rashi} />
+              <ProfileDetailItem icon={Star} label="Nakshatra" value={selectedProfile.nakshira} />
+              <ProfileDetailItem icon={Star} label="Gothra" value={selectedProfile.gothra} />
+              <ProfileDetailItem icon={Star} label="Gotra Devak" value={selectedProfile.gotraDevak} />
+              <ProfileDetailItem icon={Star} label="Charan" value={selectedProfile.charan} />
+              <ProfileDetailItem icon={Star} label="Gan" value={selectedProfile.gan} />
+              <ProfileDetailItem icon={Star} label="Nadi" value={selectedProfile.nadi} />
+              <ProfileDetailItem icon={Star} label="Mangal" value={selectedProfile.mangal ? "Yes" : "No"} />
+            </div>
+          </div>
+          
+          {/* Preferences */}
+          <div>
+            <h4 className="font-semibold text-lg mb-3 text-gray-800 border-b pb-2">Preferences</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileDetailItem icon={Heart} label="Expected Caste" value={selectedProfile.expectedCaste} />
+              <ProfileDetailItem icon={Heart} label="Expected Education" value={selectedProfile.expectedEducation} />
+              <ProfileDetailItem icon={Heart} label="Expected Height" value={selectedProfile.expectedHeight} />
+              <ProfileDetailItem icon={Heart} label="Expected Income" value={selectedProfile.expectedIncome} />
+              <ProfileDetailItem icon={Heart} label="Expected Age Difference" value={selectedProfile.expectedAgeDifference} />
+            </div>
           </div>
         </div>
       </motion.div>

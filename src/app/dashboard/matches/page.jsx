@@ -157,25 +157,26 @@ const fetchSentInterests = async (senderId) => {
 };
 
   const fetchUsers = async () => {
-    try {
-      setIsLoading(true);
-      
-      // First fetch the current user's full profile including expectations
-      const currentUserRes = await fetch('/api/users/me');
-      const currentUserData = await currentUserRes.json();
-      
-      const sentReceiverIds = await fetchSentInterests(currentUserData._id);
-      // Then fetch potential matches
-      const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
-      const data = await res.json();
-      console.log("Data = ",data.data)
+  try {
+    setIsLoading(true);
+    
+    // First fetch the current user's full profile including expectations
+    const currentUserRes = await fetch('/api/users/me');
+    const currentUserData = await currentUserRes.json();
+    
+    const sentReceiverIds = await fetchSentInterests(currentUserData._id);
+    // Then fetch potential matches
+    const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
+    const data = await res.json();
+    console.log("Data = ", data.data)
    
-      
-      if (data.success) {
-        
-         const enriched = data.data
-        // Filter out current user's profile
-        .filter(matchUser => matchUser._id !== currentUserData.id)
+    if (data.success) {
+      const enriched = data.data
+        // Filter out current user's profile and filter by opposite gender
+        .filter(matchUser => 
+          matchUser._id !== currentUserData.id && 
+          matchUser.gender !== currentUserData.gender
+        )
         .map(matchUser => {
           const compatibility = calculateCompatibility(currentUserData, {
             ...matchUser,
@@ -199,14 +200,14 @@ const fetchSentInterests = async (senderId) => {
           };
         });
         
-        setMatches(enriched);
-      }
-    } catch (err) {
-      console.error('Failed to fetch matches:', err);
-    } finally {
-      setIsLoading(false);
+      setMatches(enriched);
     }
-  };
+  } catch (err) {
+    console.error('Failed to fetch matches:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const tabs = [
     { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility > 0).length, icon: Users },

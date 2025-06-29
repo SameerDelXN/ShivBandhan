@@ -6,24 +6,37 @@ export async function GET() {
   try {
     await dbConnect();
 
-    // Plan prices
+    // Plan prices - should match exactly with your subscription plan names
     const planPrices = {
-      premium: 1999,
-      gold: 999,
-      silver: 899
+      'Premium Plan': 1999,
+      'Gold Plan': 999,
+      'Silver Plan': 899,
+      'Basic Plan': 499,
+      // Add all other plans you have with their exact names and prices
     };
 
-    // Count users by plan
-    const premiumCount = await User.countDocuments({ 'subscription.plan': 'Premium Plan' });
-    const goldCount = await User.countDocuments({ 'subscription.plan': 'gold' });
-    const silverCount = await User.countDocuments({ 'subscription.plan': 'silver' });
+    // Count users
     const totalUsers = await User.countDocuments();
-    console.log('Total Users:', premiumCount);
-    // Total revenue from all paid plans
-    const revenue =
-      premiumCount * planPrices.premium +
-      goldCount * planPrices.gold +
-      silverCount * planPrices.silver;
+    
+    // Count all subscribed users
+    const subscribedUsersCount = await User.countDocuments({ 
+      'subscription.isSubscribed': true 
+    });
+    
+    // Get all subscribed users with their plan types for revenue calculation
+    const subscribedUsers = await User.find(
+      { 'subscription.isSubscribed': true },
+      { 'subscription.plan': 1 }
+    );
+
+    // Calculate revenue based on actual plans of subscribed users
+    let revenue = 0;
+    subscribedUsers.forEach(user => {
+      const planName = user.subscription.plan;
+      if (planName && planPrices[planName]) {
+        revenue += planPrices[planName];
+      }
+    });
 
     // Get recent users
     const recentUsers = await User.find()
@@ -36,12 +49,11 @@ export async function GET() {
       data: {
         stats: {
           totalUsers,
-          premiumUsers: premiumCount,
-          // goldUsers and silverUsers not required anymore
+          subscribedUsers: subscribedUsersCount, // All subscribed users count
           revenue,
           changes: {
             totalUsers: '+12%',
-            premiumUsers: '+15%',
+            subscribedUsers: '+15%',
             revenue: '+18%',
           }
         },

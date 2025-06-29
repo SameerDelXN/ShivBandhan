@@ -35,7 +35,7 @@ export default function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const usersPerPage = 4;
+  const usersPerPage = 10;
 
   // Fetch users from API
   const fetchUsers = async (page = 1) => {

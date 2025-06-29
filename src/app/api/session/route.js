@@ -34,6 +34,7 @@ console.log('User found:', user);
         phoneIsVerified: user.phoneIsVerified,
         subscription: user?.subscription,
         profilePhoto: user.profilePhoto,
+        gender:user?.gender
       }
     });
 
@@ -72,6 +73,7 @@ export async function POST(request) {
         },
         profilePhoto: user.profilePhoto,
         subscription: user.subscription || null,
+        gender:user?.gender
       }
     });
 

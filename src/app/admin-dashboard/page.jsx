@@ -31,6 +31,7 @@ export default function AdminDashboard() {
 
     fetchData();
   }, []);
+  console.log(data)
 
   if (loading) {
     return (
@@ -63,8 +64,8 @@ export default function AdminDashboard() {
  const stats = [
   { 
     title: 'Total Users', 
-    value: data.stats.totalUsers.toLocaleString(), 
-    change: data.stats.changes.totalUsers, 
+    value: data?.stats?.totalUsers.toLocaleString(), 
+    change: data?.stats?.changes?.totalUsers, 
     icon: Users, 
     bgColor: 'bg-[#E8F5E9]',
     textColor: 'text-[#2E7D32]',
@@ -72,8 +73,8 @@ export default function AdminDashboard() {
   },
   { 
     title: 'Premium Users', 
-    value: data.stats.premiumUsers.toLocaleString(), 
-    change: data.stats.changes.premiumUsers, 
+    value: data?.stats?.subscribedUsers.toLocaleString(), 
+    change: data?.stats?.changes?.subscribedUsers, 
     icon: Crown, 
     bgColor: 'bg-[#E3F2FD]',
     textColor: 'text-[#1565C0]',
@@ -82,8 +83,8 @@ export default function AdminDashboard() {
   
   { 
     title: 'Revenue (₹)', 
-    value: data.stats.revenue.toLocaleString(), 
-    change: data.stats.changes.revenue, 
+    value: data?.stats?.revenue.toLocaleString(), 
+    change: data?.stats?.changes?.revenue, 
     icon: DollarSign, 
     bgColor: 'bg-[#F3E5F5]',
     textColor: 'text-[#7B1FA2]',
