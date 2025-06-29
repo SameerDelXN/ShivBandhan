@@ -172,7 +172,7 @@ const UserSchema = new mongoose.Schema({
   },
   isSubscribed: {
     type: Boolean,
-    default: true, // Indicates if the user has an active subscription
+    default: false, // Indicates if the user has an active subscription
   },
   expiresAt: Date,
   transactionId: String, // ID from payment gateway

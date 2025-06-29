@@ -59,6 +59,7 @@
                 |-- page.jsx
             |-- verification
                 |-- page.jsx
+                |-- verification.jsx
         |-- api
             |-- admin
                 |-- dashboard

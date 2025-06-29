@@ -369,7 +369,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                   <input
                    type="date"
-                   value={formatDateToYYYYMMDD(formData.dob)}
+                   value={formatDateToYYYYMMDD(formData?.dob)}
                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                    />
