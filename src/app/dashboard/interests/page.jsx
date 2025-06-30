@@ -578,14 +578,7 @@ console.log("slee",selectedProfile)
                     ? 'Start browsing profiles and express your interest!' 
                     : 'Your perfect match might be just around the corner!'}
                 </p>
-                <motion.button 
-                  className="bg-rose-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors flex items-center mx-auto"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Search className="w-4 h-4 mr-2" />
-                  Browse Profiles
-                </motion.button>
+               
               </motion.div>
             ) : (
               <motion.div 
