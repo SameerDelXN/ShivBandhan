@@ -1249,7 +1249,7 @@ case 'relative':
                         (
                           verificationStatus === 'Pending' ? 'Verification Pending' :
                           verificationStatus === 'Verified' ? 'Profile Verified' :
-                          'Send for Verification'
+                          'Sent for Verification'
                         ) : 'Save Profile'
                       )}
                     </button>

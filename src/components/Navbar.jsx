@@ -86,12 +86,10 @@ export default function MatrimonialNavbar() {
               </a>
             ))}
             <div className="pt-2 flex flex-col space-y-3">
-              <button className="w-full py-2 text-rose-600 border border-rose-600 rounded-full hover:bg-rose-50 transition-colors duration-200">
+              <Link href={"/login"} className="w-full py-2 text-center text-rose-600 border border-rose-600 rounded-full hover:bg-rose-50 transition-colors duration-200">
                 Login
-              </button>
-              <button className="w-full py-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-colors duration-200">
-                Register
-              </button>
+              </Link>
+             
             </div>
           </div>
         </div>
