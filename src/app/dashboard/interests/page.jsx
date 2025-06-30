@@ -99,7 +99,7 @@ export default function InterestsPage() {
     const profileData = type === 'sent' ? person.receiver : person.sender;
     setSelectedProfile({
       ...profileData,
-      image: profileData?.profilePhoto || profileData.image
+      image: profileData?.profilePhoto || profileData?.image
     });
     setShowModal(true);
   };
@@ -164,7 +164,7 @@ export default function InterestsPage() {
 
 const InterestCard = ({ person, type }) => {
   const profile = type === 'sent' ? person.receiver : person.sender;
-  const profileImage = profile?.profilePhoto || profile.image;
+  const profileImage = profile?.profilePhoto || profile?.image;
   
   // Function to format name based on status
   const formatName = (name, status) => {
@@ -641,7 +641,7 @@ console.log("slee",selectedProfile)
             <div className="relative mr-6">
               <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden">
                 <img 
-                  src={selectedProfile.image || selectedProfile?.profilePhoto} 
+                  src={selectedProfile?.image || selectedProfile?.profilePhoto} 
                   alt={selectedProfile.name} 
                   className="w-full h-full object-cover"
                 />
