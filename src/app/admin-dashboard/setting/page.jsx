@@ -194,7 +194,7 @@ export default function AdminSettings() {
 
       {/* Sidebar - Desktop */}
       <div className="hidden md:flex flex-shrink-0 w-72 h-screen overflow-y-auto bg-gray-50 p-6 border-r border-gray-200">
-        <div className="bg-white rounded-lg shadow-sm p-4 sticky top-6">
+        <div className="bg-white rounded-lg shadow-sm p-4 sticky top-6 w-full">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Navigation</h3>
           <div className="space-y-2">
             {navigationItems.map((item) => {
