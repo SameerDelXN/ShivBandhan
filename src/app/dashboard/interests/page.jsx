@@ -198,12 +198,12 @@ const InterestCard = ({ person, type }) => {
             whileTap={{ scale: 0.95 }}
           >
             {profileImage ? (
-              <img src={profileImage} alt={formatName(profile.name, person.status)} className="w-full h-full object-cover" />
+              <img src={profileImage} alt={formatName(profile?.name, person?.status)} className="w-full h-full object-cover" />
             ) : (
               <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
             )}
           </motion.div>
-          {profile.isOnline && (
+          {profile?.isOnline && (
             <motion.div 
               className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white"
               initial={{ scale: 0 }}
@@ -219,29 +219,29 @@ const InterestCard = ({ person, type }) => {
             <div className="space-y-1">
               <div className="flex items-center justify-center sm:justify-start space-x-2 mb-1">
                 <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">
-                  {formatName(profile.name, person.status)}
+                  {formatName(profile?.name, person?.status)}
                 </h3>
-                {profile.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
+                {profile?.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
               </div>
               <div className="flex flex-wrap justify-center sm:justify-start items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-2 gap-y-1">
                 <span className="flex items-center">
                   <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                  {calculateAge(profile.dob)} years
+                  {calculateAge(profile?.dob)} years
                 </span>
-                {person.status === 'accepted' && profile.caste && <span>{profile.caste}</span>}
+                {person.status === 'accepted' && profile?.caste && <span>{profile?.caste}</span>}
               </div>
               {person.status === 'accepted' && (
                 <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
-                  {profile.currentCity && (
+                  {profile?.currentCity && (
                     <span className="flex items-center">
                       <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                      {profile.currentCity}
+                      {profile?.currentCity}
                     </span>
                   )}
-                  {(profile.occupation || profile.education) && (
+                  {(profile?.occupation || profile?.education) && (
                     <span className="flex items-center">
                       <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                      {profile.occupation}{profile.occupation && profile.education && ' • '}{profile.education}
+                      {profile?.occupation}{profile?.occupation && profile?.education && ' • '}{profile?.education}
                     </span>
                   )}
                 </div>
@@ -251,14 +251,14 @@ const InterestCard = ({ person, type }) => {
           </div>
 
           {/* Badges - Only show for accepted interests */}
-          {person.status === 'accepted' && profile.badges?.length > 0 && (
+          {person.status === 'accepted' && profile?.badges?.length > 0 && (
             <motion.div 
               className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              {profile.badges.map((badge, index) => (
+              {profile?.badges.map((badge, index) => (
                 <motion.span 
                   key={index} 
                   className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
