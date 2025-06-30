@@ -70,7 +70,17 @@ console.log("User Data", user)
 
     return Math.round((filledFields / sectionFields.length) * 100);
   };
-
+  useEffect(() => {
+  if (formData && Object.keys(formData).length > 0) {
+    const sections = getProfileSections(formData);
+    const totalCompletion = sections.reduce(
+      (sum, section) => sum + section.completion, 
+      0
+    ) / sections.length;
+    
+    setProfileCompletion(Math.round(totalCompletion));
+  }
+}, [formData]); // Recalculate when formData changes
   const getProfileSections = (formData) => {
     return [
       { 
