@@ -194,7 +194,6 @@ export async function POST(request) {
     ]);
 
     drawFormalSection('Account Details', [
-      ['Profile Completion', userData.profileCompletion + '%'],
       ['Member Since', formatDate(userData.createdAt)],
       ['Last Updated', formatDate(userData.updatedAt)],
       ['Last Login', formatDate(userData.lastLoginAt)],
