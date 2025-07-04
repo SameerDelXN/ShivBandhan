@@ -114,7 +114,13 @@ export async function GET(request) {
   verificationStatus: user.verificationStatus,
   preferences: user.preferences,
   subscription: user.subscription,
-  createdAt: user.createdAt
+  createdAt: user.createdAt,
+
+  // profile setup
+ profileSetup: {
+        willAdminFill: user.profileSetup?.willAdminFill || false,
+        dontAskAgain: user.profileSetup?.dontAskAgain || false
+      }
 };
     console.log("Me = ",userData)
     return NextResponse.json(userData);

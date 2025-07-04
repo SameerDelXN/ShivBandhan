@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { useSession } from '@/context/SessionContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, User, MapPin, GraduationCap, Briefcase, Calendar, Star, CheckCircle, Lock, Camera, Clock, Crown, Sparkles, Filter, ArrowUpDown, Bookmark, Eye, MessageCircle, TrendingUp, Users, Navigation, Zap, ChevronDown, SlidersHorizontal, X, Loader2,Search
 } from 'lucide-react';
@@ -67,6 +68,10 @@ export default function MatchesPage() {
     const isActive = user?.subscription?.isSubscribed || user?.user?.subscription?.isSubscribed;
       // Check subscription status from user session
       setHasSubscription(isActive);
+       // If subscription status changed, refetch matches to update blur status
+    if (hasSubscription !== isActive) {
+      await fetchUsers();
+    }
     } catch (err) {
       console.error('Error checking subscription:', err);
        setHasSubscription(false);
@@ -187,7 +192,7 @@ const fetchSentInterests = async (senderId) => {
             age: calculateAge(matchUser.dob),
             profilePhoto: matchUser.profilePhoto || 'https://via.placeholder.com/200x250?text=Profile',
             hasPhoto: !!matchUser.profilePhoto,
-            isBlurred: matchUser.subscription?.plan !== 'Premium',
+            isBlurred: !hasSubscription,
             matchType: 'all',
             mutualMatch: false,
             interestSent: sentReceiverIds.includes(matchUser._id),
@@ -329,298 +334,523 @@ if (quickFilters.education) {
     console.error('Error sending interest:', error);
   }
 };
+
+const handleImageClick = (match) => {
+  if (!hasSubscription) {
+    window.location.href = '/dashboard/subscription';
+    return;
+  }
+  setSelectedProfile(match);
+};
   const closeProfilePopup = () => {
     setSelectedProfile(null);
   };
   console.log("USERRRRRR = ",user?.id)
-  const ProfilePopup = ({ profile, onClose }) => (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
-          <h3 className="text-xl font-bold">{maskFirstName(profile.name)}'s Profile</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-6 mb-6">
-            <div className="w-full md:w-1/3">
-              <div className="aspect-[3/4] bg-gradient-to-br from-rose-100 to-amber-100 rounded-lg overflow-hidden">
+
+//   // At the beginning of the ProfilePopup component:
+// if (!hasSubscription) {
+//   return (
+//     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+//       <div className="bg-white rounded-xl p-6 max-w-md text-center">
+//         <Lock className="w-12 h-12 mx-auto text-rose-500 mb-4" />
+//         <h3 className="text-xl font-bold text-gray-900 mb-2">Premium Feature</h3>
+//         <p className="text-gray-600 mb-6">
+//           You need a subscription to view full profiles. Upgrade now to see complete details and photos.
+//         </p>
+//         <button
+//           onClick={() => window.location.href = '/dashboard/subscription'}
+//           className="bg-rose-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors"
+//         >
+//           Upgrade Now
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
+  const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
+
+  return (
+    <>
+      {/* Main Profile Popup */}
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-rose-100 flex flex-col lg:flex-row"
+        >
+          {/* Fixed Left Side - Profile Image & Quick Stats */}
+          <div className="w-full lg:w-1/3 p-4 border-r border-rose-100 bg-gradient-to-b from-rose-50/30 to-amber-50/30 flex flex-col items-center">
+            {/* Close button for desktop */}
+            
+
+            {/* Header for mobile */}
+            <div className="lg:hidden mb-4 text-center">
+              <h3 className="text-xl font-bold text-rose-800">Profile Details</h3>
+              <p className="text-sm text-rose-600">Compatibility: {profile.compatibility}% Match</p>
+            </div>
+
+            {/* Clickable Profile Photo */}
+            <motion.div 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setIsImagePopupOpen(true)}
+              className="w-full max-w-[240px] mx-auto mb-4 cursor-pointer"
+            >
+              <div className="aspect-[3/4] bg-gradient-to-br from-rose-100 to-amber-100 rounded-xl overflow-hidden shadow-lg relative group">
                 {profile.profilePhoto ? (
-                  <img
-                    src={profile.profilePhoto}
-                    alt={`${maskFirstName(profile.name)} profile`}
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    <img
+                      src={profile.profilePhoto}
+                      alt={`${maskFirstName(profile.name)} profile`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </>
                 ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <Camera className="w-12 h-12 text-gray-400" />
+                  <div className="h-full flex flex-col items-center justify-center gap-2">
+                    <Camera className="w-12 h-12 text-rose-300" />
+                    <span className="text-rose-400 font-medium">Add Profile Photo</span>
                   </div>
                 )}
               </div>
+            </motion.div>
+            
+            {/* Quick Stats */}
+            <div className="w-full grid grid-cols-2 gap-2 mt-2">
+              <div className="bg-rose-50 p-2 rounded-lg text-center">
+                <p className="text-xs text-rose-600">Age</p>
+                <p className="font-semibold text-rose-800">{profile.age}</p>
+              </div>
+              <div className="bg-amber-50 p-2 rounded-lg text-center">
+                <p className="text-xs text-amber-600">Height</p>
+                <p className="font-semibold text-amber-800">{profile.height}</p>
+              </div>
+              <div className="bg-emerald-50 p-2 rounded-lg text-center">
+                <p className="text-xs text-emerald-600">City</p>
+                <p className="font-semibold text-emerald-800">{profile.currentCity}</p>
+              </div>
+              <div className="bg-blue-50 p-2 rounded-lg text-center">
+                <p className="text-xs text-blue-600">Weight</p>
+                <p className="font-semibold text-blue-800">{profile.weight || '-'}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Scrollable Right Side - Profile Details */}
+          <div className="w-full lg:w-2/3 overflow-y-auto flex flex-col">
+            {/* Header for desktop */}
+            <div className="hidden lg:flex sticky top-0 bg-gradient-to-r from-rose-50 to-amber-50 p-4 border-b border-rose-200 z-10">
+              <div>
+                <h3 className="text-xl font-bold text-rose-800">Profile Details</h3>
+                <p className="text-sm text-rose-600">Compatibility: {profile.compatibility}% Match</p>
+              </div>
+              <button 
+    onClick={onClose}
+    className="text-rose-500 hover:text-rose-700 transition-colors p-1 rounded-full hover:bg-rose-100 ml-auto"
+  >
+    <X className="w-6 h-6" />
+  </button>
             </div>
             
-            <div className="w-full md:w-2/3">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{maskFirstName(profile.name)}</h2>
-                  <div className="flex items-center space-x-4 mt-1">
-                    <span className="text-gray-600">{profile.age} years</span>
-                    <span className="text-gray-600">{profile.height}</span>
-                    <span className="text-gray-600">{profile.caste}</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center bg-rose-50 px-3 py-1 rounded-full">
-                  <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                  <span className="font-medium">{profile.compatibility}% Match</span>
-                </div>
+            {/* Content */}
+            <div className="p-6">
+              {/* Name and Title */}
+              <div className="border-b border-rose-100 pb-4">
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                 {hasSubscription ? profile.name : maskFirstName(profile.name)}
+                 {profile.isVerified && (
+                 <span className="ml-2 inline-flex items-center bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                 <CheckCircle className="w-3 h-3 mr-1" />
+                   Verified
+                 </span>
+                )}
+                </h2>
+                <p className="text-rose-600 font-medium">{profile.occupation || 'Professional'}</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center text-gray-600 mb-1">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="font-medium">Location</span>
-                  </div>
-                  <p>{profile.currentCity}, {profile.state}</p>
-                </div>
-                
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center text-gray-600 mb-1">
-                    <GraduationCap className="w-4 h-4 mr-2" />
-                    <span className="font-medium">Education</span>
-                  </div>
-                  <p>{profile.education}</p>
-                </div>
-                
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center text-gray-600 mb-1">
-                    <Briefcase className="w-4 h-4 mr-2" />
-                    <span className="font-medium">Profession</span>
-                  </div>
-                  <p>{profile.occupation} at {profile.company}</p>
-                </div>
-                
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center text-gray-600 mb-1">
+              {/* Info Sections */}
+              <div className="space-y-5 mt-5">
+                {/* About Section */}
+                <div className="bg-gradient-to-r from-rose-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-rose-700 font-semibold mb-2">
                     <User className="w-4 h-4 mr-2" />
-                    <span className="font-medium">About</span>
+                    About
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Gender</p>
+                      <p className="font-medium">{profile.gender || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Marital Status</p>
+                      <p className="font-medium">{profile.maritalStatus || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Mother Tongue</p>
+                      <p className="font-medium">{profile.motherTongue || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Complexion</p>
+                      <p className="font-medium">{profile.complexion || '-'}</p>
+                    </div>
                   </div>
-                  <p>{profile.bio || 'No information provided'}</p>
                 </div>
-              </div>
-              
-              <div className="flex space-x-3">
-                <button 
-                  onClick={() => handleSendInterest(user.id , profile._id)}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
-                    profile.interestSent 
-                      ? 'bg-gray-200 text-gray-500 cursor-default'
-                      : 'bg-rose-500 text-white hover:bg-rose-600'
-                  }`}
-                  disabled={profile.interestSent}
-                >
-                  <Heart className={`w-4 h-4 mr-2 ${profile.interestSent ? 'fill-rose-600' : ''}`} />
-                  {profile.interestSent ? 'Interest Sent' : 'Send Interest'}
-                </button>
-                <button className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors">
-                  <MessageCircle className="w-4 h-4 mr-2 inline" />
-                  Start Chat
-                </button>
+                
+                {/* Location Section */}
+                <div className="bg-gradient-to-r from-blue-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-blue-700 font-semibold mb-2">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Location
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Current City</p>
+                      <p className="font-medium">{profile.currentCity || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Native City</p>
+                      <p className="font-medium">{profile.nativeCity || '-'}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-500">Address</p>
+                      <p className="font-medium">{profile.permanentAddress || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Education Section */}
+                <div className="bg-gradient-to-r from-purple-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-purple-700 font-semibold mb-2">
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Education
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Highest Degree</p>
+                      <p className="font-medium">{profile.education || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Field of Study</p>
+                      <p className="font-medium">{profile.fieldOfStudy || '-'}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-500">College</p>
+                      <p className="font-medium">{profile.college || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Professional Section */}
+                <div className="bg-gradient-to-r from-emerald-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-emerald-700 font-semibold mb-2">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    Professional
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Occupation</p>
+                      <p className="font-medium">{profile.occupation || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Company</p>
+                      <p className="font-medium">{profile.company || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Income</p>
+                      <p className="font-medium">{profile.income || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Family Section */}
+                <div className="bg-gradient-to-r from-amber-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-amber-700 font-semibold mb-2">
+                    <Users className="w-4 h-4 mr-2" />
+                    Family
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Father</p>
+                      <p className="font-medium">{profile.fatherName || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Mother</p>
+                      <p className="font-medium">{profile.mother || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Siblings</p>
+                      <p className="font-medium">
+                        {profile.brothers || 0} brothers, {profile.sisters || 0} sisters
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Parent Occupation</p>
+                      <p className="font-medium">{profile.parentOccupation || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Horoscope Section */}
+                <div className="bg-gradient-to-r from-indigo-50/50 to-transparent p-4 rounded-xl">
+                  <h3 className="flex items-center text-indigo-700 font-semibold mb-2">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Horoscope
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-gray-500">Rashi</p>
+                      <p className="font-medium">{profile.rashi || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Nakshira</p>
+                      <p className="font-medium">{profile.nakshira || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Gotra/Devak</p>
+                      <p className="font-medium">{profile.gotraDevak || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Mangal</p>
+                      <p className="font-medium">{profile.mangal ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div className="border-t pt-6">
-            <h4 className="font-bold text-lg mb-4">More Details</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Religion</h5>
-                <p>{profile.religion || 'Not specified'}</p>
+        </motion.div>
+      </div>
+
+      {/* Profile Image Popup */}
+      <AnimatePresence>
+        {isImagePopupOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-4 backdrop-blur-lg"
+            onClick={() => setIsImagePopupOpen(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              transition={{ type: 'spring', damping: 20 }}
+              className="relative max-w-2xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {profile.profilePhoto ? (
+                <img
+                  src={profile.profilePhoto}
+                  alt={`${maskFirstName(profile.name)} profile`}
+                  className="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
+                />
+              ) : (
+                <div className="aspect-[3/4] bg-gradient-to-br from-rose-100 to-amber-100 rounded-lg flex items-center justify-center">
+                  <Camera className="w-16 h-16 text-rose-300" />
+                </div>
+              )}
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-rose-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                Shivbandhan Matrimony
               </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Mother Tongue</h5>
-                <p>{profile.motherTongue || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Marital Status</h5>
-                <p>{profile.maritalStatus || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Blood Group</h5>
-                <p>{profile.bloodGroup || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Complexion</h5>
-                <p>{profile.complexion || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Gotra/Devak</h5>
-                <p>{profile.gotraDevak || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Rashi</h5>
-                <p>{profile.rashi || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Nakshira</h5>
-                <p>{profile.nakshira || 'Not specified'}</p>
-              </div>
-              <div>
-                <h5 className="text-gray-500 text-sm mb-1">Last Active</h5>
-                <p>{profile.lastActive || 'Recently'}</p>
-              </div>
-            </div>
+              <button
+                onClick={() => setIsImagePopupOpen(false)}
+                className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-md hover:bg-rose-50 transition-colors"
+              >
+                <X className="w-6 h-6 text-rose-600" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+const MatchCard = ({ match }) => (
+  <div className="bg-white rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
+    <div className="relative">
+      {/* Mutual Match Banner */}
+      {match.mutualMatch && (
+        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-1 px-3 z-10">
+          <div className="flex items-center justify-center">
+            <Heart className="w-3 h-3 mr-1 fill-current" />
+            <span className="text-xs font-medium">It's a Match!</span>
           </div>
         </div>
-      </div>
-    </div>
-  );
+      )}
 
-  const MatchCard = ({ match }) => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
-      <div className="relative">
-        {/* Mutual Match Banner */}
-        {match.mutualMatch && (
-          <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-1 px-3 z-10">
-            <div className="flex items-center justify-center">
-              <Heart className="w-3 h-3 mr-1 fill-current" />
-              <span className="text-xs font-medium">It's a Match!</span>
-            </div>
+      {/* Profile Image */}
+     <div className={`aspect-[4/5] bg-gradient-to-br from-rose-50 to-amber-50 flex items-center justify-center relative ${match.mutualMatch ? 'mt-8' : ''}`}>
+        {match.profilePhoto ? (
+          <>
+            <img
+              src={match.profilePhoto}
+              alt={`${maskFirstName(match.name)} profile`}
+              className={`w-full h-full object-cover ${!hasSubscription ? 'blur-md' : ''}`}
+            />
+            {!hasSubscription && (
+              <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-4 text-center">
+                
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.location.href = '/dashboard/subscription';
+                  }}
+                  className="mt-2 bg-white text-rose-600 px-3 py-1 rounded-full text-xs font-medium hover:bg-rose-50 transition-colors"
+                >
+                  Unlock Now
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center">
+            <Camera className="w-8 h-8 text-gray-400 mx-auto mb-1" />
+            <p className="text-xs text-gray-500">No Photo</p>
           </div>
         )}
-
-        {/* Profile Image */}
-        <div className={`aspect-[4/5] bg-gradient-to-br from-rose-50 to-amber-50 flex items-center justify-center relative ${match.mutualMatch ? 'mt-8' : ''}`}>
-          {match.profilePhoto ? (
-            <div className={`w-full h-full ${match.isBlurred ? 'blur-md' : ''}`}>
-              <img
-                src={match.profilePhoto}
-                alt={`${maskFirstName(match.name)} profile`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div className="text-center">
-              <Camera className="w-8 h-8 text-gray-400 mx-auto mb-1" />
-              <p className="text-xs text-gray-500">No Photo</p>
+        
+        {/* Badges */}
+        <div className="absolute top-1 left-1 flex flex-col space-y-1">
+          {match.isVerified && (
+            <div className="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-medium flex items-center">
+              <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
+              Verified
             </div>
           )}
-          
-          {/* Badges */}
-          <div className="absolute top-1 left-1 flex flex-col space-y-1">
-            {match.isVerified && (
-              <div className="bg-green-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-medium flex items-center">
-                <CheckCircle className="w-2.5 h-2.5 mr-0.5" />
-                Verified
-              </div>
-            )}
-            {match.subscription?.plan === 'Premium' && (
-              <div className="bg-gradient-to-r from-amber-400 to-rose-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-medium flex items-center">
-                <Crown className="w-2.5 h-2.5 mr-0.5" />
-                Premium
-              </div>
-            )}
-          </div>
-
-          {/* Compatibility Score */}
-          <div className="absolute top-1 right-1 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-full">
-            <div className="flex items-center">
-              <Star className={`w-2.5 h-2.5 mr-0.5 
-                ${
-                  match.compatibility >= 90 ? 'text-green-500' :
-                  match.compatibility >= 70 ? 'text-teal-500' :
-                  match.compatibility >= 50 ? 'text-yellow-500' :
-                  'text-rose-500'
-                }`} />
-              <span className={`text-[10px] font-medium 
-                ${
-                  match.compatibility >= 90 ? 'text-green-700' :
-                  match.compatibility >= 70 ? 'text-teal-700' :
-                  match.compatibility >= 50 ? 'text-yellow-700' :
-                  'text-rose-700'
-                }`}>
-                {match.compatibility}%
-              </span>
+          {match.subscription?.plan === 'Premium' && (
+            <div className="bg-gradient-to-r from-amber-400 to-rose-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-medium flex items-center">
+              <Crown className="w-2.5 h-2.5 mr-0.5" />
+              Premium
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Profile Info */}
-        <div className="p-3">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="font-semibold text-gray-900 text-sm">{maskFirstName(match.name)}</h3>
-            <div className="flex items-center space-x-1">
-              <Clock className="w-2.5 h-2.5 text-gray-400" />
-              <span className="text-[10px] text-gray-500">{match.lastActive}</span>
-            </div>
-          </div>
-          
-          <div className="space-y-0.5 text-xs text-gray-600 mb-2">
-            <div className="flex items-center">
-              <Calendar className="w-2.5 h-2.5 mr-1" />
-              <span>{match.age} yrs • {match.height}</span>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="w-2.5 h-2.5 mr-1" />
-              <span>{match.currentCity}</span>
-            </div>
-            <div className="flex items-center">
-              <GraduationCap className="w-2.5 h-2.5 mr-1" />
-              <span className="truncate">{match.education}</span>
-            </div>
-            <div className="flex items-center">
-              <Briefcase className="w-2.5 h-2.5 mr-1" />
-              <span className="truncate">{match.income}</span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex space-x-1.5">
-            {match.mutualMatch ? (
-              <button className="flex-1 bg-green-50 text-green-600 py-1 px-2 rounded text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center">
-                <MessageCircle className="w-3 h-3 mr-0.5" />
-                Chat
-              </button>
-            ) : match.interestSent ? (
-              <button 
-             onClick={() => handleSendInterest(user?.user?.id, match._id)}
-             disabled={match.interestSent}
-             className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
-             match.interestSent 
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-               : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
-               }`}
->
-             <Heart className={`w-4 h-4 mr-1 ${match.interestSent ? 'fill-rose-600' : ''}`} />
-              {match.interestSent ? 'Interest Sent' : 'Send Interest'}
-               </button>
-            ) : (
-              <button 
-                onClick={() => handleSendInterest(user?.id ? user.id : user.user.id, match._id)}
-                disabled={checkingSubscription}
-                className={`flex-1 py-1 px-2 rounded text-xs font-medium ${
-                  checkingSubscription ? 'bg-gray-100' :
-                  'bg-rose-50 hover:bg-rose-100 text-rose-600'
-                }`}
-              >
-                {checkingSubscription ? (
-                  <Loader2 className="w-3 h-3 animate-spin mx-auto" />
-                ) : (
-                  <>
-                    <Heart className="w-3 h-3 mr-0.5 inline" />
-                    Interest
-                  </>
-                )}
-              </button>
-            )}
+        {/* Compatibility Score */}
+        <div className="absolute top-1 right-1 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-full">
+          <div className="flex items-center">
+            <Star className={`w-2.5 h-2.5 mr-0.5 
+              ${
+                match.compatibility >= 90 ? 'text-green-500' :
+                match.compatibility >= 70 ? 'text-teal-500' :
+                match.compatibility >= 50 ? 'text-yellow-500' :
+                'text-rose-500'
+              }`} />
+            <span className={`text-[10px] font-medium 
+              ${
+                match.compatibility >= 90 ? 'text-green-700' :
+                match.compatibility >= 70 ? 'text-teal-700' :
+                match.compatibility >= 50 ? 'text-yellow-700' :
+                'text-rose-700'
+              }`}>
+              {match.compatibility}%
+            </span>
           </div>
         </div>
       </div>
+
+      {/* Profile Info */}
+      <div className="p-3">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="font-semibold text-gray-900 text-sm"> {hasSubscription ? match.name : maskFirstName(match.name)}</h3>
+          <div className="flex items-center space-x-1">
+            <Clock className="w-2.5 h-2.5 text-gray-400" />
+            <span className="text-[10px] text-gray-500">{match.lastActive}</span>
+          </div>
+        </div>
+        
+        <div className="space-y-0.5 text-xs text-gray-600 mb-2">
+          <div className="flex items-center">
+            <Calendar className="w-2.5 h-2.5 mr-1" />
+            <span>{match.age} yrs • {match.height}</span>
+          </div>
+          <div className="flex items-center">
+            <MapPin className="w-2.5 h-2.5 mr-1" />
+            <span>{match.currentCity}</span>
+          </div>
+          <div className="flex items-center">
+            <GraduationCap className="w-2.5 h-2.5 mr-1" />
+            <span className="truncate">{match.education}</span>
+          </div>
+          <div className="flex items-center">
+            <Briefcase className="w-2.5 h-2.5 mr-1" />
+            <span className="truncate">{match.income}</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        
+<div className="flex space-x-1.5">
+  <button 
+    onClick={(e) => {
+      e.stopPropagation();
+      if (!hasSubscription) {
+        window.location.href = '/dashboard/subscription';
+        return;
+      }
+      setSelectedProfile(match);
+    }}
+    className="flex-1 bg-gray-100 text-gray-700 py-1 px-2 rounded text-xs font-medium hover:bg-gray-200 transition-colors"
+  >
+    <Eye className="w-3 h-3 mr-0.5 inline" />
+    View
+  </button>
+  
+  {match.mutualMatch ? (
+    <button className="flex-1 bg-green-50 text-green-600 py-1 px-2 rounded text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center">
+      <MessageCircle className="w-3 h-3 mr-0.5" />
+      Chat
+    </button>
+  ) : match.interestSent ? (
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        handleSendInterest(user?.user?.id, match._id);
+      }}
+      disabled={match.interestSent}
+      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
+        match.interestSent 
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
+      }`}
+    >
+      <Heart className={`w-4 h-4 mr-1 ${match.interestSent ? 'fill-rose-600' : ''}`} />
+      {match.interestSent ? 'Interest Sent' : 'Send Interest'}
+    </button>
+  ) : (
+    <button 
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!hasSubscription) {
+          window.location.href = '/dashboard/subscription';
+          return;
+        }
+        handleSendInterest(user?.id ? user.id : user.user.id, match._id);
+      }}
+      disabled={checkingSubscription}
+      className={`flex-1 py-1 px-2 rounded text-xs font-medium ${
+        checkingSubscription ? 'bg-gray-100' :
+        'bg-rose-50 hover:bg-rose-100 text-rose-600'
+      }`}
+    >
+      {checkingSubscription ? (
+        <Loader2 className="w-3 h-3 animate-spin mx-auto" />
+      ) : (
+        <>
+          <Heart className="w-3 h-3 mr-0.5 inline" />
+          Interest
+        </>
+      )}
+    </button>
+  )}
+</div>
+      </div>
     </div>
-  );
+  </div>
+);
 
   const EmptyState = ({ isLoading }) => (
     <div className="text-center py-12">
@@ -978,7 +1208,10 @@ if (quickFilters.education) {
           <>
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredMatches.map((match) => (
-                <MatchCard key={match._id} match={match} />
+                <MatchCard key={match._id}
+                 match={match}
+                 hasSubscription={hasSubscription}
+                 setSelectedProfile={setSelectedProfile} />
               ))}
             </div>
 
@@ -1000,9 +1233,13 @@ if (quickFilters.education) {
     </div>
 
     {/* Profile Popup */}
-    {selectedProfile && (
-      <ProfilePopup profile={selectedProfile} onClose={closeProfilePopup} />
-    )}
+  {selectedProfile && (
+  <ProfilePopup 
+    profile={selectedProfile} 
+    onClose={closeProfilePopup} 
+    hasSubscription={hasSubscription}
+  />
+)}
   </div>
 );
 }

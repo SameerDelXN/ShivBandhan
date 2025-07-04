@@ -92,6 +92,9 @@ const {
   divorcee,
   expectedHeight,
   expectedIncome,
+
+// Profile Setup
+      profileSetup,
   
   // Photos
   photos
@@ -164,15 +167,21 @@ const updateData = {
   
   // Photos
   photos,
+   profileSetup: {
+        willAdminFill: profileSetup?.willAdminFill ,
+        dontAskAgain: profileSetup?.dontAskAgain 
+      },
   
   // Timestamp
   updatedAt: new Date()
 };
 
+console.log('Update Data:', userId);
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       updateData,
-      
+  
       { new: true, runValidators: true }
     ).select('-__v');
 

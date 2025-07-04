@@ -7,7 +7,6 @@ import Link from 'next/link';
 //sample
 export default function MyProfilePage() {
   const { user } = useSession();
-  
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,6 +16,11 @@ export default function MyProfilePage() {
   const [filteredSurname, setFilteredSurname] = useState('');
   const [showCompletionUpdate, setShowCompletionUpdate] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState('Unverified');
+  const [showFormFillChoice, setShowFormFillChoice] = useState(false);
+  const [dontAskAgain, setDontAskAgain] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+ 
   const [photos, setPhotos] = useState([
     { id: 1, url: user?.profilePhoto || null, isPrimary: true },
     { id: 2, url: null, isPrimary: false },
@@ -46,9 +50,81 @@ console.log("User Data", user)
     }
   }, [user]);
 
- 
+ useEffect(() => {
+    const checkPreferences = async () => {
+      try {
+        const response = await fetch('/api/users/me', {
+          cache: 'no-store'
+        });
+        const userData = await response.json();
+        console.log(userData);
+        
+        // Show popup ONLY if both fields are false/unset
+        const shouldShow = !userData?.profileSetup?.willAdminFill && 
+                         !userData?.profileSetup?.dontAskAgain;
+        
+        setShowFormFillChoice(shouldShow);
+      } catch (error) {
+        console.error("Error checking preferences:", error);
+        setShowFormFillChoice(true); // Default to show if error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkPreferences();
+  }, []);
+
+ const handleFormFillChoice = async (willAdminFill) => {
+  try {
+    if (!user?.id) {
+      throw new Error("User ID is missing");
+    }
+
+    // Add loading state
+    setIsLoading(true);
+
+    const response = await fetch('/api/users/setup', {  
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        willAdminFill,
+        dontAskAgain: dontAskAgain 
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to save preference');
+    }
+
+    const data = await response.json();
+
+    // Update local state
+    setFormData(prev => ({
+      ...prev,
+      profileSetup: {
+        willAdminFill,
+        dontAskAgain: willAdminFill ? true : dontAskAgain
+      }
+    }));
+
+    setShowFormFillChoice(false);
     
-  const calculateCompletion = (section) => {
+    // Show success message from backend
+    alert(data.message);
+
+  } catch (error) {
+    console.error("Error saving preference:", error);
+    alert(`Error: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+const calculateCompletion = (section) => {
     if (!formData) return 0; 
     const fields = {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
@@ -154,7 +230,7 @@ console.log("User Data", user)
         permanentAddress: data.permanentAddress || '',
         userId: user?.user?.id || '',
         verificationStatus: data?.verificationStatus || 'Unverified',
-profilePhoto:data?.profilePhoto || "",
+        profilePhoto:data?.profilePhoto || "",
          // Relative Info
         fatherName: data.fatherName || '',
         parentResidenceCity: data.parentResidenceCity || '',
@@ -188,6 +264,12 @@ profilePhoto:data?.profilePhoto || "",
         divorcee: data.divorcee || false,
         expectedHeight: data.expectedHeight || '',
         expectedIncome: data.expectedIncome || '',
+
+        // Profile Setup  
+        profileSetup: {
+          willAdminFill: data?.profileSetup?.willAdminFill || false,
+          dontAskAgain: data?.profileSetup?.dontAskAgain || false
+        }
       };
       setFormData(InitailFormData)
       // Calculate initial profile completion
@@ -328,7 +410,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
         label: 'Verification Rejected'
       }
     };
-
+  
     const config = statusConfig[status] || statusConfig.Unverified;
 
     return (
@@ -345,8 +427,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
-
-  console.log(formData)
+ console.log(formData)
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -1129,8 +1210,9 @@ case 'relative':
   };
   
   return (
-   !isLoaded ?<div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center">
+
+      !isLoaded ?<div className="flex items-center justify-center min-h-screen bg-gray-50">
+       <div className="text-center">
         {/* Simple Spinner */}
         <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
         
@@ -1216,6 +1298,7 @@ case 'relative':
                     </div>
                     <div className="flex items-center mt-2">
                       <VerificationBadge status={formData?.verificationStatus} />
+                       
                     </div>
                   </div>
                 </div>
@@ -1261,7 +1344,7 @@ case 'relative':
         </div>
 
         {/* Main Content Grid */}
-        <div className={`grid grid-cols-1 lg:grid-cols-4 gap-6 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+        <div className={`grid grid-cols-1 lg:grid-cols-4 gap-6 transform transiti~on-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
 
           {/* Left Sidebar - Profile Sections */}
           <div className="lg:col-span-1 space-y-4">
@@ -1398,6 +1481,54 @@ case 'relative':
           </div> 
         </div>
       </div>
+    {showFormFillChoice && (
+        <div className="fixed inset-0 z-[9999] bg-gray-500/50 bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl relative">
+            <button 
+              onClick={() => setShowFormFillChoice(false)}
+              className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-3">Profile Setup</h3>
+            <p className="text-gray-600 mb-6">
+              Would you like to fill out your profile details yourself, or have our team assist you?
+            </p>
+
+            {!user?.profileSetup?.willAdminFill && (
+              <div className="flex items-start mb-6">
+                <input
+                  type="checkbox"
+                  id="dontAskAgain"
+                  checked={dontAskAgain}
+                  onChange={(e) => setDontAskAgain(e.target.checked)}
+                  className="mt-1 h-4 w-4 text-rose-500 rounded border-gray-300 focus:ring-rose-500"
+                />
+                <label htmlFor="dontAskAgain" className="ml-3 block text-sm text-gray-700">
+                  Don't ask me again
+                </label>
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              <button
+                onClick={() => handleFormFillChoice(false)}
+                className="w-full bg-rose-500 text-white py-3 rounded-lg font-medium hover:bg-rose-600 transition-colors"
+              >
+                I'll fill it myself
+              </button>
+              
+              <button
+                onClick={() => handleFormFillChoice(true)}
+                className="w-full bg-white text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors border border-gray-300"
+              >
+                Have admin fill it for me
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

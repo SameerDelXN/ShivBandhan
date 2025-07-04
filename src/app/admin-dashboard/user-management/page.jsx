@@ -37,69 +37,70 @@ export default function UserManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const usersPerPage = 4;
 
-  // Fetch users from API
-  const fetchUsers = async (page = 1) => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/users/fetchAllUsers?page=${page}&limit=${usersPerPage}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch users');
-      }
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Transform API data to match UI expectations
-        const transformedUsers = data.data.map(user => ({
-          id: user._id,
-          name: user.name || 'N/A',
-          email: user.phone, // Using phone as email since API doesn't have email
-          phone: user.phone,
-          status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
-          plan: user.subscription?.plan || 'Free',
-          joined: new Date(user.createdAt).toLocaleDateString('en-US'),
-          age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
-          dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
-          address: user.currentCity || 'N/A',
-          education: user.education || 'N/A',
-          familyBackground: user.occupation || 'N/A',
-          height: user.height || 'N/A',
-          weight: user.weight ? `${user.weight}kg` : 'N/A',
-          hobbies: 'N/A', // API doesn't have hobbies field
-          gender: user.gender || 'N/A',
-          maritalStatus: user.maritalStatus || 'N/A',
-          motherTongue: user.motherTongue || 'N/A',
-          religion: user.religion || 'N/A',
-          caste: user.caste || 'N/A',
-          subCaste: user.subCaste || 'N/A',
-          gothra: user.gothra || 'N/A',
-          college: user.college || 'N/A',
-          company: user.company || 'N/A',
-          fieldOfStudy: user.fieldOfStudy || 'N/A',
-          income: user.income || 'N/A',
-          lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
-          isVerified: user.isVerified,
-          phoneIsVerified: user.phoneIsVerified,
-          verificationStatus: user.verificationStatus || 'Unverified'
-        }));
-        
-        setUsers(transformedUsers);
-        setAllUsers(transformedUsers); // Store all users for client-side filtering
-        setTotalUsers(data.pagination.total);
-        setTotalPages(data.pagination.totalPages);
-        setCurrentPage(data.pagination.page);
-      } else {
-        throw new Error('API response indicates failure');
-      }
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching users:', err);
-    } finally {
-      setLoading(false);
+  
+  // Modify the fetchUsers function to fetch all users at once
+const fetchUsers = async (page = 1) => {
+  try {
+    setLoading(true);
+    // Remove pagination parameters to get all users
+    const response = await fetch(`/api/users/fetchAllUsers`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
     }
-  };
-
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Transform API data to match UI expectations
+      const transformedUsers = data.data.map(user => ({
+        id: user._id,
+        name: user.name || 'N/A',
+        email: user.phone, // Using phone as email since API doesn't have email
+        phone: user.phone,
+        status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
+        plan: user.subscription?.plan || 'Free',
+        joined: new Date(user.createdAt).toLocaleDateString('en-US'),
+        age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
+        dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
+        address: user.currentCity || 'N/A',
+        education: user.education || 'N/A',
+        familyBackground: user.occupation || 'N/A',
+        height: user.height || 'N/A',
+        weight: user.weight ? `${user.weight}kg` : 'N/A',
+        hobbies: 'N/A', // API doesn't have hobbies field
+        gender: user.gender || 'N/A',
+        maritalStatus: user.maritalStatus || 'N/A',
+        motherTongue: user.motherTongue || 'N/A',
+        religion: user.religion || 'N/A',
+        caste: user.caste || 'N/A',
+        subCaste: user.subCaste || 'N/A',
+        gothra: user.gothra || 'N/A',
+        college: user.college || 'N/A',
+        company: user.company || 'N/A',
+        fieldOfStudy: user.fieldOfStudy || 'N/A',
+        income: user.income || 'N/A',
+        lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
+        isVerified: user.isVerified,
+        phoneIsVerified: user.phoneIsVerified,
+        verificationStatus: user.verificationStatus || 'Unverified'
+      }));
+      
+      setUsers(transformedUsers);
+      setAllUsers(transformedUsers); // Store all users for client-side filtering
+      setTotalUsers(transformedUsers.length); // Use the length of all users
+      setTotalPages(Math.ceil(transformedUsers.length / usersPerPage)); // Calculate pages based on all users
+      setCurrentPage(page); // Keep the current page functionality
+    } else {
+      throw new Error('API response indicates failure');
+    }
+  } catch (err) {
+    setError(err.message);
+    console.error('Error fetching users:', err);
+  } finally {
+    setLoading(false);
+  }
+};
   // Apply filters
   const applyFilters = () => {
     let filtered = [...allUsers];

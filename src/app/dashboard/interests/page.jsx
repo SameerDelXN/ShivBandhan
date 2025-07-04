@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { 
   User, Heart, Eye, CheckCircle, X, Clock, MapPin, Calendar, 
   Briefcase, Shield, ThumbsUp, ThumbsDown, Send, Mail, 
-  Loader2, RefreshCw, Search, ChevronDown, ChevronUp, Phone, Globe, MessageSquare
+  Loader2, RefreshCw, Search, ChevronDown, ChevronUp, Phone, Globe, MessageSquare, Lock
 } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,7 +25,34 @@ export default function InterestsPage() {
     family: false,
     lifestyle: false
   });
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [checkingSubscription, setCheckingSubscription] = useState(true);
 
+  // Check user's subscription status
+  const checkSubscription = async () => {
+    try {
+      setCheckingSubscription(true);
+      const isActive = user?.subscription?.isSubscribed || user?.user?.subscription?.isSubscribed;
+      setHasSubscription(isActive);
+    } catch (err) {
+      console.error('Error checking subscription:', err);
+      setHasSubscription(false);
+    } finally {
+      setCheckingSubscription(false);
+    }
+  };
+
+  // Mask first name while keeping last name visible
+  const maskFirstName = (fullName) => {
+    if (!fullName) return '****';
+    const names = fullName.split(' ');
+    if (names.length > 1) {
+      return `${'*'.repeat(names[0].length)} ${names.slice(1).join(' ')}`;
+    }
+    return '****';
+  };
+
+  // Calculate age from date of birth
   const calculateAge = (dateString) => {
     if (!dateString) return 'N/A';
     const birthDate = new Date(dateString);
@@ -38,6 +65,7 @@ export default function InterestsPage() {
     return age;
   };
 
+  // Fetch interests from API
   const fetchInterests = async (type) => {
     try {
       if (!user?.id ? user.id : user?.user?.id) return [];
@@ -53,6 +81,7 @@ export default function InterestsPage() {
     }
   };
 
+  // Load all interest data
   const loadAllData = async () => {
     if (!user?.id ? user.id : user?.user?.id) {
       setIsLoading(false);
@@ -76,11 +105,13 @@ export default function InterestsPage() {
     }
   };
 
+  // Refresh data
   const handleRefresh = () => {
     setIsRefreshing(true);
     loadAllData();
   };
 
+  // Handle interest actions (accept/decline/cancel)
   const handleInterestAction = async (action, interestId) => {
     try {
       const response = await fetch('/api/interest/status', {
@@ -95,7 +126,12 @@ export default function InterestsPage() {
     }
   };
 
+  // Handle viewing profile with subscription check
   const handleViewProfile = (person, type) => {
+    if (!hasSubscription) {
+      window.location.href = '/dashboard/subscription';
+      return;
+    }
     const profileData = type === 'sent' ? person.receiver : person.sender;
     setSelectedProfile({
       ...profileData,
@@ -104,6 +140,7 @@ export default function InterestsPage() {
     setShowModal(true);
   };
 
+  // Toggle profile sections
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
       ...prev,
@@ -111,12 +148,15 @@ export default function InterestsPage() {
     }));
   };
 
+  // Initialize component
   useEffect(() => {
     if (user) {
+      checkSubscription();
       loadAllData();
     }
   }, [user]);
 
+  // Get status badge component
   const getStatusBadge = (status) => {
     switch(status) {
       case 'pending':
@@ -135,6 +175,7 @@ export default function InterestsPage() {
     }
   };
 
+  // Get badge style based on type
   const getBadgeStyle = (badge) => {
     switch(badge) {
       case 'New': return 'bg-blue-100 text-blue-800';
@@ -145,176 +186,150 @@ export default function InterestsPage() {
     }
   };
 
-  const formatName = (name, type, status) => {
-    if (!name) return '';
-    // Always show full name in received section
-    if (type === 'received') return name;
-    // For sent section, show full name only if accepted
-    if (status === 'accepted') return name;
+  // Interest Card Component
+  const InterestCard = ({ person, type }) => {
+    const profile = type === 'sent' ? person.receiver : person.sender;
+    const profileImage = profile?.profilePhoto || profile?.image;
     
-    // Split name into parts
-    const nameParts = name.split(' ');
-    if (nameParts.length === 1) return '****'; // If only one name
-    
-    // Mask first name and show last name
-    const maskedFirstName = '****';
-    const lastName = nameParts[nameParts.length - 1];
-    return `${maskedFirstName} ${lastName}`;
-  };
-
- const InterestCard = ({ person, type }) => {
-  const profile = type === 'sent' ? person.receiver : person.sender;
-  const profileImage = profile.profilePhoto || profile.image;
-  
-  return (
-    <motion.div 
-      className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-rose-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-rose-200"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
-        {/* Profile Image */}
-        <div className="relative flex-shrink-0 self-center sm:self-start">
-          <motion.div 
-            className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-300 transition-all"
-            onClick={() => profileImage && setExpandedImage(profileImage)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {profileImage ? (
-              <img src={profileImage} alt={profile.name} className="w-full h-full object-cover" />
-            ) : (
-              <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
-            )}
-          </motion.div>
-          {profile.isOnline && (
+    return (
+      <motion.div 
+        className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-rose-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-rose-200"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
+          {/* Profile Image with blur effect for non-subscribers */}
+          <div className="relative flex-shrink-0 self-center sm:self-start">
             <motion.div 
-              className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring" }}
-            />
-          )}
-        </div>
-
-        {/* Profile Details */}
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 space-y-2 sm:space-y-0">
-            <div className="space-y-1">
-              <div className="flex items-center justify-center sm:justify-start space-x-2 mb-1">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">{profile.name}</h3>
-                {profile.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
-              </div>
-              <div className="flex flex-wrap justify-center sm:justify-start items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-2 gap-y-1">
-                <span className="flex items-center">
-                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                  {calculateAge(profile.dob)} years
-                </span>
-                {profile.caste && <span>{profile.caste}</span>}
-              </div>
-              <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
-                {profile.currentCity && (
-                  <span className="flex items-center">
-                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                    {profile.currentCity}
-                  </span>
-                )}
-                {(profile.occupation || profile.education) && (
-                  <span className="flex items-center">
-                    <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                    {profile.occupation}{profile.occupation && profile.education && ' • '}{profile.education}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="self-center sm:self-start">{getStatusBadge(person.status)}</div>
-          </div>
-
-          {/* Badges */}
-          {profile.badges?.length > 0 && (
-            <motion.div 
-              className="flex flex-wrap justify-center sm:justify-start gap-1 mb-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-300 transition-all ${
+                !hasSubscription && profileImage ? 'blur-sm' : ''
+              }`}
+              onClick={() => {
+                if (!hasSubscription) {
+                  window.location.href = '/dashboard/subscription';
+                  return;
+                }
+                profileImage && setExpandedImage(profileImage);
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {profile.badges.map((badge, index) => (
-                <motion.span 
-                  key={index} 
-                  className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium ${getBadgeStyle(badge)}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ 
-                    delay: 0.2 + (index * 0.1),
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 15
-                  }}
-                >
-                  {badge}
-                </motion.span>
-              ))}
-            </motion.div>
-          )}
-
-          {/* Footer with Date and Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-gray-100 space-y-2 sm:space-y-0">
-            <div className="text-xs text-gray-500">
-              {type === 'sent' ? `Sent: ${new Date(person.createdAt).toLocaleDateString()}` : 
-               `Received: ${new Date(person.createdAt).toLocaleDateString()}`}
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-2">
-              {type === 'received' && person.status === 'pending' && (
+              {profileImage ? (
                 <>
-                  <motion.button 
-                    onClick={() => handleInterestAction('declined', person._id)}
-                    className="flex items-center px-2 sm:px-3 py-1 bg-red-50 text-red-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-red-100 transition-colors"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <ThumbsDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Decline
-                  </motion.button>
-                  <motion.button 
-                    onClick={() => handleInterestAction('accepted', person._id)}
-                    className="flex items-center px-2 sm:px-3 py-1 bg-green-50 text-green-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-green-100 transition-colors"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Accept
-                  </motion.button>
+                  <img 
+                    src={profileImage} 
+                    alt={profile?.name} 
+                    className="w-full h-full object-cover"
+                  />
+                  {!hasSubscription && (
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <Lock className="w-5 h-5 text-white" />
+                    </div>
+                  )}
                 </>
+              ) : (
+                <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
               )}
+            </motion.div>
+            {profile?.isOnline && (
+              <motion.div 
+                className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring" }}
+              />
+            )}
+          </div>
+
+          {/* Profile Details */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-2 space-y-2 sm:space-y-0">
+              <div className="space-y-1">
+                <div className="flex items-center justify-center sm:justify-start space-x-2 mb-1">
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 text-center sm:text-left">
+                    {hasSubscription ? profile?.name : maskFirstName(profile?.name)}
+                  </h3>
+                  {profile?.badges?.includes('Verified') && <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />}
+                </div>
+                <div className="flex flex-wrap justify-center sm:justify-start items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-600 mb-2 gap-y-1">
+                  <span className="flex items-center">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                    {calculateAge(profile?.dob)} years
+                  </span>
+                  {profile?.caste && <span>{profile?.caste}</span>}
+                </div>
+                <div className="flex flex-wrap justify-center sm:justify-start items-center text-xs sm:text-sm text-gray-600 mb-2 gap-x-2 gap-y-1">
+                  {profile?.currentCity && (
+                    <span className="flex items-center">
+                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {profile?.currentCity}
+                    </span>
+                  )}
+                  {(profile?.occupation || profile?.education) && (
+                    <span className="flex items-center">
+                      <Briefcase className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {profile?.occupation}{profile?.occupation && profile?.education && ' • '}{profile?.education}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="self-center sm:self-start">{getStatusBadge(person.status)}</div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-between pt-3 border-t border-gray-100 space-y-2 sm:space-y-0">
+              <div className="text-xs text-gray-500">
+                {type === 'sent' ? `Sent: ${new Date(person.createdAt).toLocaleDateString()}` : 
+                 `Received: ${new Date(person.createdAt).toLocaleDateString()}`}
+              </div>
               
-              {type === 'sent' && person.status === 'pending' && (
-                <motion.button 
-                  onClick={() => handleInterestAction('cancel', person._id)}
-                  className="flex items-center px-2 sm:px-3 py-1 bg-gray-50 text-gray-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-100 transition-colors"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <X className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Cancel
-                </motion.button>
-              )}
-              
-              {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
-                <motion.button 
-                  onClick={() => handleViewProfile(person, type)}
-                  className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> View Profile
-                </motion.button>
-              )}
+              <div className="flex flex-wrap justify-center gap-2">
+                {type === 'received' && person.status === 'pending' && (
+                  <>
+                    <motion.button 
+                      onClick={() => handleInterestAction('declined', person._id)}
+                      className="flex items-center px-2 sm:px-3 py-1 bg-red-50 text-red-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-red-100 transition-colors"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <ThumbsDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Decline
+                    </motion.button>
+                    <motion.button 
+                      onClick={() => handleInterestAction('accepted', person._id)}
+                      className="flex items-center px-2 sm:px-3 py-1 bg-green-50 text-green-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-green-100 transition-colors"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> Accept
+                    </motion.button>
+                  </>
+                )}
+                
+                {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
+                  <motion.button 
+                    onClick={() => handleViewProfile(person, type)}
+                    className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={checkingSubscription}
+                  >
+                    {checkingSubscription ? (
+                      <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 animate-spin" />
+                    ) : (
+                      <>
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1" /> View Profile
+                      </>
+                    )}
+                  </motion.button>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </motion.div>
-  );
-};
+      </motion.div>
+    );
+  };
 
   const ProfileDetailItem = ({ icon: Icon, label, value }) => (
     <motion.div 
