@@ -186,6 +186,14 @@ const UserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   lastLoginAt: Date,
+
+
+  //form fillup option for user 
+   profileSetup: {
+  willAdminFill: Boolean,  // true if admin should fill, false if user will fill
+  dontAskAgain: Boolean,   // true if we shouldn't show popup again
+ 
+},
 });
 
 delete mongoose.models.User; // Remove existing model if it exists

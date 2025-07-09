@@ -4,17 +4,17 @@ import User from "@/models/User";
 export const POST = async (request) => {
   try {
     const { userId, action } = await request.json();
-
+    console.log(userId,action)
     await dbConnect();
 
     let updateData = {};
-    if (action === "Verified") {
+    if (action === "APPROVE") {
       updateData = {
         isVerified: true,
         verificationStatus: "Verified",
         verificationRequested: false
       };
-    } else if (action === "Rejected") {
+    } else if (action === "REJECT") {
       updateData = {
         isVerified: false,
         verificationStatus: "Rejected",

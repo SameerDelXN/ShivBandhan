@@ -23,6 +23,7 @@
         |-- couple1.jpeg
         |-- couple2.jpeg
         |-- couple3.jpeg
+        |-- default-user.jpg
     |-- logo.png
     |-- mobileView.png
     |-- next.svg
@@ -45,6 +46,8 @@
         |-- admin-dashboard
             |-- emp-management
                 |-- page.jsx
+            |-- form-builder
+                |-- page.jsx
             |-- layout.js
             |-- page.jsx
             |-- payment
@@ -62,7 +65,11 @@
                 |-- verification.jsx
         |-- api
             |-- admin
+                |-- adminSetupProfiles
+                    |-- route.js
                 |-- dashboard
+                    |-- route.js
+                |-- form-sections
                     |-- route.js
                 |-- login
                     |-- route.js
@@ -78,6 +85,8 @@
                 |-- route.js
                 |-- [id]
                     |-- route.js
+            |-- form-config
+                |-- route.js
             |-- interest
                 |-- received
                     |-- route.js
@@ -119,6 +128,8 @@
                     |-- route.js
                 |-- privacy
                     |-- route.js
+                |-- setup
+                    |-- route.js
                 |-- update
                     |-- route.js
                 |-- update-plan
@@ -145,6 +156,7 @@
             |-- profile
                 |-- me
                     |-- page.jsx
+            |-- profile - Shortcut.lnk
             |-- razorpay
                 |-- page.jsx
             |-- search
@@ -171,6 +183,7 @@
         |-- AppDownload.jsx
         |-- AuthBanner.jsx
         |-- BlogPreview.jsx
+        |-- DynamicProfileForm.jsx
         |-- FeaturedProfiles.jsx
         |-- Footer.jsx
         |-- HeroSection.jsx
@@ -195,6 +208,7 @@
     |-- models
         |-- admin.js
         |-- Employee.js
+        |-- FormSection.js
         |-- Interest.js
         |-- Subscription.js
         |-- User.js
