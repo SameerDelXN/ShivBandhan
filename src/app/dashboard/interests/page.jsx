@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
 import { motion, AnimatePresence } from 'framer-motion';
-
+//sample
 export default function InterestsPage() {
   const { user } = useSession();
   const [activeTab, setActiveTab] = useState('received');
