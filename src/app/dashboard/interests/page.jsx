@@ -26,7 +26,7 @@ export default function InterestsPage() {
   });
   const [hasSubscription, setHasSubscription] = useState(false);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
-
+//sample
   // Check user's subscription status
   const checkSubscription = async () => {
     try {
