@@ -877,6 +877,7 @@ export default function Verification() {
   };
 
   const renderProfileCards = (profiles) => (
+    
     <motion.div 
       layout
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"
@@ -961,7 +962,8 @@ export default function Verification() {
                 </svg>
                 View Details
               </motion.button>
-              <motion.button
+             {
+              u?.profileSetup?.willAdminFill &&  <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setEditingProfile(u)}
@@ -970,6 +972,7 @@ export default function Verification() {
                 <Edit size={16} />
                 Edit
               </motion.button>
+             }
               {activeTab === 'pending' ? (
                                <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -1185,13 +1188,18 @@ export default function Verification() {
                         profile={selectedProfile}
                         onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
                       />
-                      <DetailItem 
-                        label="Date of Birth" 
-                        value={selectedProfile.dob} 
-                        field="dob"
-                        profile={selectedProfile}
-                        onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
-                      />
+                     <DetailItem 
+  label="Date of Birth" 
+  value={new Date(selectedProfile.dob).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })} // outputs: 29 Feb 2004
+  field="dob"
+  profile={selectedProfile}
+  onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
+/>
+
                       <DetailItem 
                         label="Age" 
                         value={selectedProfile.age} 

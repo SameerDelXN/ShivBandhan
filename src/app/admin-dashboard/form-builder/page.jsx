@@ -134,25 +134,7 @@ export default function FormBuilder() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/50 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
-                Form Builder
-              </h1>
-              <p className="text-slate-600 mt-1">Design and customize your form structure</p>
-            </div>
-            <button 
-              onClick={saveSections}
-              className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              <Save size={18} />
-              <span className="font-medium">Save Configuration</span>
-            </button>
-          </div>
-        </div>
-      </div>
+    
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -191,13 +173,7 @@ export default function FormBuilder() {
                       >
                         {expandedSections[sectionIndex] ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
-                      <button 
-                        onClick={() => addField(sectionIndex)}
-                        className="p-2 text-green-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        title="Add Field"
-                      >
-                        <Plus size={18} />
-                      </button>
+                      
                       <button 
                         onClick={() => {
                           const updated = sections.filter((_, i) => i !== sectionIndex);
@@ -206,7 +182,7 @@ export default function FormBuilder() {
                         className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remove Section"
                       >
-                        <Trash2 size={18} />
+                        {/* <Trash2 size={18} /> */}
                       </button>
                     </div>
                   </div>
@@ -253,7 +229,7 @@ export default function FormBuilder() {
                                   className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                   title="Remove Field"
                                 >
-                                  <Trash2 size={16} />
+                                  {/* <Trash2 size={16} /> */}
                                 </button>
                               </div>
                             </div>
@@ -416,7 +392,7 @@ export default function FormBuilder() {
           ))}
 
           {/* Add Section Button */}
-          <div className="flex justify-center pt-6">
+          {/* <div className="flex justify-center pt-6">
             <button
               onClick={addSection}
               className="flex items-center gap-3 text-blue-600 hover:text-blue-700 px-6 py-4 border-2 border-dashed border-blue-200 hover:border-blue-300 rounded-2xl hover:bg-blue-50/50 transition-all duration-200 font-medium"
@@ -424,7 +400,7 @@ export default function FormBuilder() {
               <Plus size={20} />
               Add New Section
             </button>
-          </div>
+          </div> */}
 
           {sections.length === 0 && (
             <div className="text-center py-20">

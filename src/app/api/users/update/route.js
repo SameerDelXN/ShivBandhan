@@ -215,18 +215,8 @@ export async function PUT(request) {
   try {
     await dbConnect();
 
-    // Get token from cookies (uncomment when ready)
-    // const token = request.cookies.get('authToken')?.value;
-    // if (!token) {
-    //   return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    // }
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // if (!decoded) {
-    //   return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
-    // }
-
     const body = await request.json();
-    const { userId, formData, profileSetup } = body;
+    const { userId, ...formData } = body; // Destructure to get userId and the rest as formData
 
     // Validate required fields
     if (!userId) {
@@ -239,50 +229,30 @@ export async function PUT(request) {
     // Get form configuration to validate structure
     const formSections = await FormSection.find().sort({ order: 1 });
     
-    // Prepare update data
+    // Prepare update data - start with the formData as it comes flat from the frontend
     const updateData = {
+      ...formData, // Spread all form data first
       updatedAt: new Date()
     };
 
-    // Process each section from the form configuration
-    for (const section of formSections) {
-      if (formData[section.name]) {
-        // Add each field from the section to the update data
-        for (const field of section.fields) {
-          if (formData[section.name][field.name] !== undefined) {
-            // Handle special field types
-            let value = formData[section.name][field.name];
-            
-            // Convert empty strings to null for database
-            if (value === '') {
-              value = null;
-            }
-            // Convert numbers if field type is number
-            else if (field.type === 'number' && value !== null) {
-              value = Number(value);
-            }
-            // Convert boolean for checkbox
-            else if (field.type === 'checkbox') {
-              value = Boolean(value);
-            }
-
-            updateData[field.name] = value;
-          }
-        }
+    // Remove any undefined or null values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined || updateData[key] === null) {
+        delete updateData[key];
       }
-    }
+    });
 
-    // Handle profile setup preferences
-    if (profileSetup) {
+    // Handle profile setup preferences if they exist
+    if (formData.profileSetup) {
       updateData.profileSetup = {
-        willAdminFill: Boolean(profileSetup.willAdminFill),
-        dontAskAgain: Boolean(profileSetup.dontAskAgain)
+        willAdminFill: Boolean(formData.profileSetup.willAdminFill),
+        dontAskAgain: Boolean(formData.profileSetup.dontAskAgain)
       };
     }
 
     // Handle photos if provided
-    if (body.photos) {
-      updateData.photos = body.photos.map(photo => ({
+    if (formData.photos) {
+      updateData.photos = formData.photos.map(photo => ({
         url: photo.url,
         isPrimary: photo.isPrimary
       }));

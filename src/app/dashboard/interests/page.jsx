@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { 
   User, Heart, Eye, CheckCircle, X, Clock, MapPin, Calendar, 
-  Briefcase, Shield, ThumbsUp, ThumbsDown, Send, Mail, 
+  Briefcase, Shield, ThumbsUp, ThumbsDown, Send, Mail, Droplet,Users,Home,GraduationCap,DollarSign,Star,
   Loader2, RefreshCw, Search, ChevronDown, ChevronUp, Phone, Globe, MessageSquare, Lock
 } from 'lucide-react';
 import { useSession } from '@/context/SessionContext';
@@ -305,7 +305,7 @@ export default function InterestsPage() {
                   </>
                 )}
                 
-                {(type === 'sent' || type === 'received') && person.status === 'accepted' && (
+                {(type === 'sent' || type === 'received')  && (
                   <motion.button 
                     onClick={() => handleViewProfile(person, type)}
                     className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"

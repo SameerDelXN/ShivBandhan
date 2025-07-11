@@ -13,11 +13,11 @@ export const GET = async (request) => {
     }).select('-password');
 
     // Calculate completion percentage for each user and filter
-    // const pendingUsers = potentialUsers.map(user => {
-    //   const userObj = user.toObject();
-    //   userObj.profileCompletion = calculateProfileCompletion(userObj);
-    //   return userObj;
-    // }).filter(user => user.profileCompletion >= 80); // Only include users with 80%+ completion
+    const pendingUsers = potentialUsers.map(user => {
+      const userObj = user.toObject();
+      userObj.profileCompletion = calculateProfileCompletion(userObj);
+      return userObj;
+    })
     console.log("Pending Users:", potentialUsers);
     if (!potentialUsers.length) {
       return new Response(JSON.stringify({ error: "No pending profiles found" }), {
@@ -25,7 +25,7 @@ export const GET = async (request) => {
       });
     }
 
-    return new Response(JSON.stringify({ users: potentialUsers }), {
+    return new Response(JSON.stringify({ users: pendingUsers }), {
       status: 200,
     });
   } catch (error) {
