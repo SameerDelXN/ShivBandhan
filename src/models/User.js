@@ -85,7 +85,6 @@ const UserSchema = new mongoose.Schema({
    income:
     {
       type: String,
-      enum: ['','₹5-10 Lakhs', '₹10-15 Lakhs', '₹15-20 Lakhs', null],
       default: null
   },
     email: {
