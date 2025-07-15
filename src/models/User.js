@@ -133,7 +133,7 @@
     birthPlace: String,
     birthTime: String,
     gotraDevak: String,
-
+//sample
     // Expectations
     expectedCaste: String,
     preferredCity: String,
