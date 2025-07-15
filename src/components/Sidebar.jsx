@@ -23,7 +23,7 @@ export default function Sidebar({ mobileOpen = false, setMobileOpen }) {
     { href: "/dashboard/profile/me", label: "My Profile", icon: User },
     { href: "/dashboard/matches", label: "Matches", icon: Heart },
     { href: "/dashboard/interests", label: "Interests", icon: UserPlus },
-    { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },
+    // { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },
     { href: "/dashboard/subscription", label: "Subscription", icon: Crown },
     { href: "/dashboard/settings", label: "Settings", icon: Settings },
   ];

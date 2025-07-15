@@ -187,6 +187,7 @@
         |-- FeaturedProfiles.jsx
         |-- Footer.jsx
         |-- HeroSection.jsx
+        |-- LoadingSpinner.js
         |-- Navbar.jsx
         |-- QuickRegistrationForm.jsx
         |-- SearchMatchesWidget.jsx

@@ -216,9 +216,10 @@ export async function PUT(request) {
     await dbConnect();
 
     const body = await request.json();
-    const { userId, ...formData } = body; // Destructure to get userId and the rest as formData
+    const { userId, ...updateData } = body;
+    
+    console.log("Received update data:", updateData);
 
-    // Validate required fields
     if (!userId) {
       return NextResponse.json(
         { message: 'User ID is required' },
@@ -226,40 +227,25 @@ export async function PUT(request) {
       );
     }
 
-    // Get form configuration to validate structure
-    const formSections = await FormSection.find().sort({ order: 1 });
-    
-    // Prepare update data - start with the formData as it comes flat from the frontend
-    const updateData = {
-      ...formData, // Spread all form data first
-      updatedAt: new Date()
-    };
+    // Add updatedAt timestamp
+    updateData.updatedAt = new Date();
 
-    // Remove any undefined or null values
-    Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined || updateData[key] === null) {
-        delete updateData[key];
-      }
-    });
-
-    // Handle profile setup preferences if they exist
-    if (formData.profileSetup) {
+    // Handle special cases if needed
+    if (updateData.profileSetup) {
       updateData.profileSetup = {
-        willAdminFill: Boolean(formData.profileSetup.willAdminFill),
-        dontAskAgain: Boolean(formData.profileSetup.dontAskAgain)
+        willAdminFill: Boolean(updateData.profileSetup.willAdminFill),
+        dontAskAgain: Boolean(updateData.profileSetup.dontAskAgain)
       };
     }
 
-    // Handle photos if provided
-    if (formData.photos) {
-      updateData.photos = formData.photos.map(photo => ({
+    if (updateData.photos) {
+      updateData.photos = updateData.photos.map(photo => ({
         url: photo.url,
         isPrimary: photo.isPrimary
       }));
     }
 
-    console.log('Updating user with data:', updateData);
-
+    // Update the user document
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       updateData,

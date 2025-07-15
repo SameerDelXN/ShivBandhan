@@ -114,13 +114,13 @@ export default function MatchesPage() {
         const matchAge = matchProfile.age;
         const ageDiff = Math.abs(userAge - matchAge);
         
-        if (expectedValue === '±1 year' && ageDiff <= 1) {
+        if (expectedValue === '1' && ageDiff <= 1) {
           matchedPercentage += percentagePerField;
-        } else if (expectedValue === '±2 years' && ageDiff <= 2) {
+        } else if (expectedValue === '2' && ageDiff <= 2) {
           matchedPercentage += percentagePerField;
-        } else if (expectedValue === '±3 years' && ageDiff <= 3) {
+        } else if (expectedValue === '3' && ageDiff <= 3) {
           matchedPercentage += percentagePerField;
-        } else if (expectedValue === '±5 years' && ageDiff <= 5) {
+        } else if (expectedValue === '5' && ageDiff <= 5) {
           matchedPercentage += percentagePerField;
         }
       } 
@@ -213,7 +213,7 @@ const fetchSentInterests = async (senderId) => {
     setIsLoading(false);
   }
 };
-
+console.log("matches = ",matches)
   const tabs = [
     { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility > 0).length, icon: Users },
     { id: 'preferred', label: 'Preferred', count: matches.filter(m => m.compatibility >= 70).length, icon: Star },
