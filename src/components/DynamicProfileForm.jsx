@@ -852,13 +852,7 @@ const handleProfileUpdate = async () => {
                     disabled={isSaving}
                   >
                     {isSaving ? 'Saving...' : (
-                      profileCompletion === 100 ?
-                      (
-                        verificationStatus === 'Pending' ? 'Verification Pending' :
-                        verificationStatus === 'Verified' ? 'Profile Verified' :
-                        'Save Profile'
-                      ) : 'Save Profile'
-                    )}
+                     "Save Profile")}
                   </button>
                 </div>
               </div>
