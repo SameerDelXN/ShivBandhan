@@ -319,7 +319,7 @@ const calculateProfileCompletion = (formDataToCheck = formData) => {
   if (formData.profilePhoto) {
     transformed.profilePhoto = formData.profilePhoto;
   }
-
+//sample
   // Handle relative surnames specifically
   if (formData['Relative Surnames']) {
     if (Array.isArray(formData['Relative Surnames'])) {
