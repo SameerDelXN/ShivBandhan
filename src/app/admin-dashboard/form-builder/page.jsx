@@ -167,13 +167,21 @@ export default function FormBuilder() {
                     
                     <div className="flex items-center gap-2">
                       <button 
+                       onClick={saveSections}
+                       className="p-2 text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                       title="Save Form"
+                     >
+                       <Save size={18} />
+                      </button>
+                      
+                      <button 
                         onClick={() => toggleSection(sectionIndex)}
                         className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                         title={expandedSections[sectionIndex] ? "Collapse" : "Expand"}
                       >
                         {expandedSections[sectionIndex] ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
-                      
+
                       <button 
                         onClick={() => {
                           const updated = sections.filter((_, i) => i !== sectionIndex);

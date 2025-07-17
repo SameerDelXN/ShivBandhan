@@ -88,66 +88,148 @@ export default function MatchesPage() {
   };
 
   const calculateCompatibility = (userProfile, matchProfile) => {
-    // List of expectation fields to compare with basic info
-    const expectationFields = [
-      { expectation: 'expectedCaste', matchField: 'caste' },
-      { expectation: 'preferredCity', matchField: 'currentCity' },
-      { expectation: 'expectedEducation', matchField: 'education' },
-      { expectation: 'expectedHeight', matchField: 'height' },
-      { expectation: 'expectedIncome', matchField: 'income' },
-      { expectation: 'gotraDevak', matchField: 'gotraDevak' },
-      { expectation: 'expectedAgeDifference', matchField: 'age' },
-    ];
+  // List of expectation fields to compare with basic info
+  const expectationFields = [
+    { expectation: 'expectedCaste', matchField: 'caste' },
+    { expectation: 'preferredCity', matchField: 'currentCity' },
+    { expectation: 'expectedEducation', matchField: 'education' },
+    { expectation: 'expectedHeight', matchField: 'height' },
+    { expectation: 'expectedIncome', matchField: 'income' },
+    { expectation: 'divorcee', matchField: 'maritalStatus' },
+    { expectation: 'expectedAgeDifference', matchField: 'age' },
+  ];
+   
+  const totalFields = expectationFields.length;
+  const percentagePerField = 100 / totalFields;
+  let matchedPercentage = 0;
 
-    const totalFields = expectationFields.length;
-    const percentagePerField = 100 / totalFields;
-    let matchedPercentage = 0;
+  expectationFields.forEach(({ expectation, matchField }) => {
+    const expectedValue = userProfile[expectation];
+    const matchValue = matchProfile[matchField];
+    
+    if (!expectedValue || !matchValue) return;
 
-    expectationFields.forEach(({ expectation, matchField }) => {
-      const expectedValue = userProfile[expectation];
-      const matchValue = matchProfile[matchField];
-      
-      if (!expectedValue || !matchValue) return;
-      
-      if (expectation === 'expectedAgeDifference') {
-        const userAge = calculateAge(userProfile.dob);
-        const matchAge = matchProfile.age;
-        const ageDiff = Math.abs(userAge - matchAge);
-        
-        if (expectedValue === '1' && ageDiff <= 1) {
-          matchedPercentage += percentagePerField;
-        } else if (expectedValue === '2' && ageDiff <= 2) {
-          matchedPercentage += percentagePerField;
-        } else if (expectedValue === '3' && ageDiff <= 3) {
-          matchedPercentage += percentagePerField;
-        } else if (expectedValue === '5' && ageDiff <= 5) {
-          matchedPercentage += percentagePerField;
-        }
-      } 
-      else if (expectation === 'expectedHeight' && matchField === 'height') {
-        const expectedRange = expectedValue.split('-').map(s => s.trim());
-        if (expectedRange.length === 2) {
-          const matchHeight = parseInt(matchValue.split("'")[0]);
-          const minHeight = parseInt(expectedRange[0].split("'")[0]);
-          const maxHeight = parseInt(expectedRange[1].split("'")[0]);
-          
-          if (matchHeight >= minHeight && matchHeight <= maxHeight) {
-            matchedPercentage += percentagePerField;
-          }
-        }
-      }
-      else if (expectation === 'expectedIncome' && matchField === 'income') {
-        if (expectedValue === matchValue) {
-          matchedPercentage += percentagePerField;
-        }
-      }
-      else if (expectedValue === matchValue) {
+    else if (expectation === 'expectedEducation' && matchField === 'education') {
+  // Define education hierarchy (lower index = higher education)
+  const educationHierarchy = ['Doctorate', 'Master\'s Degree', 'Bachelor\'s Degree', 'High School'];
+  
+  const expectedIndex = educationHierarchy.indexOf(expectedValue);
+  const matchIndex = educationHierarchy.indexOf(matchValue);
+  
+  if (expectedIndex !== -1 && matchIndex !== -1) {
+    if (matchIndex <= expectedIndex) {
+      // Full match - match's education meets or exceeds expectation
+      matchedPercentage += percentagePerField;
+    } else {
+      // Partial match - match's education is lower than expected
+      matchedPercentage += percentagePerField / 2;
+    }
+  }
+}
+    
+    if (expectation === 'expectedAgeDifference') {
+  const userAge = calculateAge(userProfile.dob);
+  const matchAge = matchProfile.age;
+  const ageDiff = Math.abs(userAge - matchAge);
+  console 
+  
+  // No partial matches - either full match or no match
+  if (expectedValue === '1' && ageDiff <= 1) {
+    matchedPercentage += percentagePerField;
+  } 
+  else if (expectedValue === '2' && ageDiff <= 2) {
+    matchedPercentage += percentagePerField;
+  }
+  else if (expectedValue === '3' && ageDiff <= 3) {
+    matchedPercentage += percentagePerField;
+  }
+  else if (expectedValue === '5' && ageDiff <= 5) {
+    matchedPercentage += percentagePerField;
+  }
+  else if (expectedValue === '6+' && ageDiff >= 6) {  // Changed to >= for "6 & above"
+    matchedPercentage += percentagePerField;
+  }
+}
+else if (expectation === 'expectedHeight' && matchField === 'height') {
+  // Extract cm value from strings like:
+  // "4'6"(137 cm)", "5'3"(160 cm)", "51"(155cm)-54"(163cm)", etc.
+  const extractCm = (str) => {
+    const match = str.match(/(\d+)\s*cm/i); // Finds the first number followed by "cm"
+    return match ? parseInt(match[1]) : null;
+  };
+
+  // Parse expected height range (min and max in cm)
+  let expectedMinCm, expectedMaxCm;
+
+  if (expectedValue.includes('–') || expectedValue.includes('-')) { 
+    // Case: Range like "4'6"(137 cm) – 5'0"(152 cm)" or "51"(155cm)-54"(163cm)"
+    const [rangeStart, rangeEnd] = expectedValue.split(/[–-]/); // Split on hyphen/dash
+    expectedMinCm = extractCm(rangeStart);
+    expectedMaxCm = extractCm(rangeEnd);
+  } 
+  else if (expectedValue.includes('& above')) {
+    // Case: "65"(196cm) & above" → min = 196cm, no max limit
+    expectedMinCm = extractCm(expectedValue);
+    expectedMaxCm = Infinity; // Anything >= expectedMinCm is acceptable
+  } 
+  else {
+    // Case: Single value (e.g., "5'2"(157 cm)") → treat as exact match
+    expectedMinCm = extractCm(expectedValue);
+    expectedMaxCm = expectedMinCm; // Must match exactly
+  }
+
+  // Extract user's height in cm (e.g., "5'3"(160 cm)" → 160)
+  const userHeightCm = extractCm(matchValue);
+
+  // Strict check: Only increase % if user's height is within or EQUAL to min/max
+  if (expectedMinCm !== null && expectedMaxCm !== null && userHeightCm !== null) {
+    if (userHeightCm >= expectedMinCm && userHeightCm <= expectedMaxCm) {
+      matchedPercentage += percentagePerField; // Full match → increase %
+    }
+    
+  } 
+  else {
+    console.error("Failed to parse height values:", { expectedValue, matchValue });
+  }
+}
+    else if (expectation === 'expectedIncome' && matchField === 'income') {
+      if (expectedValue === matchValue) {
         matchedPercentage += percentagePerField;
       }
-    });
+    }
+    else if (expectation === 'preferredCity' && matchField === 'currentCity') {
+      if (isSameCity(expectedValue, matchValue)) {
+        matchedPercentage += percentagePerField;
+      }
+    }
+    else if (expectation === 'divorcee' && matchField === 'maritalStatus') {
+      if (expectedValue === 'yes' || matchValue === 'Unmarried') {
+        matchedPercentage += percentagePerField;
+      }
+    }
+    else if (expectedValue === matchValue) {
+      matchedPercentage += percentagePerField;
+    }
+     if (expectation === 'expectedCaste' && matchField === 'caste') {
+      // Split caste and sub-caste (assuming format like "Brahmin-Deshastha")
+      const [expectedMainCaste, expectedSubCaste] = expectedValue.split('-');
+      const [matchMainCaste, matchSubCaste] = matchValue.split('-');
+      
+      if (expectedMainCaste === matchMainCaste) {
+        if (expectedSubCaste && matchSubCaste && expectedSubCaste === matchSubCaste) {
+          // Full match - both main caste and sub-caste match
+          matchedPercentage += percentagePerField;
+        } else {
+          // Partial match - only main caste matches
+          matchedPercentage += percentagePerField / 2;
+        }
+      }
+    }
+  });
 
-    return Math.round(matchedPercentage);
-  };
+  return Math.min(100, Math.round(matchedPercentage));
+
+};
 const fetchSentInterests = async (senderId) => {
   try {
     const res = await fetch(`/api/interest?userId=${senderId}`);
@@ -164,30 +246,29 @@ const fetchSentInterests = async (senderId) => {
   const fetchUsers = async () => {
   try {
     setIsLoading(true);
-    
-    // First fetch the current user's full profile including expectations
+
     const currentUserRes = await fetch('/api/users/me');
     const currentUserData = await currentUserRes.json();
-    
+
     const sentReceiverIds = await fetchSentInterests(currentUserData._id);
-    // Then fetch potential matches
+
     const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
     const data = await res.json();
-    console.log("Data = ", data.data)
-   
+
     if (data.success) {
       const enriched = data.data
-        // Filter out current user's profile and filter by opposite gender
-        .filter(matchUser => 
-          matchUser._id !== currentUserData.id && 
-          matchUser.gender !== currentUserData.gender
+        .filter(matchUser =>
+          matchUser._id !== currentUserData.id &&
+          matchUser.gender !== currentUserData.gender &&
+          matchUser.dob && matchUser.height && matchUser.currentCity &&
+          matchUser.education && matchUser.income && matchUser.maritalStatus && matchUser.caste
         )
         .map(matchUser => {
           const compatibility = calculateCompatibility(currentUserData, {
             ...matchUser,
             age: calculateAge(matchUser.dob)
           });
-          
+
           return {
             ...matchUser,
             age: calculateAge(matchUser.dob),
@@ -200,11 +281,11 @@ const fetchSentInterests = async (senderId) => {
             shortlisted: false,
             compatibility,
             bio: matchUser.bio || 'Looking for a compatible life partner.',
-            isNew: Math.random() > 0.7, // Randomly mark some as new for demo
-            lastActive: ['Recently', 'Today', '1 day ago', '2 days ago'][Math.floor(Math.random() * 4)] // Random last active time
+            isNew: Math.random() > 0.7,
+            lastActive: ['Recently', 'Today', '1 day ago', '2 days ago'][Math.floor(Math.random() * 4)]
           };
         });
-        
+
       setMatches(enriched);
     }
   } catch (err) {
@@ -213,6 +294,7 @@ const fetchSentInterests = async (senderId) => {
     setIsLoading(false);
   }
 };
+
 console.log("matches = ",matches)
   const tabs = [
     { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility > 0).length, icon: Users },

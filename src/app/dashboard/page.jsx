@@ -57,7 +57,7 @@ export default function MatrimonialDashboard() {
         month: 'short', 
         day: 'numeric' 
       }),
-      color: isSubscribed && !isExpired ? 'bg-gradient-to-br from-amber-400 to-rose-500' : 'bg-gray-500'
+      color: isSubscribed && !isExpired ? 'bg-gradient-to-br from-amber-400 to-rose-500' : 'bg-gradient-to-br from-amber-400 to-rose-500'
     };
   };
 
