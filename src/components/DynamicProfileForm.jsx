@@ -375,6 +375,7 @@ const handleProfileUpdate = async () => {
       company: currentFormData["Company"],
       weight: currentFormData["Weight"],
       permanentAddress: currentFormData["Permanent Address"],
+      profilePhoto:currentFormData['profilePhoto'],
       complexion: currentFormData["Complexion"],
       income: currentFormData["Annual Income"],
       bloodGroup: currentFormData["Blood Group"],
@@ -433,7 +434,7 @@ const handleProfileUpdate = async () => {
     alert('Profile updated successfully!');
     
     if (profileCompletion === 100 && verificationStatus === 'Unverified') {
-      await handleVerificationSubmit();
+      // await handleVerificationSubmit();
     }
   } catch (error) {
     console.error("Error updating profile:", error);
