@@ -772,12 +772,12 @@ const MatchCard = ({ match }) => (
             <img
               src={match.profilePhoto}
               alt={`${maskFirstName(match.name)} profile`}
-              className={`w-full h-full object-cover ${!hasSubscription ? 'blur-md' : ''}`}
+              className={`w-full h-full object-cover `}
             />
             {!hasSubscription && (
               <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-4 text-center">
                 
-                <button 
+                {/* <button 
                   onClick={(e) => {
                     e.stopPropagation();
                     window.location.href = '/dashboard/subscription';
@@ -785,7 +785,7 @@ const MatchCard = ({ match }) => (
                   className="mt-2 bg-white text-rose-600 px-3 py-1 rounded-full text-xs font-medium hover:bg-rose-50 transition-colors"
                 >
                   Unlock Now
-                </button>
+                </button> */}
               </div>
             )}
           </>

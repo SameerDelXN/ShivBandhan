@@ -15,6 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 
 export default function UserManagement() {
@@ -83,7 +85,8 @@ const fetchUsers = async (page = 1) => {
         lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
         isVerified: user.isVerified,
         phoneIsVerified: user.phoneIsVerified,
-        verificationStatus: user.verificationStatus || 'Unverified'
+        verificationStatus: user.verificationStatus || 'Unverified',
+        adminWillFill: user.profileSetup?.willAdminFill || false
       }));
       
       setUsers(transformedUsers);
@@ -101,6 +104,7 @@ const fetchUsers = async (page = 1) => {
     setLoading(false);
   }
 };
+
   // Apply filters
   const applyFilters = () => {
     let filtered = [...allUsers];
@@ -209,6 +213,39 @@ const fetchUsers = async (page = 1) => {
     }
   };
 
+  // Handle toggle admin can fill
+  const handleToggleAdminFill = async (userId, currentValue) => {
+    try {
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          profileSetup: {
+            willAdminFill: !currentValue
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update admin fill setting');
+      }
+
+      // Update local state
+      setUsers(users.map(user => 
+        user.id === userId ? { ...user, adminWillFill: !currentValue } : user
+      ));
+      setAllUsers(allUsers.map(user => 
+        user.id === userId ? { ...user, adminWillFill: !currentValue } : user
+      ));
+
+    } catch (error) {
+      console.error("Error updating admin fill setting:", error);
+    }
+  };
+
   // Handle ban/suspend user
   const handleBanUser = (userName) => {
     setUsers(users.map(user => 
@@ -302,6 +339,7 @@ const fetchUsers = async (page = 1) => {
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Plan</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Joined</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Last Login</th>
+                <th className="text-left py-4 px-6 font-semibold text-gray-900">Admin Can Fill</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Actions</th>
               </tr>
             </thead>
@@ -349,6 +387,25 @@ const fetchUsers = async (page = 1) => {
                   </td>
                   <td className="py-4 px-6 text-sm text-gray-600">{user.joined}</td>
                   <td className="py-4 px-6 text-sm text-gray-600">{user.lastLogin}</td>
+                  <td className="py-4 px-6">
+                    <button
+                      onClick={() => handleToggleAdminFill(user.id, user.adminWillFill)}
+                      className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none ${
+                        user.adminWillFill ? 'bg-rose-500' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block w-4 h-4 transform transition-transform bg-white rounded-full ${
+                          user.adminWillFill ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                      {user.adminWillFill ? (
+                        <ToggleRight className="absolute left-1 w-3 h-3 text-white" />
+                      ) : (
+                        <ToggleLeft className="absolute right-1 w-3 h-3 text-gray-600" />
+                      )}
+                    </button>
+                  </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button
@@ -487,6 +544,20 @@ const fetchUsers = async (page = 1) => {
                           Verified
                         </span>
                       )}
+                    </div>
+                    <div className="mt-2">
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedUser.adminWillFill}
+                          onChange={(e) => handleToggleAdminFill(selectedUser.id, selectedUser.adminWillFill)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        <span className="ml-3 text-sm font-medium text-gray-700">
+                          Admin Can Fill
+                        </span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -675,7 +746,6 @@ const fetchUsers = async (page = 1) => {
                 <X className="h-6 w-6" />
               </button>
             </div>
-
             {/* Modal Body */}
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
