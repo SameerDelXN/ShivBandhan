@@ -815,7 +815,7 @@ const handleProfileUpdate = async () => {
                   <div className="flex items-center mt-2">
                     <VerificationBadge status={verificationStatus} />
                   </div>
-                  <div className="flex items-center mt-3">
+                  {/* <div className="flex items-center mt-3">
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input 
                         type="checkbox" 
@@ -828,7 +828,7 @@ const handleProfileUpdate = async () => {
                         Admin can Fill
                       </span>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
