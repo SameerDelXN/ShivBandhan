@@ -100,7 +100,7 @@ const DynamicProfileForm = () => {
         // Fetch form sections structure
         const sectionsRes = await fetch('/api/admin/form-sections');
         const sectionsData = await sectionsRes.json();
-        
+
         // Transform sections data to match our expected format
         const transformedSections = sectionsData.map(section => ({
           ...section,
@@ -115,7 +115,7 @@ const DynamicProfileForm = () => {
             placeholder: field.placeholder || ''
           }))
         }));
-        
+
         setFormSections(transformedSections);
 
         // Set active tab to first section if available
@@ -126,10 +126,10 @@ const DynamicProfileForm = () => {
         // Fetch user data
         const userRes = await fetch('/api/users/me');
         const userData = await userRes.json();
-        
+
         // Create initial form data state by mapping user data to form fields
         const initialFormData = {};
-        
+
         // Map user data to form fields using field mappings
         transformedSections.forEach(section => {
           section.fields.forEach(field => {
@@ -137,7 +137,7 @@ const DynamicProfileForm = () => {
             const mappingEntry = Object.entries(fieldNameMappings).find(
               ([key]) => normalizeFieldName(key) === normalizeFieldName(field.name)
             );
-            
+
             if (mappingEntry) {
               const [_, backendField] = mappingEntry;
               if (userData[backendField] !== undefined) {
@@ -157,11 +157,11 @@ const DynamicProfileForm = () => {
         });
 
         setFormData(initialFormData);
-        
+
         // Update photos with profile photo if exists
         if (userData.profilePhoto) {
-          setPhotos(prevPhotos => 
-            prevPhotos.map(photo => 
+          setPhotos(prevPhotos =>
+            prevPhotos.map(photo =>
               photo.id === 1 ? { ...photo, url: userData.profilePhoto } : photo
             )
           );
@@ -193,256 +193,256 @@ const DynamicProfileForm = () => {
     }
   }, [formData, formSections]);
 
-const calculateProfileCompletion = (formDataToCheck = formData) => {
-  if (!formSections.length) return 0;
-  
-  // Define the required fields we want to check
-  const requiredFields = [
-    'Full Name',
-    'Height',
-    'Weight',
-    'Date of Birth',
-    'Marital Status',
-    'Mother Tongue',
-    'Current City',
-    'Email Address',
-    'Permanent Address',
-    'Gender',
-    'Blood Group',
-    'Wears Lens',
-    'Complexion',
-    'Highest Education',
-    'Occupation',
-    'Field of Study',
-    'Company',
-    'College/University',
-    'Annual Income',
-    "Father's Name",
-    "Mother's Name",
-    "Parent's Residence City",
-    "Number of Brothers",
-    "Number of Sisters",
-    "Married Brothers",
-    "Married Sisters",
-    "Native District",
-    "Native City",
-    "Family Wealth",
-    "Mama's Surname",
-    "Parent's Occupation",
-    "Relative Surnames",
-    "Religion",
-    "Sub Caste",
-    "Caste",
-    "Gothra",
-    "Rashi",
-    "Nadi",
-    "Nakshira",
-    "Mangal Dosha",
-    "Charan",
-    "Birth Place",
-    "Birth Time",
-    "Gan",
-    "Gotra Devak",
-    "Expected Caste",
-    "Preferred City",
-    "Expected Age Difference",
-    "Expected Education",
-    "Accept Divorcee",
-    "Expected Height",
-    "Expected Income"
-  ];
+  const calculateProfileCompletion = (formDataToCheck = formData) => {
+    if (!formSections.length) return 0;
 
-  let totalFields = requiredFields.length;
-  let filledFields = 0;
+    // Define the required fields we want to check
+    const requiredFields = [
+      'Full Name',
+      'Height',
+      'Weight',
+      'Date of Birth',
+      'Marital Status',
+      'Mother Tongue',
+      'Current City',
+      'Email Address',
+      'Permanent Address',
+      'Gender',
+      'Blood Group',
+      'Wears Lens',
+      'Complexion',
+      'Highest Education',
+      'Occupation',
+      'Field of Study',
+      'Company',
+      'College/University',
+      'Annual Income',
+      "Father's Name",
+      "Mother's Name",
+      "Parent's Residence City",
+      "Number of Brothers",
+      "Number of Sisters",
+      "Married Brothers",
+      "Married Sisters",
+      "Native District",
+      "Native City",
+      "Family Wealth",
+      "Mama's Surname",
+      "Parent's Occupation",
+      "Relative Surnames",
+      "Religion",
+      "Sub Caste",
+      "Caste",
+      "Gothra",
+      "Rashi",
+      "Nadi",
+      "Nakshira",
+      "Mangal Dosha",
+      "Charan",
+      "Birth Place",
+      "Birth Time",
+      "Gan",
+      "Gotra Devak",
+      "Expected Caste",
+      "Preferred City",
+      "Expected Age Difference",
+      "Expected Education",
+      "Accept Divorcee",
+      "Expected Height",
+      "Expected Income"
+    ];
 
-  requiredFields.forEach(fieldName => {
-    const value = formDataToCheck[fieldName];
-    
-    // Check if the value is filled
-    if (value !== undefined && value !== null && value !== '') {
-      if (Array.isArray(value)) {
-        if (value.length > 0 && value.some(item => item.trim() !== '')) {
+    let totalFields = requiredFields.length;
+    let filledFields = 0;
+
+    requiredFields.forEach(fieldName => {
+      const value = formDataToCheck[fieldName];
+
+      // Check if the value is filled
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          if (value.length > 0 && value.some(item => item.trim() !== '')) {
+            filledFields++;
+          }
+        } else if (typeof value === 'boolean') {
+          // Boolean fields are always considered filled
+          filledFields++;
+        } else if (typeof value === 'string' && value.trim() !== '') {
+          filledFields++;
+        } else if (typeof value === 'number') {
           filledFields++;
         }
-      } else if (typeof value === 'boolean') {
-        // Boolean fields are always considered filled
-        filledFields++;
-      } else if (typeof value === 'string' && value.trim() !== '') {
-        filledFields++;
-      } else if (typeof value === 'number') {
-        filledFields++;
       }
-    }
-  });
-
-  // Add photo as a required field
-  totalFields++;
-  if (formDataToCheck.profilePhoto || (photos[0] && photos[0].url)) {
-    filledFields++;
-  }
-
-  return totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
-};
-
- const transformFormDataForBackend = (formData) => {
-  const transformed = {};
-  
-  // First pass - map all fields that have direct mappings
-  Object.keys(formData).forEach(formField => {
-    // Skip internal fields we don't want to send
-    if (formField === 'profileSetup' || formField === 'subscription') {
-      return;
-    }
-
-    // Find if this form field has a mapping
-    const mappingEntry = Object.entries(fieldNameMappings).find(
-      ([key]) => normalizeFieldName(key) === normalizeFieldName(formField)
-    );
-    
-    if (mappingEntry) {
-      const [_, backendField] = mappingEntry;
-      // Handle different value types appropriately
-      if (Array.isArray(formData[formField])) {
-        transformed[backendField] = formData[formField].filter(item => item.trim() !== '');
-      } else if (typeof formData[formField] === 'boolean') {
-        transformed[backendField] = formData[formField];
-      } else {
-        transformed[backendField] = formData[formField] || null;
-      }
-    } else {
-      // If no mapping exists, include the field as-is
-      transformed[formField] = formData[formField];
-    }
-  });
-
-  // Handle special cases
-  if (formData.profilePhoto) {
-    transformed.profilePhoto = formData.profilePhoto;
-  }
-//sample
-  // Handle relative surnames specifically
-  if (formData['Relative Surnames']) {
-    if (Array.isArray(formData['Relative Surnames'])) {
-      transformed.relativeSurname = formData['Relative Surnames'].filter(s => s.trim() !== '');
-    } else if (typeof formData['Relative Surnames'] === 'string') {
-      transformed.relativeSurname = formData['Relative Surnames'].split(',').map(s => s.trim()).filter(s => s !== '');
-    }
-  }
-
-  return transformed;
-};
-
-const handleInputChange = (fieldName, value) => {
-  console.log("field Name = ",fieldName)
-  setFormData(prev => {
-    const newData = {
-      ...prev,
-      [fieldName]: value
-    };
-    
-    // Recalculate completion whenever form data changes
-    setProfileCompletion(calculateProfileCompletion(newData));
-    
-    return newData;
-  });
-};
-console.log("Input change form data = ",formData)
-
-const handleProfileUpdate = async () => {
-  setIsSaving(true);
-  try {
-    // Create a deep copy of the current formData
-    const currentFormData = JSON.parse(JSON.stringify(formData));
-    console.log("current = ",currentFormData)
-    // Transform the data to match your schema
-    const transformedData = {
-      name: currentFormData["Full Name"],
-      email: currentFormData["Email Address"],
-      gender: currentFormData["Gender"],
-      dob: currentFormData["Date of Birth"],
-      height: currentFormData["Height"],
-      religion: currentFormData["Religion"],
-      currentCity: currentFormData["Current City"],
-      education: currentFormData["Highest Education"],
-      maritalStatus: currentFormData["Marital Status"],
-      motherTongue: currentFormData["Mother Tongue"],
-      caste: currentFormData["Caste"],
-      subCaste: currentFormData["Sub Caste"],
-      gothra: currentFormData["Gothra"],
-      fieldOfStudy: currentFormData["Field of Study"],
-      college: currentFormData["College/University"],
-      occupation: currentFormData["Occupation"],
-      company: currentFormData["Company"],
-      weight: currentFormData["Weight"],
-      permanentAddress: currentFormData["Permanent Address"],
-      profilePhoto:currentFormData['profilePhoto'],
-      complexion: currentFormData["Complexion"],
-      income: currentFormData["Annual Income"],
-      bloodGroup: currentFormData["Blood Group"],
-      wearsLens: currentFormData["Wears Lens"],
-      fatherName: currentFormData["Father's Name"],
-      parentResidenceCity: currentFormData["Parent's Residence City"],
-      mother: currentFormData["Mother's Name"],
-      brothers: currentFormData["Number of Brothers"],
-      marriedBrothers: currentFormData["Married Brothers"],
-      sisters: currentFormData["Number of Sisters"],
-      marriedSisters: currentFormData["Married Sisters"],
-      nativeDistrict: currentFormData["Native District"],
-      nativeCity: currentFormData["Native City"],
-      familyWealth: currentFormData["Family Wealth"],
-      relativeSurname: currentFormData["Relative Surnames"],
-      parentOccupation: currentFormData["Parent's Occupation"],
-      mamaSurname: currentFormData["Mama's Surname"],
-      rashi: currentFormData["Rashi"],
-      nakshira: currentFormData["Nakshira"],
-      charan: currentFormData["Charan"],
-      gan: currentFormData["Gan"],
-      nadi: currentFormData["Nadi"],
-      mangal: currentFormData["Mangal Dosha"],
-      birthPlace: currentFormData["Birth Place"],
-      birthTime: currentFormData["Birth Time"],
-      gotraDevak: currentFormData["Gotra Devak"],
-      expectedCaste: currentFormData["Expected Caste"],
-      preferredCity: currentFormData["Preferred City"],
-      expectedAgeDifference: currentFormData["Expected Age Difference"],
-      expectedEducation: currentFormData["Expected Education"],
-      divorcee: currentFormData["Accept Divorcee"],
-      expectedHeight: currentFormData["Expected Height"],
-      expectedIncome: currentFormData["Expected Income"]
-    };
-
-    // Prepare the final payload
-    const payload = {
-      ...transformedData,
-      userId: user?.user?.id || user?.id
-    };
-
-    console.log("Sending payload to backend:", payload);
-
-    const response = await fetch('/api/users/update', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
     });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update profile');
+
+    // Add photo as a required field
+    totalFields++;
+    if (formDataToCheck.profilePhoto || (photos[0] && photos[0].url)) {
+      filledFields++;
     }
-    
-    const result = await response.json();
-    alert('Profile updated successfully!');
-    
-    if (profileCompletion === 100 && verificationStatus === 'Unverified') {
-      // await handleVerificationSubmit();
+
+    return totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+  };
+
+  const transformFormDataForBackend = (formData) => {
+    const transformed = {};
+
+    // First pass - map all fields that have direct mappings
+    Object.keys(formData).forEach(formField => {
+      // Skip internal fields we don't want to send
+      if (formField === 'profileSetup' || formField === 'subscription') {
+        return;
+      }
+
+      // Find if this form field has a mapping
+      const mappingEntry = Object.entries(fieldNameMappings).find(
+        ([key]) => normalizeFieldName(key) === normalizeFieldName(formField)
+      );
+
+      if (mappingEntry) {
+        const [_, backendField] = mappingEntry;
+        // Handle different value types appropriately
+        if (Array.isArray(formData[formField])) {
+          transformed[backendField] = formData[formField].filter(item => item.trim() !== '');
+        } else if (typeof formData[formField] === 'boolean') {
+          transformed[backendField] = formData[formField];
+        } else {
+          transformed[backendField] = formData[formField] || null;
+        }
+      } else {
+        // If no mapping exists, include the field as-is
+        transformed[formField] = formData[formField];
+      }
+    });
+
+    // Handle special cases
+    if (formData.profilePhoto) {
+      transformed.profilePhoto = formData.profilePhoto;
     }
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    alert(`Error: ${error.message}`);
-  } finally {
-    setIsSaving(false);
-  }
-};
+    //sample
+    // Handle relative surnames specifically
+    if (formData['Relative Surnames']) {
+      if (Array.isArray(formData['Relative Surnames'])) {
+        transformed.relativeSurname = formData['Relative Surnames'].filter(s => s.trim() !== '');
+      } else if (typeof formData['Relative Surnames'] === 'string') {
+        transformed.relativeSurname = formData['Relative Surnames'].split(',').map(s => s.trim()).filter(s => s !== '');
+      }
+    }
+
+    return transformed;
+  };
+
+  const handleInputChange = (fieldName, value) => {
+    console.log("field Name = ", fieldName)
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [fieldName]: value
+      };
+
+      // Recalculate completion whenever form data changes
+      setProfileCompletion(calculateProfileCompletion(newData));
+
+      return newData;
+    });
+  };
+  console.log("Input change form data = ", formData)
+
+  const handleProfileUpdate = async () => {
+    setIsSaving(true);
+    try {
+      // Create a deep copy of the current formData
+      const currentFormData = JSON.parse(JSON.stringify(formData));
+      console.log("current = ", currentFormData)
+      // Transform the data to match your schema
+      const transformedData = {
+        name: currentFormData["Full Name"],
+        email: currentFormData["Email Address"],
+        gender: currentFormData["Gender"],
+        dob: currentFormData["Date of Birth"],
+        height: currentFormData["Height"],
+        religion: currentFormData["Religion"],
+        currentCity: currentFormData["Current City"],
+        education: currentFormData["Highest Education"],
+        maritalStatus: currentFormData["Marital Status"],
+        motherTongue: currentFormData["Mother Tongue"],
+        caste: currentFormData["Caste"],
+        subCaste: currentFormData["Sub Caste"],
+        gothra: currentFormData["Gothra"],
+        fieldOfStudy: currentFormData["Field of Study"],
+        college: currentFormData["College/University"],
+        occupation: currentFormData["Occupation"],
+        company: currentFormData["Company"],
+        weight: currentFormData["Weight"],
+        permanentAddress: currentFormData["Permanent Address"],
+        profilePhoto: currentFormData['profilePhoto'],
+        complexion: currentFormData["Complexion"],
+        income: currentFormData["Annual Income"],
+        bloodGroup: currentFormData["Blood Group"],
+        wearsLens: currentFormData["Wears Lens"],
+        fatherName: currentFormData["Father's Name"],
+        parentResidenceCity: currentFormData["Parent's Residence City"],
+        mother: currentFormData["Mother's Name"],
+        brothers: currentFormData["Number of Brothers"],
+        marriedBrothers: currentFormData["Married Brothers"],
+        sisters: currentFormData["Number of Sisters"],
+        marriedSisters: currentFormData["Married Sisters"],
+        nativeDistrict: currentFormData["Native District"],
+        nativeCity: currentFormData["Native City"],
+        familyWealth: currentFormData["Family Wealth"],
+        relativeSurname: currentFormData["Relative Surnames"],
+        parentOccupation: currentFormData["Parent's Occupation"],
+        mamaSurname: currentFormData["Mama's Surname"],
+        rashi: currentFormData["Rashi"],
+        nakshira: currentFormData["Nakshira"],
+        charan: currentFormData["Charan"],
+        gan: currentFormData["Gan"],
+        nadi: currentFormData["Nadi"],
+        mangal: currentFormData["Mangal Dosha"],
+        birthPlace: currentFormData["Birth Place"],
+        birthTime: currentFormData["Birth Time"],
+        gotraDevak: currentFormData["Gotra Devak"],
+        expectedCaste: currentFormData["Expected Caste"],
+        preferredCity: currentFormData["Preferred City"],
+        expectedAgeDifference: currentFormData["Expected Age Difference"],
+        expectedEducation: currentFormData["Expected Education"],
+        divorcee: currentFormData["Accept Divorcee"],
+        expectedHeight: currentFormData["Expected Height"],
+        expectedIncome: currentFormData["Expected Income"]
+      };
+
+      // Prepare the final payload
+      const payload = {
+        ...transformedData,
+        userId: user?.user?.id || user?.id
+      };
+
+      console.log("Sending payload to backend:", payload);
+
+      const response = await fetch('/api/users/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile');
+      }
+
+      const result = await response.json();
+      alert('Profile updated successfully!');
+
+      if (profileCompletion === 100 && verificationStatus === 'Unverified') {
+        // await handleVerificationSubmit();
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
 
   const handleVerificationSubmit = async () => {
@@ -460,7 +460,7 @@ const handleProfileUpdate = async () => {
       });
 
       if (!response.ok) throw new Error('Failed to submit verification');
-      
+
       const result = await response.json();
       setVerificationStatus('Pending');
       alert('Verification submitted successfully!');
@@ -472,15 +472,15 @@ const handleProfileUpdate = async () => {
 
   const handlePhotoUploadSuccess = (result, photoId) => {
     const url = result.info.secure_url;
-    
-    setPhotos(prevPhotos => 
+
+    setPhotos(prevPhotos =>
       prevPhotos.map(photo =>
         photo.id === photoId
           ? { ...photo, url }
           : photo
       )
     );
-    
+
     if (photoId === 1) {
       handleInputChange('profilePhoto', url);
     }
@@ -495,7 +495,7 @@ const handleProfileUpdate = async () => {
 
   const handleAdminFillToggle = async (enabled) => {
     setAdminWillFill(enabled);
-    
+
     try {
       const response = await fetch('/api/users/update', {
         method: 'PUT',
@@ -510,9 +510,9 @@ const handleProfileUpdate = async () => {
           }
         }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to update admin fill setting');
-      
+
       const result = await response.json();
       setFormData(prev => ({
         ...prev,
@@ -539,7 +539,7 @@ const handleProfileUpdate = async () => {
 
   const renderFieldInput = (field) => {
     const value = formData[field.name] ?? '';
-    
+
     switch (field.type.toLowerCase()) {
       case 'select':
         return (
@@ -554,7 +554,7 @@ const handleProfileUpdate = async () => {
             ))}
           </select>
         );
-      
+
       case 'checkbox':
         return (
           <select
@@ -566,7 +566,7 @@ const handleProfileUpdate = async () => {
             <option value="Yes">Yes</option>
           </select>
         );
-      
+
       case 'date':
         return (
           <input
@@ -576,7 +576,7 @@ const handleProfileUpdate = async () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
           />
         );
-      
+
       case 'number':
         return (
           <input
@@ -627,7 +627,7 @@ const handleProfileUpdate = async () => {
         label: 'Verification Rejected'
       }
     };
-  
+
     const config = statusConfig[status] || statusConfig.Unverified;
 
     return (
@@ -640,7 +640,7 @@ const handleProfileUpdate = async () => {
 
   const renderTabContent = () => {
     const currentSection = formSections.find(s => s._id === activeTab);
-    
+
     if (!currentSection) return null;
 
     if (currentSection.label.toLowerCase().includes('photo')) {
@@ -666,14 +666,14 @@ const handleProfileUpdate = async () => {
                 >
                   {({ open }) => (
                     <div>
-                      <div 
+                      <div
                         className="aspect-[4/5] bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer"
                         onClick={() => open()}
                       >
                         {photo.url ? (
-                          <img 
-                            src={photo.url} 
-                            alt={`Photo ${photo.id}`} 
+                          <img
+                            src={photo.url}
+                            alt={`Photo ${photo.id}`}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -743,7 +743,7 @@ const handleProfileUpdate = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 ">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Profile Header */}
         <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
@@ -752,9 +752,9 @@ const handleProfileUpdate = async () => {
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
               <div className="xs:flex-col lg:flex-row flex items-center space-x-6 mb-6 lg:mb-0">
                 <div className="relative">
-                  <CldUploadWidget 
-                    uploadPreset="shivbandhan" 
-                    options={{ 
+                  <CldUploadWidget
+                    uploadPreset="shivbandhan"
+                    options={{
                       multiple: false,
                       sources: ['local', 'camera'],
                       maxFiles: 1
@@ -765,21 +765,21 @@ const handleProfileUpdate = async () => {
                       <>
                         {formData?.profilePhoto ? (
                           <div onClick={() => open()}>
-                            <img 
-                              src={formData.profilePhoto} 
-                              alt="Profile" 
+                            <img
+                              src={formData.profilePhoto}
+                              alt="Profile"
                               className="w-24 h-24 rounded-full object-cover cursor-pointer border-2 border-white shadow-md"
                             />
                           </div>
                         ) : (
-                          <div 
+                          <div
                             className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
                             onClick={() => open()}
                           >
                             <User className="w-12 h-12 text-rose-500" />
                           </div>
                         )}
-                        <button 
+                        <button
                           className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -815,7 +815,7 @@ const handleProfileUpdate = async () => {
                   <div className="flex items-center mt-2">
                     <VerificationBadge status={verificationStatus} />
                   </div>
-                  <div className="flex items-center mt-3">
+                  {/* <div className="flex items-center mt-3">
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input 
                         type="checkbox" 
@@ -828,7 +828,7 @@ const handleProfileUpdate = async () => {
                         Admin can Fill
                       </span>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -846,13 +846,13 @@ const handleProfileUpdate = async () => {
                       style={{ width: `${profileCompletion}%` }}
                     ></div>
                   </div>
-                  <button 
+                  <button
                     onClick={handleProfileUpdate}
                     className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
                     disabled={isSaving}
                   >
                     {isSaving ? 'Saving...' : (
-                     "Save Profile")}
+                      "Save Profile")}
                   </button>
                 </div>
               </div>
@@ -861,40 +861,39 @@ const handleProfileUpdate = async () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Left Sidebar - Profile Sections */}
-          <div className="lg:col-span-1 space-y-4">
+          <div className="lg:col-span-1 space-y-4 ">
             <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
-  <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
-  <div className="space-y-2">
-    {formSections.map((section) => {
-      const Icon = getIconComponent(section.icon || 'User');
-      // Ensure section label is single line and properly truncated if needed
-      const label = section.label.split(' ')[0] === 'Education' 
-        ? 'Education & Profession' 
-        : section.label.split(' ')[0] === 'Religious' 
-        ? 'Religious & Community' 
-        : section.label;
+              <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
+              <div className="space-y-2">
+                {formSections.map((section) => {
+                  const Icon = getIconComponent(section.icon || 'User');
+                  // Ensure section label is single line and properly truncated if needed
+                  const label = section.label.split(' ')[0] === 'Education'
+                    ? 'Education & Profession'
+                    : section.label.split(' ')[0] === 'Religious'
+                      ? 'Religious & Community'
+                      : section.label;
 
-      return (
-        <button
-          key={section._id}
-          onClick={() => setActiveTab(section._id)}
-          className={`w-full px-4 flex items-center p-3 rounded-lg transition-all duration-200 ${
-            activeTab === section._id
-              ? 'bg-rose-50 text-rose-600 border border-rose-200'
-              : 'text-gray-700'
-          }`}
-        >
-          <div className="flex items-center whitespace-nowrap">
-            <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
-            <span className="text-sm font-medium truncate">{label}</span>
-          </div>
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  return (
+                    <button
+                      key={section._id}
+                      onClick={() => setActiveTab(section._id)}
+                      className={`w-full px-4 flex items-center p-3 rounded-lg transition-all duration-200 ${activeTab === section._id
+                          ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                          : 'text-gray-700'
+                        }`}
+                    >
+                      <div className="flex items-center whitespace-nowrap">
+                        <Icon className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <span className="text-xs font-medium truncate">{label}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">
               <div className="flex items-center justify-between mb-3">
@@ -911,12 +910,12 @@ const handleProfileUpdate = async () => {
                 <div className="flex justify-between">
                   <span className="text-white/80">Expires:</span>
                   <span className="font-medium">
-                    {formData.subscription?.expiresAt ? 
+                    {formData.subscription?.expiresAt ?
                       new Date(formData.subscription.expiresAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
-                      }) : 
+                      }) :
                       'Never'}
                   </span>
                 </div>
@@ -970,10 +969,10 @@ const handleProfileUpdate = async () => {
 // Helper function to get icon component by name
 function getIconComponent(iconName) {
   const icons = {
-    User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin, 
-    Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff, 
-    UserCheck, Upload, Briefcase, GraduationCap, Home, Users, 
-    Search, Clock, Bell, Shield, ChevronRight, Plus, X, 
+    User, Heart, Eye, CheckCircle, Edit3, Crown, Camera, MapPin,
+    Calendar, Award, Star, Gift, Sparkles, Settings, EyeOff,
+    UserCheck, Upload, Briefcase, GraduationCap, Home, Users,
+    Search, Clock, Bell, Shield, ChevronRight, Plus, X,
     AlertCircle, ToggleLeft, ToggleRight, XCircle, Phone
   };
   return icons[iconName] || User;
