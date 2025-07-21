@@ -2028,6 +2028,7 @@ import Link from 'next/link';
 const DynamicProfileForm = () => {
   const { user } = useSession();
   const [formSections, setFormSections] = useState([]);
+   const [isLoaded, setIsLoaded] = useState(false);
   const [formData, setFormData] = useState({});
   const [adminWillFill, setAdminWillFill] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -2765,7 +2766,7 @@ const handleProfileUpdate = async () => {
     <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Profile Header */}
-      <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
+      {/* <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
           <div className="relative z-10">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
@@ -2810,6 +2811,7 @@ const handleProfileUpdate = async () => {
                       </>
                     )}
                   </CldUploadWidget>
+                  
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                     <CheckCircle className="w-3 h-3 text-white" />
                   </div>
@@ -2879,6 +2881,125 @@ const handleProfileUpdate = async () => {
                       ) : 'Save Profile'
                     )}
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> */}
+         <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+            <div className="relative z-10">
+              <div className="flex flex-col  lg:flex-row items-start lg:items-center justify-between">
+                <div className="xs:flex-col lg:flex-row flex items-center space-x-6 mb-6 lg:mb-0">
+              <div className="relative">
+  <CldUploadWidget 
+  uploadPreset="shivbandhan" 
+  options={{ 
+    multiple: false,
+    sources: ['local', 'camera'],
+    maxFiles: 1
+  }}
+  onSuccess={(result) => handlePhotoUploadSuccess(result, 1)}
+>
+  {({ open }) => (
+    <>
+      {formData?.profilePhoto ? (
+        <div onClick={() => open()}>
+          <img 
+            src={formData.profilePhoto} 
+            alt="Profile" 
+            className="w-24 h-24 rounded-full object-cover cursor-pointer border-2 border-white shadow-md"
+          />
+        </div>
+      ) : (
+        <div 
+          className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
+          onClick={() => open()}
+        >
+          <User className="w-12 h-12 text-rose-500" />
+        </div>
+      )}
+      <button 
+        className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          open();
+        }}
+      >
+        <Camera className="w-3 h-3 text-white" />
+      </button>
+    </>
+  )}
+</CldUploadWidget>
+  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+    <CheckCircle className="w-3 h-3 text-white" />
+  </div>
+</div>
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h1 className="text-2xl font-bold text-gray-900">{formData?.name || 'Your Name'}</h1>
+                      {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
+                    </div>
+                    <div className="space-y-1 text-gray-600">
+                      <div className="flex items-center space-x-4 text-sm">
+                        {/* {formData.dob && (
+                          <span className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {new Date().getFullYear() - new Date(formData.dob).getFullYear()} years
+                          </span>
+                        )} */}
+                        {formData?.height && <span>{formData?.height}</span>}
+                        {formData?.religion && <span>{formData?.religion}</span>}
+                      </div>
+                      {formData?.currentCity && (
+                        <div className="flex items-center text-sm">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {formData?.currentCity}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center mt-2">
+                      <VerificationBadge status={formData?.verificationStatus} />
+                       
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-3 relative">
+                  {showCompletionUpdate && (
+                    <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+                      +{profileCompletion}%
+                    </div>
+                  )}
+                  <div className="bg-rose-50 rounded-lg p-4 min-w-[200px]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Profile Completion</span>
+                      <span className="text-sm font-bold text-rose-600">
+                        {isLoaded ? `${profileCompletion}%` : 'Loading...'}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                      <div
+                        className="bg-gradient-to-r from-rose-500 to-rose-600 h-2 rounded-full transition-all duration-1000"
+                        style={{ width: `${isLoaded ? profileCompletion : 0}%` }}
+                      ></div>
+                    </div>
+                    <button 
+                      onClick={handleVerificationSubmit}
+                      className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
+                      disabled={verificationStatus === 'Pending' || isSaving}
+                    >
+                      {isSaving ? 'Saving...' : (
+                        profileCompletion === 100 ?
+                        (
+                          verificationStatus === 'Pending' ? 'Verification Pending' :
+                          verificationStatus === 'Verified' ? 'Profile Verified' :
+                          'Send for Verification'
+                        ) : 'Save Profile'
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

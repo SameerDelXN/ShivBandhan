@@ -60,7 +60,7 @@ export default function MatrimonialLogin() {
       });
 
       const data = await response.json();
-
+      console.log(data)
       if (data.success) {
         setStep(2);
         setResendTimer(30);
