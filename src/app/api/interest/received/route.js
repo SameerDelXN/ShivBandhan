@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/dbConnect";
 import Interest from "@/models/Interest";
 import User from "@/models/User";
-
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true'
+};
 export async function GET(req) {
   try {
     await connectDB();
@@ -13,7 +18,7 @@ export async function GET(req) {
     if (!userId) {
       return NextResponse.json(
         { message: "User ID is required" },
-        { status: 400 }
+        { status: 400 ,headers:corsHeaders}
       );
     }
 
@@ -22,7 +27,7 @@ export async function GET(req) {
     if (!userExists) {
       return NextResponse.json(
         { message: "User not found" },
-        { status: 404 }
+        { status: 404 ,headers:corsHeaders}
       );
     }
 
@@ -46,7 +51,7 @@ export async function GET(req) {
       success: true,
       count: populatedInterests.length,
       interests: populatedInterests 
-    });
+    },{headers:corsHeaders});
 
   } catch (error) {
     console.error("Error fetching received interests:", error);
@@ -56,7 +61,7 @@ export async function GET(req) {
         message: "Internal server error",
         error: error.message 
       },
-      { status: 500 }
+      { status: 500,headers:corsHeaders }
     );
   }
 }

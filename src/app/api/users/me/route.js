@@ -4,6 +4,12 @@ import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 import { Weight } from 'lucide-react';
 // export const dynamic = 'force-dynamic';2
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true'
+};
 export async function GET(request) {
   try {
     await dbConnect();
@@ -13,7 +19,7 @@ export async function GET(request) {
     if (!token) {
       return NextResponse.json(
         { message: 'Unauthorized' },
-        { status: 401 }
+        { status: 401 ,headers:corsHeaders}
       );
     }
     console.log('Token :', token);
@@ -23,7 +29,7 @@ export async function GET(request) {
     if (!decoded) {
       return NextResponse.json(
         { message: 'Invalid token' },
-        { status: 401 }
+        { status: 401,headers:corsHeaders }
       );
     }
 
@@ -31,7 +37,7 @@ export async function GET(request) {
     if (!user) {
       return NextResponse.json(
         { message: 'User not found' },
-        { status: 404 }
+        { status: 404,headers:corsHeaders }
       );
     }
     console.log('User found:', user);
@@ -123,12 +129,12 @@ export async function GET(request) {
       }
 };
     console.log("Me = ",userData)
-    return NextResponse.json(userData);
+    return NextResponse.json(userData,{headers:corsHeaders});
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
-      { status: 500 }
+      { status: 500,headers:corsHeaders }
     );
   }
 }

@@ -6,10 +6,10 @@ import { createToken, setTokenCookie } from "@/lib/auth";
 
 // Define CORS headers
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*', // Or your specific origin
+  'Access-Control-Allow-Origin': 'http://localhost:8081', // Or your specific origin
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Credentials': 'true' // If using credentials
+  'Access-Control-Allow-Credentials' : true,
 };
 
 export async function POST(req) {

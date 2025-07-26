@@ -4,7 +4,12 @@ import mongoose from 'mongoose';
 import User from '@/models/User'; // Assuming your User model is imported from here
 import connectDB from '@/lib/dbConnect';
 // Connect to MongoDB if not already connected
-
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true'
+};
 
 export async function GET(request) {
   try {
@@ -52,13 +57,13 @@ export async function GET(request) {
         limit: parseInt(limit),
         totalPages: Math.ceil(total / limit)
       }
-    });
+    },{headers:corsHeaders});
     
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { success: false, message: 'Failed to fetch users', error: error.message },
-      { status: 500 }
+      { status: 500 ,headers:corsHeaders  }
     );
   }
 }
