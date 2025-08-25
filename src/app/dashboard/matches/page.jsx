@@ -10,12 +10,27 @@ import { Toaster,toast } from 'react-hot-toast';
 // Utility function to mask first names
 const maskFirstName = (fullName) => {
   if (!fullName) return '****';
-  const names = fullName.split(' ');
-  if (names.length > 1) {
-    return `${'*'.repeat(names[0].length)} ${names.slice(1).join(' ')}`;
+  const names = fullName.trim().split(/\s+/);
+
+  if (names.length === 1) {
+    // Only one word → hide it all
+    return '*'.repeat(names[0].length);
   }
-  return '****';
+
+  if (names.length === 2) {
+    // Two words → hide first, show last
+    return `${'*'.repeat(names[0].length)} ${names[1]}`;
+  }
+
+  // Three or more words → hide first + middle, show last
+  const hiddenPart = names
+    .slice(0, -1)
+    .map(n => '*'.repeat(n.length))
+    .join(' ');
+  const lastName = names[names.length - 1];
+  return `${hiddenPart} ${lastName}`;
 };
+
 
 // Helper function for case-insensitive city comparison
 const isSameCity = (city1, city2) => {
