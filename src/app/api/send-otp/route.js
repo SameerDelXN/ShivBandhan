@@ -73,9 +73,14 @@ export async function OPTIONS() {
 //         "Content-Type": "application/json"
 //       },
 //       body: JSON.stringify({
-//         route: "q",
-//         "message" : otp,
-//         numbers: phoneNumber
+//        
+        // "route" : "dlt",
+        // "sender_id" : "SHVBDN",
+        // "message" : "",
+        // "variables_values" : "",
+        // "schedule_time" : ,
+        // "flash" : 0,
+        // "numbers" : phoneNumber,
 //       })
 //     });
 
