@@ -198,7 +198,7 @@ export async function POST(request) {
     });
     currentY -= 50;
 
-    // PROFILE HEADER WITH PROFILE IMAGE
+    
     const profileId = userData.id ? userData.id.toString().slice(-6).toUpperCase() : 
                      (userData._id ? userData._id.toString().slice(-6).toUpperCase() : 
                      Date.now().toString().slice(-6));
