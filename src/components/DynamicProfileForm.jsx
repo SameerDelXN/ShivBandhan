@@ -742,7 +742,7 @@ const DynamicProfileForm = () => {
       </div>
     );
   }
-
+//sample
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
   <div className="max-w-7xl mx-auto space-y-6">
