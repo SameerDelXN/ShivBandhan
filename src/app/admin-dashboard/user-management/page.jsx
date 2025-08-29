@@ -55,6 +55,7 @@ const fetchUsers = async (page = 1) => {
     
     if (data.success) {
       // Transform API data to match UI expectations
+      console.log("data = ",data.data)
       const transformedUsers = data.data.map(user => ({
         id: user._id,
         name: user.name || 'N/A',
@@ -81,6 +82,7 @@ const fetchUsers = async (page = 1) => {
         college: user.college || 'N/A',
         company: user.company || 'N/A',
         fieldOfStudy: user.fieldOfStudy || 'N/A',
+        profilePhoto : user.profilePhoto || '',
         income: user.income || 'N/A',
         lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
         isVerified: user.isVerified,
@@ -186,6 +188,7 @@ const fetchUsers = async (page = 1) => {
   };
 
   const handleExportUser = async (user) => {
+    console.log("user ==========",user)
     try {
       const response = await fetch('/api/users/generatePdf', {
         method: 'POST',
