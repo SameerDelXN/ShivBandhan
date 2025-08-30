@@ -2,7 +2,7 @@
 import cron from "node-cron";
 import connectDB from "./dbConnect";
 import User from "@/models/User";
-
+//smaple
 const checkExpiredSubscriptions = async () => {
   try {
     await connectDB();
