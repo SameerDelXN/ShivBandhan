@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, MapPin, Briefcase, Heart } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function FeaturedProfiles() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -182,9 +183,9 @@ export default function FeaturedProfiles() {
                       </div>
                     </div>
                     
-                    <button className="w-full py-3 px-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    <Link href={"/login"} className="w-full py-3 px-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-xl font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                       View Profile
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

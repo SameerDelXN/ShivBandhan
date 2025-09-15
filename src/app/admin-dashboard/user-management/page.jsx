@@ -22,7 +22,8 @@ import {
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
-  const [allUsers, setAllUsers] = useState([]); // Store all users for filtering
+  const [allUsers, setAllUsers] = useState([]);
+  const [originalUsersData, setOriginalUsersData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
@@ -39,73 +40,73 @@ export default function UserManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const usersPerPage = 10;
 
-  
   // Modify the fetchUsers function to fetch all users at once
-const fetchUsers = async (page = 1) => {
-  try {
-    setLoading(true);
-    // Remove pagination parameters to get all users
-    const response = await fetch(`/api/users/fetchAllUsers`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch users');
-    }
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Transform API data to match UI expectations
-      console.log("data = ",data.data)
-      const transformedUsers = data.data.map(user => ({
-        id: user._id,
-        name: user.name || 'N/A',
-        email: user.phone, // Using phone as email since API doesn't have email
-        phone: user.phone,
-        status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
-        plan: user.subscription?.plan || 'Free',
-        joined: new Date(user.createdAt).toLocaleDateString('en-US'),
-        age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
-        dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
-        address: user.currentCity || 'N/A',
-        education: user.education || 'N/A',
-        familyBackground: user.occupation || 'N/A',
-        height: user.height || 'N/A',
-        weight: user.weight ? `${user.weight}kg` : 'N/A',
-        hobbies: 'N/A', // API doesn't have hobbies field
-        gender: user.gender || 'N/A',
-        maritalStatus: user.maritalStatus || 'N/A',
-        motherTongue: user.motherTongue || 'N/A',
-        religion: user.religion || 'N/A',
-        caste: user.caste || 'N/A',
-        subCaste: user.subCaste || 'N/A',
-        gothra: user.gothra || 'N/A',
-        college: user.college || 'N/A',
-        company: user.company || 'N/A',
-        fieldOfStudy: user.fieldOfStudy || 'N/A',
-        profilePhoto : user.profilePhoto || '',
-        income: user.income || 'N/A',
-        lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
-        isVerified: user.isVerified,
-        phoneIsVerified: user.phoneIsVerified,
-        verificationStatus: user.verificationStatus || 'Unverified',
-        adminWillFill: user.profileSetup?.willAdminFill || false
-      }));
+  const fetchUsers = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/users/fetchAllUsers`);
       
-      setUsers(transformedUsers);
-      setAllUsers(transformedUsers); // Store all users for client-side filtering
-      setTotalUsers(transformedUsers.length); // Use the length of all users
-      setTotalPages(Math.ceil(transformedUsers.length / usersPerPage)); // Calculate pages based on all users
-      setCurrentPage(page); // Keep the current page functionality
-    } else {
-      throw new Error('API response indicates failure');
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Store original API data for PDF export
+        setOriginalUsersData(data.data);
+        
+        // Transform API data to match UI expectations
+        const transformedUsers = data.data.map(user => ({
+          id: user._id,
+          name: user.name || 'N/A',
+          email: user.phone,
+          phone: user.phone,
+          status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
+          plan: user.subscription?.plan || 'Free',
+          joined: new Date(user.createdAt).toLocaleDateString('en-US'),
+          age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
+          dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
+          address: user.currentCity || 'N/A',
+          education: user.education || 'N/A',
+          familyBackground: user.occupation || 'N/A',
+          height: user.height || 'N/A',
+          weight: user.weight ? `${user.weight}kg` : 'N/A',
+          hobbies: 'N/A',
+          gender: user.gender || 'N/A',
+          maritalStatus: user.maritalStatus || 'N/A',
+          motherTongue: user.motherTongue || 'N/A',
+          religion: user.religion || 'N/A',
+          caste: user.caste || 'N/A',
+          subCaste: user.subCaste || 'N/A',
+          gothra: user.gothra || 'N/A',
+          college: user.college || 'N/A',
+          company: user.company || 'N/A',
+          fieldOfStudy: user.fieldOfStudy || 'N/A',
+          profilePhoto: user.profilePhoto || '',
+          income: user.income || 'N/A',
+          lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
+          isVerified: user.isVerified,
+          phoneIsVerified: user.phoneIsVerified,
+          verificationStatus: user.verificationStatus || 'Unverified',
+          adminWillFill: user.profileSetup?.willAdminFill || false
+        }));
+        
+        setUsers(transformedUsers);
+        setAllUsers(transformedUsers);
+        setTotalUsers(transformedUsers.length);
+        setTotalPages(Math.ceil(transformedUsers.length / usersPerPage));
+        setCurrentPage(page);
+      } else {
+        throw new Error('API response indicates failure');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError(err.message);
-    console.error('Error fetching users:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Apply filters
   const applyFilters = () => {
@@ -134,7 +135,16 @@ const fetchUsers = async (page = 1) => {
     setUsers(filtered);
     setTotalUsers(filtered.length);
     setTotalPages(Math.ceil(filtered.length / usersPerPage));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
+  };
+
+  // Handle edit form changes
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    });
   };
 
   // Load users on component mount
@@ -182,20 +192,31 @@ const fetchUsers = async (page = 1) => {
   // Handle save edited user
   const handleSaveEdit = () => {
     setUsers(users.map(user => 
-      user.name === editingUser.name ? { ...user, ...editFormData } : user
+      user.id === editingUser.id ? { ...user, ...editFormData } : user
+    ));
+    setAllUsers(allUsers.map(user => 
+      user.id === editingUser.id ? { ...user, ...editFormData } : user
     ));
     setEditingUser(null);
   };
 
+  // Handle export user with original data
   const handleExportUser = async (user) => {
-    console.log("user ==========",user)
     try {
+      // Find the original user data from the stored original data
+      const originalUser = originalUsersData.find(u => u._id === user.id);
+      
+      if (!originalUser) {
+        console.error('Original user data not found');
+        return;
+      }
+
       const response = await fetch('/api/users/generatePdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userData: user }),
+        body: JSON.stringify({ userData: originalUser }),
       });
 
       const data = await response.json();
@@ -250,9 +271,12 @@ const fetchUsers = async (page = 1) => {
   };
 
   // Handle ban/suspend user
-  const handleBanUser = (userName) => {
+  const handleBanUser = (userId) => {
     setUsers(users.map(user => 
-      user.name === userName ? { ...user, status: "Suspended" } : user
+      user.id === userId ? { ...user, status: "Suspended" } : user
+    ));
+    setAllUsers(allUsers.map(user => 
+      user.id === userId ? { ...user, status: "Suspended" } : user
     ));
   };
 
@@ -356,6 +380,7 @@ const fetchUsers = async (page = 1) => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
+                        <p className="text-sm text-gray-500">{user.email}</p>
                       </div>
                     </div>
                   </td>
@@ -423,6 +448,18 @@ const fetchUsers = async (page = 1) => {
                       >
                         <Download className="w-4 h-4" />
                       </button>
+                      <button 
+                        className="text-amber-600 hover:text-amber-700 p-1"
+                        onClick={() => handleEditUser(user)}
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className="text-red-600 hover:text-red-700 p-1"
+                        onClick={() => handleBanUser(user.id)}
+                      >
+                        <Ban className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -487,7 +524,6 @@ const fetchUsers = async (page = 1) => {
           </div>
         </div>
       </div>
-
 
       {/* View User Modal */}
       {selectedUser && (
@@ -762,34 +798,39 @@ const fetchUsers = async (page = 1) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select
-                      name="status"
-                      value={editFormData.status || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Suspended">Suspended</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
-                    <select
-                      name="plan"
-                      value={editFormData.plan || ''}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    >
-                      <option value="Free">Free</option>
-                      <option value="Premium">Premium</option>
-                      <option value="Gold">Gold</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editFormData.email || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={editFormData.phone || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    name="status"
+                    value={editFormData.status || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                                        <option value="Pending">Pending</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
@@ -805,6 +846,16 @@ const fetchUsers = async (page = 1) => {
                   </select>
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={editFormData.age || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
                   <select
                     name="gender"
@@ -812,11 +863,94 @@ const fetchUsers = async (page = 1) => {
                     onChange={handleEditChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   >
-                    <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                  <input
+                    type="text"
+                    name="dob"
+                    value={editFormData.dob || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marital Status</label>
+                  <select
+                    name="maritalStatus"
+                    value={editFormData.maritalStatus || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  >
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Divorced">Divorced</option>
+                    <option value="Widowed">Widowed</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Height</label>
+                  <input
+                    type="text"
+                    name="height"
+                    value={editFormData.height || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
+                  <input
+                    type="text"
+                    name="weight"
+                    value={editFormData.weight || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Religion</label>
+                  <input
+                    type="text"
+                    name="religion"
+                    value={editFormData.religion || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Caste</label>
+                  <input
+                    type="text"
+                    name="caste"
+                    value={editFormData.caste || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sub Caste</label>
+                  <input
+                    type="text"
+                    name="subCaste"
+                    value={editFormData.subCaste || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mother Tongue</label>
+                  <input
+                    type="text"
+                    name="motherTongue"
+                    value={editFormData.motherTongue || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Education</label>
@@ -824,16 +958,6 @@ const fetchUsers = async (page = 1) => {
                     type="text"
                     name="education"
                     value={editFormData.education || ''}
-                    onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={editFormData.address || ''}
                     onChange={handleEditChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
@@ -848,6 +972,45 @@ const fetchUsers = async (page = 1) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Income</label>
+                  <input
+                    type="text"
+                    name="income"
+                    value={editFormData.income || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={editFormData.address || ''}
+                    onChange={handleEditChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    name="adminWillFill"
+                    checked={editFormData.adminWillFill || false}
+                    onChange={(e) => setEditFormData({
+                      ...editFormData,
+                      adminWillFill: e.target.checked
+                    })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                  <span className="ml-3 text-sm font-medium text-gray-700">
+                    Admin Can Fill Profile
+                  </span>
+                </label>
               </div>
             </div>
 

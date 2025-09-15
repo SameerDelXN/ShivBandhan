@@ -22,7 +22,7 @@ export default function HomePage() {
       {/* <SuccessStories /> */}
       <AppDownload />
       <UserTestimonials />
-      <BlogPreview />
+      {/* <BlogPreview /> */}
       <Footer />
     </>
   );

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Download, CheckCircle, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AppDownloadSection() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -74,7 +75,7 @@ export default function AppDownloadSection() {
             {/* Download buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* App Store Button */}
-              <button className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
+              <Link href={"https://www.facebook.com/shivbandhanmatrimony/"} className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
                 <div className="flex items-center">
                   <div className="mr-3">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" className="text-gray-900">
@@ -86,10 +87,10 @@ export default function AppDownloadSection() {
                     <div className="text-sm font-semibold text-gray-900">App Store</div>
                   </div>
                 </div>
-              </button>
+              </Link>
               
               {/* Google Play Button */}
-              <button className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
+              <Link href={"https://www.facebook.com/shivbandhanmatrimony/"} className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
                 <div className="flex items-center">
                   <div className="mr-3">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" className="text-gray-900">
@@ -101,7 +102,7 @@ export default function AppDownloadSection() {
                     <div className="text-sm font-semibold text-gray-900">Google Play</div>
                   </div>
                 </div>
-              </button>
+              </Link>
             </div>
             
             {/* QR Code option */}
@@ -115,12 +116,7 @@ export default function AppDownloadSection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
-                <p className="text-rose-100 text-sm">Or scan QR code</p>
-                <button className="flex items-center text-amber-300 text-sm font-medium mt-1 hover:text-amber-200 group">
-                  Learn more <ChevronRight size={16} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
-                </button>
-              </div>
+             
             </div>
           </div>
           

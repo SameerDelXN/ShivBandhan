@@ -5,7 +5,8 @@ import fontkit from '@pdf-lib/fontkit';
 export async function POST(request) {
   try {
     const { userData } = await request.json();
-
+    console.log("User Data:", userData);
+    
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
 
@@ -29,7 +30,6 @@ export async function POST(request) {
     // Load and embed company logo
     let logoImage;
     try {
-      // In a Next.js API route, we need to use process.cwd() and construct the path
       const fs = require('fs');
       const path = require('path');
       const logoPath = path.join(process.cwd(), 'public', 'logo.png');
@@ -43,12 +43,9 @@ export async function POST(request) {
     let profileImage;
     if (userData.profilePhoto) {
       try {
-        // Fetch the profile image
         const response = await fetch(userData.profilePhoto);
         if (response.ok) {
           const imageBuffer = await response.arrayBuffer();
-          
-          // Try to embed as JPEG first, then PNG if that fails
           try {
             profileImage = await pdfDoc.embedJpg(imageBuffer);
           } catch (e) {
@@ -95,13 +92,6 @@ export async function POST(request) {
 
     const formatDate = (date) => {
       if (!date) return '';
-      // Handle different date formats
-      if (typeof date === 'string' && date.includes('/')) {
-        const parts = date.split('/');
-        if (parts.length === 3) {
-          return `${parts[0]}/${parts[1]}/${parts[2]}`;
-        }
-      }
       
       try {
         const d = new Date(date);
@@ -118,19 +108,7 @@ export async function POST(request) {
     const calculateAge = (dob) => {
       if (!dob) return '';
       
-      // Handle different date formats
-      let birthDate;
-      if (typeof dob === 'string' && dob.includes('/')) {
-        const parts = dob.split('/');
-        if (parts.length === 3) {
-          birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
-        } else {
-          birthDate = new Date(dob);
-        }
-      } else {
-        birthDate = new Date(dob);
-      }
-      
+      const birthDate = new Date(dob);
       if (isNaN(birthDate)) return '';
       
       const ageDiff = Date.now() - birthDate.getTime();
@@ -160,21 +138,14 @@ export async function POST(request) {
     });
     currentY -= 25;
 
-    drawText('Durga Prasad Apartments, S. No. 26/6, Flat No. 1, Above Udyam Vikas Bank,', 
+    drawText('Yashganga Complex, F No- 306, Nr Hotel Deccan Povilon Navale Bridge,Katraj Bypass Road,', 
              headerX, currentY, {
       size: 9,
       color: darkText
     });
     currentY -= 12;
 
-    drawText('Hingne KD, Sinhagad Road, Pune 411051, Maharashtra, India', 
-             headerX, currentY, {
-      size: 9,
-      color: darkText
-    });
-    currentY -= 12;
-
-    drawText('Mobile: +91-8888438693 / +91-8888438694 • Email: support@shivbandhan.com', 
+    drawText('Narhe, Pune- 411041 , Maharashtra, India', 
              headerX, currentY, {
       size: 9,
       color: darkText
@@ -198,20 +169,18 @@ export async function POST(request) {
     });
     currentY -= 50;
 
-    
-    const profileId = userData.id ? userData.id.toString().slice(-6).toUpperCase() : 
-                     (userData._id ? userData._id.toString().slice(-6).toUpperCase() : 
-                     Date.now().toString().slice(-6));
+    // Profile ID
+    const profileId = userData._id ? userData._id.toString().slice(-6).toUpperCase() : 
+                     Date.now().toString().slice(-6);
     
     // Calculate text area width based on whether we have a profile image
-    // Increased the space for the larger profile photo
     const textAreaWidth = profileImage ? contentWidth - 180 : contentWidth;
     
-    // Draw profile image if available - INCREASED SIZE
+    // Draw profile image if available
     if (profileImage) {
-      const imgDims = profileImage.scale(0.35); // Increased from 0.25 to 0.35
+      const imgDims = profileImage.scale(0.35);
       const imgX = width - margin - imgDims.width - 10;
-      const imgY = currentY - 5; // Adjusted to align with text
+      const imgY = currentY - 5;
       
       // Draw a border around the image
       page.drawRectangle({
@@ -231,7 +200,7 @@ export async function POST(request) {
       });
     }
     
-    // Background for profile header - increased height to accommodate larger image
+    // Background for profile header
     const profileHeaderHeight = profileImage ? 80 : 60;
     page.drawRectangle({
       x: margin,
@@ -242,7 +211,7 @@ export async function POST(request) {
       opacity: 0.3
     });
 
-    // Name with proper text wrapping to avoid overlapping with image
+    // Name with proper text wrapping
     const name = userData.name || 'N/A';
     drawText(name, margin + 10, currentY + 55, {
       size: 18,
@@ -251,7 +220,7 @@ export async function POST(request) {
       maxWidth: textAreaWidth - 20
     });
     
-    // Profile ID positioned correctly
+    // Profile ID
     const profileIdText = `Profile ID: SB-${profileId}`;
     const profileIdWidth = boldFont.widthOfTextAtSize(profileIdText, 10);
     drawText(profileIdText, margin + textAreaWidth - profileIdWidth, currentY + 55, {
@@ -260,7 +229,7 @@ export async function POST(request) {
     });
     
     // DOB and Age
-    const dobText = `DOB: ${formatDate(userData.dob) || 'N/A'} | Age: ${userData.age || calculateAge(userData.dob) || 'N/A'} years`;
+    const dobText = `DOB: ${formatDate(userData.dob) || 'N/A'} | Age: ${calculateAge(userData.dob) || 'N/A'} years`;
     drawText(dobText, margin + 10, currentY + 35, {
       size: 10,
       color: darkText,
@@ -277,9 +246,9 @@ export async function POST(request) {
     
     currentY -= (profileHeaderHeight + 15);
 
-    // Draw section with improved styling
+    // Draw section function
     const drawSection = (title, data) => {
-      if (data.filter(([_, value]) => value).length === 0) return currentY;
+      if (data.filter(([_, value]) => value !== undefined && value !== null && value !== '').length === 0) return currentY;
 
       // Section header with background
       page.drawRectangle({
@@ -299,7 +268,7 @@ export async function POST(request) {
       currentY -= 20;
 
       // Section content with alternating row colors
-      const rows = data.filter(([_, value]) => value || value === 0 || value === false);
+      const rows = data.filter(([_, value]) => value !== undefined && value !== null && value !== '');
       
       rows.forEach(([label, value], index) => {
         if (index % 2 === 0) {
@@ -325,35 +294,53 @@ export async function POST(request) {
       });
 
       currentY -= 10;
+      return currentY;
     };
 
-    // Sections with improved layout
-    drawSection('Personal Information', [
-      ['Mobile Number', userData.phone],
-      ['Email Address', userData.email],
+    // Personal Information Section
+    currentY = drawSection('Personal Information', [
+      ['Full Name', userData.name],
+      ['Date of Birth', formatDate(userData.dob)],
+      ['Age', calculateAge(userData.dob) + ' years'],
+      ['Gender', userData.gender],
       ['Marital Status', userData.maritalStatus],
-      ['Mother Tongue', userData.motherTongue],
-      ['Religion', userData.religion],
-      ['Caste', userData.caste],
-      ['Sub Caste', userData.subCaste],
+      ['Divorcee', userData.divorcee],
       ['Height', userData.height],
-      ['Weight', userData.weight],
-      ['Address', userData.address],
-      ['Hobbies', userData.hobbies]
+      ['Wears Lens', userData.wearsLens],
+      ['Mother Tongue', userData.motherTongue],
+      ['Current City', userData.currentCity]
     ]);
 
-    drawSection('Education & Career', [
-      ['Education Level', userData.education],
+    // Family Background Section
+    currentY = drawSection('Family Background', [
+      ['Religion', userData.religion],
+      ['Caste', userData.caste],
+      ['Gothra', userData.gothra],
+      ['Brothers', userData.brothers],
+      ['Married Brothers', userData.marriedBrothers],
+      ['Sisters', userData.sisters],
+      ['Married Sisters', userData.marriedSisters],
+      ['Relative Surnames', userData.relativeSurname && userData.relativeSurname.join(', ')]
+    ]);
+
+    // Education & Career Section
+    currentY = drawSection('Education & Career', [
+      ['Education', userData.education],
       ['Field of Study', userData.fieldOfStudy],
       ['College', userData.college],
-      ['Occupation', userData.familyBackground],
+      ['Occupation', userData.occupation],
       ['Company', userData.company],
       ['Annual Income', userData.income]
     ]);
 
-    drawSection('Family Background', [
-      ['Gothra', userData.gothra],
-      ['Family Background', userData.familyBackground]
+    // Account Information Section
+    currentY = drawSection('Account Information', [
+      ['Profile Verified', userData.isVerified],
+      ['Verification Status', userData.verificationStatus],
+      ['Last Login', formatDate(userData.lastLoginAt)],
+      ['Profile Created', formatDate(userData.createdAt)],
+      ['Profile Updated', formatDate(userData.updatedAt)],
+      ['Subscription Status', userData.subscription && userData.subscription.isSubscribed ? 'Active' : 'Inactive']
     ]);
 
     // Footer with branding
@@ -376,11 +363,6 @@ export async function POST(request) {
     });
     currentY -= 12;
 
-    drawText('Pune • Mumbai • Delhi • Bangalore • Hyderabad', margin, currentY, {
-      size: 9,
-      color: darkText
-    });
-    
     drawText(`Generated on ${new Date().toLocaleDateString('en-IN')}`, width - margin - 120, currentY, {
       size: 9,
       color: lightText

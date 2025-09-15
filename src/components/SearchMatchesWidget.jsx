@@ -1,8 +1,10 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Calendar, Users, Heart } from 'lucide-react';
-
+import { useSession } from '@/context/SessionContext';
+import Link from 'next/link';
 export default function SearchMatchesWidget() {
+  const {user} = useSession();
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState({
     ageMin: 25,
@@ -130,13 +132,13 @@ export default function SearchMatchesWidget() {
                 </div>
               </div>
               
-              <button 
-                type="submit" 
+              <Link 
+                href={user ? `/dashboard` : '/login'}
                 className="flex-shrink-0 px-4 py-2 sm:px-6 sm:py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center whitespace-nowrap w-full sm:w-auto"
               >
                 <Search size={18} className="mr-2" />
                 <span className="font-medium">Search</span>
-              </button>
+              </Link>
             </div>
           </form>
         </div>

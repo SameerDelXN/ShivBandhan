@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function MatrimonialHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -37,14 +38,14 @@ export default function MatrimonialHero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-px transform flex items-center justify-center group">
+              <Link href={"/login"} className="px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-px transform flex items-center justify-center group">
                 <span className="font-medium">Register Free</span>
                 <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
-              </button>
+              </Link>
               
-              <button className="px-8 py-3 bg-white text-rose-600 rounded-full hover:bg-gray-50 transition-all duration-300 shadow-md flex items-center justify-center">
+              {/* <button className="px-8 py-3 bg-white text-rose-600 rounded-full hover:bg-gray-50 transition-all duration-300 shadow-md flex items-center justify-center">
                 <span className="font-medium">How It Works</span>
-              </button>
+              </button> */}
             </div>
             
             <div className="flex items-center space-x-4 pt-6">

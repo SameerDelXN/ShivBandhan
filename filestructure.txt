@@ -179,6 +179,17 @@
             |-- page.jsx
         |-- payment-success
             |-- page.jsx
+        |-- policies
+            |-- community-standards
+                |-- page.jsx
+            |-- privacy-policy
+                |-- page.jsx
+            |-- refund-policy
+                |-- page.jsx
+            |-- safety-guidelines
+                |-- page.jsx
+            |-- terms-of-service
+                |-- page.jsx
         |-- super-admin
             |-- layout.jsx
             |-- page.jsx
@@ -192,6 +203,7 @@
         |-- HeroSection.jsx
         |-- LoadingSpinner.js
         |-- Navbar.jsx
+        |-- policies.js
         |-- QuickRegistrationForm.jsx
         |-- SearchMatchesWidget.jsx
         |-- Sidebar.jsx

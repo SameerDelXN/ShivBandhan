@@ -38,18 +38,7 @@ export default function MatrimonialNavbar() {
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
-          {['Home', 'Browse Profiles', 'Success Stories', 'About Us', 'Contact'].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
-              className="relative text-gray-700 font-medium hover:text-rose-600 transition-colors duration-300 group"
-            >
-              {item}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-rose-600 transition-all duration-300 group-hover:w-full"></span>
-            </a>
-          ))}
-        </div>
+        
 
         {/* Auth Buttons - Desktop */}
         <div className="hidden md:flex items-center space-x-4">
@@ -75,16 +64,7 @@ export default function MatrimonialNavbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="flex flex-col p-4 space-y-4">
-            {['Home', 'Browse Profiles', 'Success Stories', 'About Us', 'Contact'].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
-                className="text-gray-700 py-2 hover:text-rose-600 transition-colors duration-200"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item}
-              </a>
-            ))}
+           
             <div className="pt-2 flex flex-col space-y-3">
               <Link href={"/login"} className="w-full py-2 text-center text-rose-600 border border-rose-600 rounded-full hover:bg-rose-50 transition-colors duration-200">
                 Login
