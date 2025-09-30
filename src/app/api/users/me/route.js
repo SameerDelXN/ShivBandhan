@@ -113,20 +113,21 @@ export async function GET(request) {
   divorcee: user.divorcee,
   expectedHeight: user.expectedHeight,
   expectedIncome: user.expectedIncome,
-  
   // System Info
   id: user._id,
   isVerified: user.isVerified,
   verificationStatus: user.verificationStatus,
   preferences: user.preferences,
   subscription: user.subscription,
+  downloadAccess: user.downloadAccess,
   createdAt: user.createdAt,
 
+
   // profile setup
- profileSetup: {
+  profileSetup: {
         willAdminFill: user.profileSetup?.willAdminFill || false,
         dontAskAgain: user.profileSetup?.dontAskAgain || false
-      }
+  }
 };
     console.log("Me = ",userData)
     return NextResponse.json(userData,{headers:corsHeaders});

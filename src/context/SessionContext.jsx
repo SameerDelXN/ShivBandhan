@@ -58,7 +58,7 @@ const login = async (userId) => {
     try {
       await fetch('/api/logout', { method: 'POST' });
       setUser(null);
-      router.push('/login');
+      router.push('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }

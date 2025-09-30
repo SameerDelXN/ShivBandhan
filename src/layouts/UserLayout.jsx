@@ -28,13 +28,13 @@ export default function UserLayout({ children }) {
       if (!isAuthenticated) {
         console.log("[Auth Debug] No session - redirecting to login");
         sessionStorage.setItem('redirectPath', pathname);
-        router.replace("/login");
+        router.replace("/");
       } else {
         console.log("[Auth Debug] Valid session - user:", user);
         if (!user || !user.id) {
           console.log("[Auth Debug] Session exists but user data missing");
           logout();
-          router.replace("/login");
+          router.replace("/");
         } else {
           setShouldRender(true);
         }
@@ -47,7 +47,7 @@ export default function UserLayout({ children }) {
       if (e.key === 'logout') {
         console.log("[Auth Debug] Received logout event from another tab");
         logout();
-        router.replace("/login");
+        router.replace("/");
       }
     };
 
