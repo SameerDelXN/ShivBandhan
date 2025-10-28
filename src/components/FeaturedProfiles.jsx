@@ -13,47 +13,68 @@ export default function FeaturedProfiles() {
   
   const profiles = [
     {
-      name: "Priya",
+      name: "Priya Jadhav",
       age: 28,
       city: "Mumbai",
       profession: "Software Engineer",
       photo: "/people/priya.jpg"
     },
     {
-      name: "Arjun",
+      name: "Arjun Pawar",
       age: 31,
-      city: "Delhi",
+      city: "Pune",
       profession: "Marketing Director",
       photo: "/people/arjun.jpg"
     },
     {
-      name: "Ananya",
+      name: "Ananya Kulkarni",
       age: 27,
-      city: "Bangalore",
+      city: "Mumbai",
       profession: "Doctor",
       photo: "/people/ananya.jpg"
     },
     {
-      name: "Vikram",
+      name: "Prathamesh Patil",
       age: 30,
-      city: "Chennai",
-      profession: "Architect",
+      city: "Kolhapur",
+      profession: "Civil Engineer",
       photo: "/people/vikram.jpg"
     },
     {
-      name: "Neha",
+      name: "Neha Shinde",
       age: 29,
-      city: "Kolkata",
-      profession: "Fashion Designer",
+      city: "Nagpur",
+      profession: "Software Engineer",
       photo: "/people/neha.jpg"
     },
     {
-      name: "Rohan",
+      name: "Rohan Mali",
       age: 32,
       city: "Pune",
       profession: "Investment Banker",
       photo: "/people/rohan.jpg"
-    }
+    },
+    {
+    name: "Aditya Chavan",
+    age: 29,
+    city: "Pune",
+    profession: "Software Developer",
+    photo: "/people/aditya.jpg"
+  },
+  {
+    name: "Ketaki Joshi",
+    age: 27,
+    city: "Nashik",
+    profession: "Architect",
+    photo: "/people/ketaki.jpg"
+  },
+  {
+    name: "Sneha Bhosale",
+    age: 26,
+    city: "Ratnagiri",
+    profession: "Interior Designer",
+    photo: "/people/sneha.jpg"
+  },
   ];
 
   useEffect(() => {
