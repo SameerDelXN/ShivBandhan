@@ -155,7 +155,7 @@ export default function DynamicSubscriptionPlans() {
         prefill: {
           name: user?.name || "Aniket Dahire",
           email: user?.email || "aniket@example.com",
-          contact: "9999999999",
+          contact: user?.phone || "",
         },
         theme: {
           color: "#3399cc",

@@ -79,7 +79,7 @@ export default function SubscriptionPage() {
         prefill: {
           name: user?.user?.name || "User",
           email: user?.user?.email || "email@example.com",
-          contact: "9999999999",
+          contact: user?.user?.phone || "",
         },
         theme: { color: "#3399cc" },
       });
