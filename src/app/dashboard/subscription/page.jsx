@@ -111,7 +111,7 @@
         });
 
         const order = await res.json();
-
+//sample
         // 2. Configure Razorpay checkout
         const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
