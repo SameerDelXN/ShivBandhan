@@ -1,3 +1,7 @@
+
+
+
+
 "use client"
 import { useState, useEffect } from 'react';
 import { useSession } from '@/context/SessionContext';
@@ -6,6 +10,10 @@ import {
   Heart, User, MapPin, GraduationCap, Briefcase, Calendar, Star, CheckCircle, Lock, Camera, Clock, Crown, Sparkles, Filter, ArrowUpDown, Bookmark, Eye, MessageCircle, TrendingUp, Users, Navigation, Zap, ChevronDown, SlidersHorizontal, X, Loader2,Search
 } from 'lucide-react';
 import { Toaster,toast } from 'react-hot-toast';
+
+// Added imports
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { Download } from 'lucide-react';
 
 // Utility function to mask first names
 const maskFirstName = (fullName) => {
@@ -19,7 +27,7 @@ const maskFirstName = (fullName) => {
 
   if (names.length === 2) {
     // Two words → hide first, show last
-    return `${'*'.repeat(names[0].length)} ${names[1]}`;
+    return `${'*'.repeat(names[0].length)} ${names[1]}` ;
   }
 
   // Three or more words → hide first + middle, show last
@@ -28,7 +36,7 @@ const maskFirstName = (fullName) => {
     .map(n => '*'.repeat(n.length))
     .join(' ');
   const lastName = names[names.length - 1];
-  return `${hiddenPart} ${lastName}`;
+  return `${hiddenPart} ${lastName}` ;
 };
 
 
@@ -247,7 +255,7 @@ else if (expectation === 'expectedHeight' && matchField === 'height') {
 };
 const fetchSentInterests = async (senderId) => {
   try {
-    const res = await fetch(`/api/interest?userId=${senderId}`);
+    const res = await fetch(`/api/interest?userId=${senderId}` );
     const data = await res.json();
     if (data.success) {
       return data.interests.map(i => i.receiver.id); // ⬅️ array of IDs where interest was sent
@@ -389,6 +397,258 @@ if (quickFilters.education) {
   });
    
   console.log("fi = ",filteredMatches)
+
+  // Added: PDF download handler
+  // Per-profile PDF download
+// Per-profile PDF download with persistent unlock for non-subscribed users
+const handleDownloadProfile = async (profile) => {
+  try {
+    // Always fetch fresh user to read latest unlock/subscription
+    const meRes = await fetch('/api/users/me', { cache: 'no-store' });
+    const me = await meRes.json();
+
+    const userId = me?._id || me?.id || me?.user?.id;
+
+    const isSubscribed =
+      !!(me?.subscription?.isSubscribed || me?.user?.subscription?.isSubscribed);
+
+    const hasPermanentUnlock =
+      !!(me?.downloadAccess?.isUnlocked || me?.user?.downloadAccess?.isUnlocked);
+
+    if (!isSubscribed && !hasPermanentUnlock) {
+      if (typeof window === 'undefined' || !window.Razorpay) {
+        toast.error('Payment is unavailable right now. Please try again.');
+        return;
+      }
+
+      const razorpay = new window.Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: 100, // ₹1 in paise
+        currency: 'INR',
+        name: 'ShivBandhan',
+        description: 'Profile PDF Download Unlock',
+        handler: async (resp) => {
+          try {
+            // Persist unlock on the server
+            const unlockRes = await fetch('/api/users/unlock-download', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId,
+                razorpay_payment_id: resp?.razorpay_payment_id || 'NA',
+              }),
+            });
+
+            if (!unlockRes.ok) {
+              const err = await unlockRes.json().catch(() => ({}));
+              throw new Error(err?.error || 'Failed to persist unlock');
+            }
+
+            // Re-enter to generate PDF after unlock
+            await handleDownloadProfile(profile);
+          } catch (e) {
+            console.error('Post-payment unlock failed:', e);
+            toast.error('Payment succeeded but unlock failed. Please contact support.');
+          }
+        },
+        theme: { color: '#3399cc' },
+      });
+
+      razorpay.on('payment.failed', function () {
+        toast.error('Payment failed. Please try again.');
+      });
+
+      razorpay.open();
+      return;
+    }
+
+    // ---------- PDF generation (your existing logic) ----------
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    const pageMargin = 40;
+    const lineHeight = 16;
+    const titleSize = 18;
+    const sectionTitleSize = 14;
+    const labelSize = 11;
+    const valueSize = 11;
+
+const colorPrimary = rgb(0.86, 0.25, 0.35); // rose
+const colorAccent = rgb(0.98, 0.78, 0.38); // amber-like
+const colorTextMuted = rgb(0.5, 0.5, 0.5);
+const headerHeight = 60;
+
+
+    let page = pdfDoc.addPage();
+    const { width, height } = page.getSize();
+    let cursorY = height - pageMargin;
+
+    const drawText = (text, x, size = valueSize, isBold = false) => {
+      page.drawText(text || '-', {
+        x, y: cursorY, size,
+        font: isBold ? boldFont : font,
+        color: rgb(0.1, 0.1, 0.1),
+      });
+    };
+    const newLine = (mult = 1) => { cursorY -= lineHeight * mult; };
+    const ensureSpace = (lines = 3) => {
+      if (cursorY < pageMargin + lines * lineHeight) {
+        page = pdfDoc.addPage();
+        cursorY = page.getSize().height - pageMargin;
+      }
+    };
+   const section = (title) => {
+  ensureSpace(3);
+  // colored marker + title
+  page.drawRectangle({ x: pageMargin, y: cursorY - 2, width: 4, height: 14, color: colorAccent });
+  drawText(title, pageMargin + 10, sectionTitleSize, true);
+  newLine(1.2);
+  // divider
+  page.drawLine({ 
+    start: { x: pageMargin, y: cursorY }, 
+    end: { x: width - pageMargin, y: cursorY }, 
+    thickness: 1, 
+    color: colorTextMuted 
+  });
+  newLine(0.8);
+};
+    const row = (label, value) => {
+      ensureSpace(1);
+      drawText(`${label}:`, pageMargin, labelSize, true);
+      drawText(String(value ?? '-'), pageMargin + 100, valueSize);
+      newLine(1);
+    };
+
+   // Header bar (styled)
+page.drawRectangle({ x: 0, y: height - headerHeight, width, height: headerHeight, color: colorPrimary });
+page.drawText('ShivBandhan', { x: pageMargin, y: height - headerHeight + 22, size: 20, font: boldFont, color: rgb(1,1,1) });
+page.drawText('Profile Details', { x: pageMargin + 140, y: height - headerHeight + 26, size: 12, font, color: rgb(1,1,1) });
+cursorY = height - headerHeight - 20;
+
+    // Summary
+    const nameDisplay = profile?.name || 'N/A';
+    const ageDisplay = profile?.age ? `${profile.age} yrs` : '-';
+    const heightDisplay = profile?.height || '-';
+    const weightDisplay = profile?.weight ? `${profile.weight}` : '-';
+    const cityDisplay = profile?.currentCity || '-';
+
+    // Name and summary badges
+page.drawText(`${nameDisplay}`, { x: pageMargin, y: cursorY, size: 15, font: boldFont, color: rgb(0.12,0.12,0.12) });
+newLine(1.2);
+const drawBadge = (text, x, y) => {
+  const paddingX = 6; 
+  const textWidth = boldFont.widthOfTextAtSize(text, 9);
+  const badgeWidth = textWidth + paddingX * 2;
+  page.drawRectangle({ x, y: y - 3, width: badgeWidth, height: 14, color: rgb(0.98, 0.9, 0.9) });
+  page.drawText(text, { x: x + paddingX, y, size: 9, font: boldFont, color: colorPrimary });
+  return x + badgeWidth + 6;
+};
+let __bx = pageMargin; 
+const __by = cursorY + 2;
+__bx = drawBadge(ageDisplay, __bx, __by);
+__bx = drawBadge(heightDisplay, __bx, __by);
+__bx = drawBadge(weightDisplay, __bx, __by);
+drawBadge(cityDisplay, __bx, __by);
+newLine(2);
+
+    if (profile?.profilePhoto) {
+      try {
+        const res = await fetch(profile.profilePhoto, { mode: 'cors' });
+        const imgBytes = await res.arrayBuffer();
+        const lower = profile.profilePhoto.toLowerCase();
+        const img = lower.endsWith('.png')
+          ? await pdfDoc.embedPng(imgBytes)
+          : await pdfDoc.embedJpg(imgBytes);
+
+        const targetWidth = 120;
+        const scale = targetWidth / img.width;
+        const drawWidth = targetWidth;
+        const drawHeight = img.height * scale;
+
+        page.drawImage(img, {
+          x: width - pageMargin - drawWidth,
+          y: height - pageMargin - drawHeight,
+          width: drawWidth,
+          height: drawHeight,
+        });
+
+        if (cursorY > height - pageMargin - drawHeight) {
+          cursorY = height - pageMargin - drawHeight - 12;
+        }
+      } catch (imgErr) {
+        console.warn('Skipping image embedding (fetch/embed failed):', imgErr);
+      }
+    }
+
+    // Sections
+    section('About');
+    row('Gender', profile?.gender);
+    row('Marital Status', profile?.maritalStatus);
+    row('Mother Tongue', profile?.motherTongue);
+    row('Complexion', profile?.complexion);
+    row('Caste', profile?.caste);
+
+    section('Location');
+    row('Current City', profile?.currentCity);
+    row('Native City', profile?.nativeCity);
+    row('Address', profile?.permanentAddress);
+
+    section('Education');
+    row('Highest Degree', profile?.education);
+    row('Field of Study', profile?.fieldOfStudy);
+    row('College', profile?.college);
+
+    section('Professional');
+    row('Occupation', profile?.occupation);
+    row('Company', profile?.company);
+    row('Income', profile?.income);
+
+    section('Family');
+    row('Father', profile?.fatherName);
+    row('Mother', profile?.mother);
+    row('Siblings', `${profile?.brothers || 0} brothers, ${profile?.sisters || 0} sisters`);
+    row('Parent Occupation', profile?.parentOccupation);
+
+    section('Horoscope');
+    row('Rashi', profile?.rashi);
+    row('Nakshira', profile?.nakshira);
+    row('Gotra/Devak', profile?.gotraDevak);
+    row('Mangal', profile?.mangal ? 'Yes' : 'No');
+
+    newLine(2);
+    drawText('Generated via ShivBandhan', pageMargin, 9);
+
+
+    // Footer on all pages
+const __pages = pdfDoc.getPages();
+const __total = __pages.length;
+const __dateStr = new Date().toLocaleDateString('en-IN');
+__pages.forEach((p, idx) => {
+  const { width: __pw } = p.getSize();
+  p.drawLine({ start: { x: pageMargin, y: 28 }, end: { x: __pw - pageMargin, y: 28 }, thickness: 0.5, color: colorTextMuted });
+  p.drawText('Generated by ShivBandhan', { x: pageMargin, y: 14, size: 9, font, color: colorTextMuted });
+  p.drawText(`${__dateStr}`, { x: __pw / 2 - 20, y: 14, size: 9, font, color: colorTextMuted });
+  p.drawText(`Page ${idx + 1} of ${__total}`, { x: __pw - pageMargin - 80, y: 14, size: 9, font, color: colorTextMuted });
+});
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(profile?.name || 'profile').toLowerCase().replace(/\\s+/g, '_')}_shivbandhan.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast.success('Profile PDF downloaded');
+  } catch (e) {
+    console.error('Profile PDF generation failed:', e);
+    toast.error('Failed to generate PDF');
+  }
+};
+
    const handleSendInterest = async (senderId, receiverId) => {
     console.log('Sending interest from', senderId, 'to', receiverId);
     
@@ -502,7 +762,7 @@ const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
                   <>
                     <img
                       src={profile.profilePhoto}
-                      alt={`${maskFirstName(profile.name)} profile`}
+                      alt={`${maskFirstName(profile.name)} profile` }
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -743,7 +1003,7 @@ const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
               {profile.profilePhoto ? (
                 <img
                   src={profile.profilePhoto}
-                  alt={`${maskFirstName(profile.name)} profile`}
+                  alt={`${maskFirstName(profile.name)} profile` }
                   className="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
                 />
               ) : (
@@ -767,7 +1027,7 @@ const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
     </>
   );
 };
-const MatchCard = ({ match }) => (
+const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfile }) => (
   <div className="bg-white rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
     <div className="relative">
       {/* Mutual Match Banner */}
@@ -781,13 +1041,13 @@ const MatchCard = ({ match }) => (
       )}
 
       {/* Profile Image */}
-     <div className={`aspect-[4/5] bg-gradient-to-br from-rose-50 to-amber-50 flex items-center justify-center relative ${match.mutualMatch ? 'mt-8' : ''}`}>
+     <div className={`aspect-[4/5] bg-gradient-to-br from-rose-50 to-amber-50 flex items-center justify-center relative ${match.mutualMatch ? 'mt-8' : ''}` }>
         {match.profilePhoto ? (
           <>
             <img
               src={match.profilePhoto}
-              alt={`${maskFirstName(match.name)} profile`}
-              className={`w-full h-full object-cover `}
+              alt={`${maskFirstName(match.name)} profile` }
+              className={`w-full h-full object-cover ` }
             />
             {!hasSubscription && (
               <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-4 text-center">
@@ -881,7 +1141,8 @@ const MatchCard = ({ match }) => (
 
         {/* Action Buttons */}
         
-<div className="flex space-x-1.5">
+<div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+  {/* View */}
   <button 
     onClick={(e) => {
       e.stopPropagation();
@@ -891,16 +1152,18 @@ const MatchCard = ({ match }) => (
       }
       setSelectedProfile(match);
     }}
-    className="flex-1 bg-gray-100 text-gray-700 py-1 px-2 rounded text-xs font-medium hover:bg-gray-200 transition-colors"
+    className="w-full bg-gray-100 text-gray-700 py-1.5 px-2 rounded text-xs font-medium hover:bg-gray-200 transition-colors flex items-center justify-center"
+    aria-label="View profile"
   >
-    <Eye className="w-3 h-3 mr-0.5 inline" />
-    View
+    <Eye className="w-3 h-3 mr-1" />
+    <span>View</span>
   </button>
-  
+
+  {/* Chat/Interest */}
   {match.mutualMatch ? (
-    <button className="flex-1 bg-green-50 text-green-600 py-1 px-2 rounded text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center">
-      <MessageCircle className="w-3 h-3 mr-0.5" />
-      Chat
+    <button className="w-full col-span-1 bg-green-50 text-green-600 py-1.5 px-2 rounded text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center">
+      <MessageCircle className="w-3 h-3 mr-1" />
+      <span>Chat</span>
     </button>
   ) : match.interestSent ? (
     <button 
@@ -909,14 +1172,15 @@ const MatchCard = ({ match }) => (
         handleSendInterest(user?.user?.id, match._id);
       }}
       disabled={match.interestSent}
-      className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center ${
+      className={`w-full col-span-1 py-1.5 px-2 rounded text-xs font-medium flex items-center justify-center ${
         match.interestSent 
           ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
           : 'bg-rose-50 text-rose-600 hover:bg-rose-100'
       }`}
+      aria-label="Interest sent"
     >
-      <Heart className={`w-4 h-4 mr-1 ${match.interestSent ? 'fill-rose-600' : ''}`} />
-      {match.interestSent ? 'Interest Sent' : 'Send Interest'}
+      <Heart className={`w-3 h-3 mr-1 ${match.interestSent ? 'fill-rose-600' : ''}`} />
+      <span>{match.interestSent ? 'Interest Sent' : 'Send Interest'}</span>
     </button>
   ) : (
     <button 
@@ -929,21 +1193,35 @@ const MatchCard = ({ match }) => (
         handleSendInterest(user?.id ? user.id : user.user.id, match._id);
       }}
       disabled={checkingSubscription}
-      className={`flex-1 py-1 px-2 rounded text-xs font-medium ${
-        checkingSubscription ? 'bg-gray-100' :
+      className={`w-full col-span-1 py-1.5 px-2 rounded text-xs font-medium flex items-center justify-center ${
+        checkingSubscription ? 'bg-gray-100 text-gray-500' :
         'bg-rose-50 hover:bg-rose-100 text-rose-600'
       }`}
+      aria-label="Send interest"
     >
       {checkingSubscription ? (
-        <Loader2 className="w-3 h-3 animate-spin mx-auto" />
+        <Loader2 className="w-3 h-3 animate-spin" />
       ) : (
         <>
-          <Heart className="w-3 h-3 mr-0.5 inline" />
-          Interest
+          <Heart className="w-3 h-3 mr-1" />
+          <span>Interest</span>
         </>
       )}
     </button>
   )}
+
+  {/* Download (icon-only) */}
+  <button
+    onClick={(e) => {
+  e.stopPropagation();
+  onDownloadProfile && onDownloadProfile(match);
+}}
+    className="w-full col-span-2 sm:col-span-1 bg-rose-50 text-rose-700 py-1.5 rounded text-xs hover:bg-rose-100 transition-colors flex items-center justify-center"
+    title="Download PDF"
+    aria-label="Download profile as PDF"
+  >
+    <Download className="w-4 h-4" />
+  </button>
 </div>
       </div>
     </div>
@@ -984,7 +1262,7 @@ const MatchCard = ({ match }) => (
     <Toaster position="top-right" />
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Header Section */}
-      <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}` }>
         <div className="bg-gradient-to-r from-rose-500 to-rose-600 rounded-xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden mb-4 sm:mb-6">
           <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-2xl"></div>
           <div className="relative z-10">
@@ -995,7 +1273,7 @@ const MatchCard = ({ match }) => (
       </div>
 
       {/* Combined Search and Tabs Section */}
-      <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}` }>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
           {/* Search Bar */}
           <div className="relative w-full sm:w-64">
@@ -1055,7 +1333,7 @@ const MatchCard = ({ match }) => (
       </div>
 
       {/* Quick Filters & Sorting */}
-      <div className={`transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className={`transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}` }>
         <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg border border-rose-100/50 p-3 sm:p-4 mb-4 sm:mb-6">
           <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
 
@@ -1069,7 +1347,7 @@ const MatchCard = ({ match }) => (
               >
                 <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 <span className="font-medium">Quick Filters</span>
-                <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 ml-0.5 sm:ml-1 transition-transform ${showQuickFilters ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 ml-0.5 sm:ml-1 transition-transform ${showQuickFilters ? 'rotate-180' : ''}` } />
               </button>
               
               {showQuickFilters && (
@@ -1180,7 +1458,7 @@ const MatchCard = ({ match }) => (
       {Array.from({ length: 24 }, (_, i) => {
         const feet = Math.floor((54 + i) / 12);
         const inches = (54 + i) % 12;
-        const height = `${feet}'${inches}"`;
+        const height = `${feet}'${inches}"` ;
         return <option key={height} value={height}>{height}</option>;
       })}
     </select>
@@ -1197,7 +1475,7 @@ const MatchCard = ({ match }) => (
       {Array.from({ length: 24 }, (_, i) => {
         const feet = Math.floor((54 + i) / 12);
         const inches = (54 + i) % 12;
-        const height = `${feet}'${inches}"`;
+        const height = `${feet}'${inches}"` ;
         return <option key={height} value={height}>{height}</option>;
       })}
     </select>
@@ -1259,6 +1537,8 @@ const MatchCard = ({ match }) => (
               <span>{filteredMatches.length} matches found</span>
             </div>
             <div className="flex items-center space-x-3">
+
+             
               {(quickFilters.withPhoto !== null || 
                 quickFilters.verified !== null || 
                 quickFilters.activeRecently !== null || 
@@ -1299,17 +1579,20 @@ const MatchCard = ({ match }) => (
       </div>
 
       {/* Match Results */}
-      <div className={`transform transition-all duration-1000 delay-400 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+      <div className={`transform transition-all duration-1000 delay-400 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}` }>
         {matches.length === 0 ? (
           <EmptyState isLoading={isLoading} />
         ) : (
           <>
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredMatches.map((match) => (
-                <MatchCard key={match._id}
-                 match={match}
-                 hasSubscription={hasSubscription}
-                 setSelectedProfile={setSelectedProfile} />
+                <MatchCard
+  key={match._id}
+  match={match}
+  hasSubscription={hasSubscription}
+  setSelectedProfile={setSelectedProfile}
+  onDownloadProfile={handleDownloadProfile}
+/>
               ))}
             </div>
 

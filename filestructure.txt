@@ -133,6 +133,8 @@
                     |-- route.js
                 |-- setup
                     |-- route.js
+                |-- unlock-download
+                    |-- route.js
                 |-- update
                     |-- route.js
                 |-- update-plan

@@ -179,6 +179,13 @@
     },
   },
 
+  // Permanent unlock for PDF downloads (non-subscription, one-time payment)
+  downloadAccess: {
+    isUnlocked: { type: Boolean, default: false },
+    transactionId: { type: String, default: null },
+    unlockedAt: { type: Date, default: null },
+  },
+
     // Timestamps
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

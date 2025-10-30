@@ -10,6 +10,7 @@ export default function FeaturedProfiles() {
   const [initialRender, setInitialRender] = useState(false);
   const carouselRef = useRef(null);
   const cardsRef = useRef([]);
+  const autoPlayRef = useRef(null);
   
   const profiles = [
     {
@@ -58,8 +59,47 @@ export default function FeaturedProfiles() {
 
   useEffect(() => {
     setIsLoaded(true);
+    startAutoPlay();
+    
+    return () => {
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+      }
+    };
   }, []);
 
+  // Start auto play
+  const startAutoPlay = () => {
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+    }
+    
+    autoPlayRef.current = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = prevIndex === profiles.length - 1 ? 0 : prevIndex + 1;
+        
+        // Scroll to the next card horizontally only
+        if (cardsRef.current[nextIndex]) {
+          const card = cardsRef.current[nextIndex];
+          const container = carouselRef.current;
+          
+          // Calculate the scroll position to center the card horizontally
+          const cardLeft = card.offsetLeft;
+          const cardWidth = card.offsetWidth;
+          const containerWidth = container.offsetWidth;
+          const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
+          
+          // Scroll horizontally without affecting vertical position
+          container.scrollTo({
+            left: scrollLeft,
+            behavior: 'smooth'
+          });
+        }
+        
+        return nextIndex;
+      });
+    }, 3000); // Change every 3 seconds
+  };
 
   const scrollToIndex = (index) => {
     let newIndex;
@@ -71,28 +111,45 @@ export default function FeaturedProfiles() {
       newIndex = index;
     }
     setCurrentIndex(newIndex);
+    
+    if (cardsRef.current[newIndex] && carouselRef.current) {
+      const card = cardsRef.current[newIndex];
+      const container = carouselRef.current;
+      
+      // Calculate the scroll position to center the card horizontally
+      const cardLeft = card.offsetLeft;
+      const cardWidth = card.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
+      
+      // Scroll horizontally without affecting vertical position
+      container.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Restart auto play after manual interaction
+    restartAutoPlay();
   };
 
   const scrollLeft = () => {
     scrollToIndex(currentIndex - 1);
-    if (cardsRef.current[currentIndex]) {
-      cardsRef.current[currentIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
-      });
-    }
   };
 
   const scrollRight = () => {
     scrollToIndex(currentIndex + 1);
-    if (cardsRef.current[currentIndex]) {
-      cardsRef.current[currentIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
-      });
+  };
+
+  const restartAutoPlay = () => {
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
     }
+    startAutoPlay();
+  };
+
+  const handleDotClick = (index) => {
+    scrollToIndex(index);
   };
 
   return (
@@ -196,9 +253,10 @@ export default function FeaturedProfiles() {
         {/* Pagination dots */}
         <div className="flex justify-center mt-8 space-x-2">
           {profiles.map((_, index) => (
+            
             <button
               key={index}
-              onClick={() => scrollToIndex(index)}
+              onClick={() => handleDotClick(index)}
               className={`h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex ? 'w-8 bg-rose-500' : 'w-2 bg-rose-200 hover:bg-rose-300'
               }`}
