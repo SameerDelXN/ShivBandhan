@@ -139,28 +139,28 @@
               }),
             });
 
-            const updateResult = await updateRes.json();
-            if (updateRes.ok) {
-              setCurrentSubscription({
-                subscriptionId: plan._id,
-                plan: plan.name,
-              });
-              router.push("/payment-success");
-            } else {
-              throw new Error(
-                updateResult.message || "Failed to update subscription"
-              );
-            }
-          },
-          prefill: {
-            name: user?.name || "Aniket Dahire",
-            email: user?.email || "aniket@example.com",
-            contact: "9999999999",
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
+          const updateResult = await updateRes.json();
+          if (updateRes.ok) {
+            setCurrentSubscription({
+              subscriptionId: plan._id,
+              plan: plan.name,
+            });
+            router.push("/payment-success");
+          } else {
+            throw new Error(
+              updateResult.message || "Failed to update subscription"
+            );
+          }
+        },
+        prefill: {
+          name: user?.name || "Aniket Dahire",
+          email: user?.email || "aniket@example.com",
+          contact: user?.phone || "",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
 
         // Initialize Razorpay
         const razorpay = new window.Razorpay(options);
