@@ -18,11 +18,12 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
-  const [allUsers, setAllUsers] = useState([]); // Store all users for filtering
+  const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
@@ -39,79 +40,84 @@ export default function UserManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const usersPerPage = 10;
 
-  
+  // Handle edit form changes
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   // Modify the fetchUsers function to fetch all users at once
-const fetchUsers = async (page = 1) => {
-  try {
-    setLoading(true);
-    // Remove pagination parameters to get all users
-    const response = await fetch(`/api/users/fetchAllUsers`);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch users');
-    }
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Transform API data to match UI expectations
-      console.log("data = ",data.data)
-      const transformedUsers = data.data.map(user => ({
-        id: user._id,
-        name: user.name || 'N/A',
-        email: user.phone, // Using phone as email since API doesn't have email
-        phone: user.phone,
-        status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
-        plan: user.subscription?.plan || 'Free',
-        joined: new Date(user.createdAt).toLocaleDateString('en-US'),
-        age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
-        dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
-        address: user.currentCity || 'N/A',
-        education: user.education || 'N/A',
-        familyBackground: user.occupation || 'N/A',
-        height: user.height || 'N/A',
-        weight: user.weight ? `${user.weight}kg` : 'N/A',
-        hobbies: 'N/A', // API doesn't have hobbies field
-        gender: user.gender || 'N/A',
-        maritalStatus: user.maritalStatus || 'N/A',
-        motherTongue: user.motherTongue || 'N/A',
-        religion: user.religion || 'N/A',
-        caste: user.caste || 'N/A',
-        subCaste: user.subCaste || 'N/A',
-        gothra: user.gothra || 'N/A',
-        college: user.college || 'N/A',
-        company: user.company || 'N/A',
-        fieldOfStudy: user.fieldOfStudy || 'N/A',
-        profilePhoto : user.profilePhoto || '',
-        income: user.income || 'N/A',
-        lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
-        isVerified: user.isVerified,
-        phoneIsVerified: user.phoneIsVerified,
-        verificationStatus: user.verificationStatus || 'Unverified',
-        adminWillFill: user.profileSetup?.willAdminFill || false
-      }));
+  const fetchUsers = async (page = 1) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/users/fetchAllUsers`);
       
-      setUsers(transformedUsers);
-      setAllUsers(transformedUsers); // Store all users for client-side filtering
-      setTotalUsers(transformedUsers.length); // Use the length of all users
-      setTotalPages(Math.ceil(transformedUsers.length / usersPerPage)); // Calculate pages based on all users
-      setCurrentPage(page); // Keep the current page functionality
-    } else {
-      throw new Error('API response indicates failure');
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log("data = ", data.data);
+        const transformedUsers = data.data.map(user => ({
+          id: user._id,
+          name: user.name || 'N/A',
+          email: user.phone,
+          phone: user.phone,
+          status: user.isVerified ? 'Active' : (user.verificationStatus === 'Pending' ? 'Pending' : 'Inactive'),
+          plan: user.subscription?.plan || 'Free',
+          joined: new Date(user.createdAt).toLocaleDateString('en-US'),
+          age: user.dob ? Math.floor((new Date() - new Date(user.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A',
+          dob: user.dob ? new Date(user.dob).toLocaleDateString('en-US') : 'N/A',
+          address: user.currentCity || 'N/A',
+          education: user.education || 'N/A',
+          familyBackground: user.occupation || 'N/A',
+          height: user.height || 'N/A',
+          weight: user.weight ? `${user.weight}kg` : 'N/A',
+          hobbies: 'N/A',
+          gender: user.gender || 'N/A',
+          maritalStatus: user.maritalStatus || 'N/A',
+          motherTongue: user.motherTongue || 'N/A',
+          religion: user.religion || 'N/A',
+          caste: user.caste || 'N/A',
+          subCaste: user.subCaste || 'N/A',
+          gothra: user.gothra || 'N/A',
+          college: user.college || 'N/A',
+          company: user.company || 'N/A',
+          fieldOfStudy: user.fieldOfStudy || 'N/A',
+          profilePhoto: user.profilePhoto || '',
+          income: user.income || 'N/A',
+          lastLogin: user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-US') : 'Never',
+          isVerified: user.isVerified,
+          phoneIsVerified: user.phoneIsVerified,
+          verificationStatus: user.verificationStatus || 'Unverified',
+          adminWillFill: user.profileSetup?.willAdminFill || false
+        }));
+        
+        setUsers(transformedUsers);
+        setAllUsers(transformedUsers);
+        setTotalUsers(transformedUsers.length);
+        setTotalPages(Math.ceil(transformedUsers.length / usersPerPage));
+        setCurrentPage(page);
+      } else {
+        throw new Error('API response indicates failure');
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError(err.message);
-    console.error('Error fetching users:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Apply filters
   const applyFilters = () => {
     let filtered = [...allUsers];
 
-    // Apply search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(user => 
@@ -121,12 +127,10 @@ const fetchUsers = async (page = 1) => {
       );
     }
 
-    // Apply status filter
     if (statusFilter !== "All Status") {
       filtered = filtered.filter(user => user.status === statusFilter);
     }
 
-    // Apply plan filter
     if (planFilter !== "All Plans") {
       filtered = filtered.filter(user => user.plan === planFilter);
     }
@@ -134,7 +138,7 @@ const fetchUsers = async (page = 1) => {
     setUsers(filtered);
     setTotalUsers(filtered.length);
     setTotalPages(Math.ceil(filtered.length / usersPerPage));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   // Load users on component mount
@@ -182,37 +186,340 @@ const fetchUsers = async (page = 1) => {
   // Handle save edited user
   const handleSaveEdit = () => {
     setUsers(users.map(user => 
-      user.name === editingUser.name ? { ...user, ...editFormData } : user
+      user.id === editingUser.id ? { ...user, ...editFormData } : user
+    ));
+    setAllUsers(allUsers.map(user => 
+      user.id === editingUser.id ? { ...user, ...editFormData } : user
     ));
     setEditingUser(null);
   };
 
+  // PDF Export Function - Same format as your matches page
   const handleExportUser = async (user) => {
-    console.log("user ==========",user)
+    console.log("user ==========", user);
     try {
-      const response = await fetch('/api/users/generatePdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userData: user }),
+      const pdfDoc = await PDFDocument.create();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      const pageMargin = 40;
+      const colorPrimary = rgb(0.86, 0.25, 0.35);
+      const colorAccent = rgb(0.98, 0.78, 0.38);
+      const colorTextMuted = rgb(0.5, 0.5, 0.5);
+      const colorText = rgb(0.12, 0.12, 0.12);
+      const colorMuted = rgb(0.55, 0.55, 0.55);
+
+      let page = pdfDoc.addPage();
+      const { width, height } = page.getSize();
+      let cursorY = height - pageMargin;
+      
+      const headerHeight = 72;
+
+      // ============ UNIQUE MAGAZINE-STYLE LAYOUT ============
+      
+      // Full-width colored header with diagonal pattern
+      const diagPatternSize = 20;
+      for (let x = 0; x < width; x += diagPatternSize) {
+        for (let y = height - headerHeight; y < height; y += diagPatternSize) {
+          const isDark = ((x + y) / diagPatternSize) % 2 === 0;
+          page.drawRectangle({
+            x, y, 
+            width: diagPatternSize, 
+            height: diagPatternSize,
+            color: isDark ? rgb(0.82, 0.22, 0.32) : rgb(0.86, 0.25, 0.35),
+            opacity: 0.95
+          });
+        }
+      }
+      
+      // Overlay gradient for depth
+      for (let i = 0; i < 10; i++) {
+        page.drawRectangle({
+          x: 0, y: height - headerHeight, 
+          width, height: headerHeight / 10,
+          color: rgb(0, 0, 0),
+          opacity: 0.02 * (10 - i)
+        });
+        page.drawLine({
+          start: { x: 0, y: height - headerHeight + (i * headerHeight / 10) },
+          end: { x: width, y: height - headerHeight + (i * headerHeight / 10) },
+          thickness: 0.3,
+          color: rgb(1, 1, 1),
+          opacity: 0.05
+        });
+      }
+
+      // Bold brand name with embossed effect
+      page.drawText('ShivBandhan', { 
+        x: pageMargin + 2, 
+        y: height - 26, 
+        size: 28, 
+        font: boldFont, 
+        color: rgb(0, 0, 0), 
+        opacity: 0.3 
+      });
+      page.drawText('ShivBandhan', { 
+        x: pageMargin, 
+        y: height - 24, 
+        size: 28, 
+        font: boldFont, 
+        color: rgb(1, 1, 1) 
+      });
+      
+      // Tagline with golden accent
+      page.drawRectangle({ x: pageMargin, y: height - 50, width: 4, height: 18, color: colorAccent });
+      page.drawText('MATRIMONY PROFILE', { 
+        x: pageMargin + 10, 
+        y: height - 47, 
+        size: 10, 
+        font: boldFont, 
+        color: rgb(1, 1, 1), 
+        opacity: 0.9 
       });
 
-      const data = await response.json();
+      cursorY = height - headerHeight - 20;
 
-      if (data.success) {
-        // Create a download link
-        const link = document.createElement('a');
-        link.href = `data:application/pdf;base64,${data.pdf}`;
-        link.download = data.fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } else {
-        console.error('Failed to generate PDF');
+      // ============ HORIZONTAL PHOTO BANNER ============
+      const bannerHeight = 200;
+      const photoWidth = 160;
+      const infoStartX = pageMargin + photoWidth + 30;
+      
+      // Photo container with frame effect
+      page.drawRectangle({ 
+        x: pageMargin - 3, 
+        y: cursorY - bannerHeight - 3, 
+        width: photoWidth + 6, 
+        height: bannerHeight + 6, 
+        color: colorAccent 
+      });
+      
+      page.drawRectangle({ 
+        x: pageMargin, 
+        y: cursorY - bannerHeight, 
+        width: photoWidth, 
+        height: bannerHeight, 
+        color: rgb(0.95, 0.95, 0.95) 
+      });
+
+      if (user?.profilePhoto) {
+        try {
+          const res = await fetch(user.profilePhoto, { mode: 'cors' });
+          const imgBytes = await res.arrayBuffer();
+          const lower = user.profilePhoto.toLowerCase();
+          const img = lower.endsWith('.png') ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
+          const scale = Math.min(photoWidth / img.width, bannerHeight / img.height);
+          const drawW = img.width * scale;
+          const drawH = img.height * scale;
+          const imgX = pageMargin + (photoWidth - drawW) / 2;
+          const imgY = cursorY - bannerHeight + (bannerHeight - drawH) / 2;
+          page.drawImage(img, { x: imgX, y: imgY, width: drawW, height: drawH });
+        } catch (err) {
+          page.drawText('Photo\nUnavailable', { 
+            x: pageMargin + 40, 
+            y: cursorY - bannerHeight / 2, 
+            size: 12, 
+            font: boldFont, 
+            color: colorMuted 
+          });
+        }
       }
+
+      // ============ INFO CARDS NEXT TO PHOTO ============
+      const nameDisplay = user?.name || 'N/A';
+      const ageDisplay = user?.age || '-';
+      const heightDisplay = user?.height || '-';
+      const cityDisplay = user?.address || '-';
+      
+      let infoY = cursorY - 15;
+      
+      // Name card with accent
+      page.drawRectangle({ 
+        x: infoStartX - 5, 
+        y: infoY - 28, 
+        width: width - infoStartX - pageMargin + 5, 
+        height: 32, 
+        color: rgb(0.98, 0.96, 0.96) 
+      });
+      page.drawRectangle({ x: infoStartX - 5, y: infoY - 28, width: 5, height: 32, color: colorPrimary });
+      page.drawText(nameDisplay, { 
+        x: infoStartX + 5, 
+        y: infoY - 18, 
+        size: 18, 
+        font: boldFont, 
+        color: colorPrimary 
+      });
+      
+      infoY -= 50;
+
+      // Stats grid
+      const statBox = (label, value, x, y, color) => {
+        page.drawRectangle({ x, y: y - 42, width: 90, height: 45, color: rgb(0.99, 0.97, 0.97) });
+        page.drawRectangle({ x, y: y - 42, width: 90, height: 3, color });
+        page.drawText(label, { x: x + 8, y: y - 15, size: 8, font, color: colorMuted });
+        page.drawText(String(value), { x: x + 8, y: y - 32, size: 12, font: boldFont, color: colorText });
+      };
+
+      statBox('Age', `${ageDisplay} years`, infoStartX, infoY, rgb(0.2, 0.6, 0.8));
+      statBox('Height', heightDisplay, infoStartX + 100, infoY, rgb(0.8, 0.4, 0.6));
+      statBox('City', cityDisplay, infoStartX + 200, infoY, rgb(0.4, 0.7, 0.5));
+
+      infoY -= 60;
+
+      // Quick info pills
+      const drawPill = (text, x, y, bgColor) => {
+        const textWidth = text.length * 5;
+        page.drawRectangle({ 
+          x, y: y - 16, 
+          width: textWidth + 16, 
+          height: 18, 
+          color: bgColor 
+        });
+        page.drawText(text, { x: x + 8, y: y - 11, size: 9, font, color: rgb(1, 1, 1) });
+        return textWidth + 24;
+      };
+
+      let pillX = infoStartX;
+      if (user?.gender) {
+        pillX += drawPill(user.gender, pillX, infoY, rgb(0.5, 0.3, 0.7));
+      }
+      if (user?.maritalStatus) {
+        pillX += drawPill(user.maritalStatus, pillX, infoY, rgb(0.3, 0.6, 0.7));
+      }
+      if (user?.education) {
+        pillX += drawPill(user.education, pillX, infoY, rgb(0.7, 0.5, 0.3));
+      }
+
+      cursorY -= bannerHeight + 40;
+
+      // ============ GRID LAYOUT FOR SECTIONS ============
+      const createSection = (title, data, startY, isLeftColumn) => {
+        const sectionWidth = (width - 3 * pageMargin) / 2;
+        const x = isLeftColumn ? pageMargin : pageMargin + sectionWidth + pageMargin;
+        let y = startY;
+        
+        // Section header with icon bar
+        page.drawRectangle({ x, y: y - 35, width: sectionWidth, height: 38, color: rgb(0.97, 0.95, 0.95) });
+        page.drawRectangle({ x, y: y - 35, width: 8, height: 38, color: colorAccent });
+        page.drawText(title.toUpperCase(), { 
+          x: x + 18, 
+          y: y - 22, 
+          size: 12, 
+          font: boldFont, 
+          color: colorPrimary 
+        });
+        
+        y -= 48;
+        
+        // Data rows with alternating background
+        data.forEach((item, idx) => {
+          if (idx % 2 === 0) {
+            page.drawRectangle({ 
+              x, y: y - 18, 
+              width: sectionWidth, 
+              height: 20, 
+              color: rgb(0.995, 0.99, 0.99) 
+            });
+          }
+          
+          page.drawText(item.label, { 
+            x: x + 10, 
+            y: y - 13, 
+            size: 9, 
+            font: boldFont, 
+            color: colorMuted 
+          });
+          
+          page.drawText(String(item.value || '-'), { 
+            x: x + 140, 
+            y: y - 13, 
+            size: 9.5, 
+            font, 
+            color: colorText 
+          });
+          
+          y -= 22;
+        });
+        
+        return y - 15;
+      };
+
+      // Left column sections
+      let leftY = cursorY;
+      
+      leftY = createSection('Personal Details', [
+        { label: 'Gender', value: user?.gender },
+        { label: 'Marital Status', value: user?.maritalStatus },
+        { label: 'Mother Tongue', value: user?.motherTongue },
+        { label: 'Religion', value: user?.religion },
+        { label: 'Weight', value: user?.weight },
+        { label: 'Phone', value: user?.phone }
+      ], leftY, true);
+
+      leftY = createSection('Education', [
+        { label: 'Highest Degree', value: user?.education },
+        { label: 'Field of Study', value: user?.fieldOfStudy },
+        { label: 'College/University', value: user?.college }
+      ], leftY, true);
+
+      leftY = createSection('Family Background', [
+        { label: 'Occupation', value: user?.familyBackground }
+      ], leftY, true);
+
+      // Right column sections
+      let rightY = cursorY;
+      
+      rightY = createSection('Location', [
+        { label: 'Current City', value: user?.address },
+        { label: 'Email', value: user?.email }
+      ], rightY, false);
+
+      rightY = createSection('Professional', [
+        { label: 'Occupation', value: user?.familyBackground },
+        { label: 'Company', value: user?.company },
+        { label: 'Annual Income', value: user?.income }
+      ], rightY, false);
+
+      rightY = createSection('Religious Details', [
+        { label: 'Caste', value: user?.caste },
+        { label: 'Sub Caste', value: user?.subCaste },
+        { label: 'Gothra', value: user?.gothra }
+      ], rightY, false);
+
+      // Account Information Section (Full width at bottom)
+      // rightY = createSection('Account Information', [
+      //   { label: 'Status', value: user?.status },
+      //   { label: 'Plan', value: user?.plan },
+      //   { label: 'Joined', value: user?.joined },
+      //   { label: 'Last Login', value: user?.lastLogin },
+      //   { label: 'Verification', value: user?.verificationStatus }
+      // ], rightY, false);
+
+      // Footer on all pages
+      const __pages = pdfDoc.getPages();
+      const __total = __pages.length;
+      const __dateStr = new Date().toLocaleDateString('en-IN');
+      __pages.forEach((p, idx) => {
+        const { width: __pw } = p.getSize();
+        p.drawLine({ start: { x: pageMargin, y: 28 }, end: { x: __pw - pageMargin, y: 28 }, thickness: 0.5, color: colorTextMuted });
+        p.drawText('Generated by ShivBandhan', { x: pageMargin, y: 14, size: 9, font, color: colorTextMuted });
+        p.drawText(`${__dateStr}`, { x: __pw / 2 - 20, y: 14, size: 9, font, color: colorTextMuted });
+        p.drawText(`Page ${idx + 1} of ${__total}`, { x: __pw - pageMargin - 80, y: 14, size: 9, font, color: colorTextMuted });
+      });
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${(user?.name || 'user').toLowerCase().replace(/\s+/g, '_')}_shivbandhan.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
     } catch (error) {
       console.error('Error exporting user:', error);
+      alert('Failed to generate PDF. Please try again.');
     }
   };
 
@@ -250,9 +557,12 @@ const fetchUsers = async (page = 1) => {
   };
 
   // Handle ban/suspend user
-  const handleBanUser = (userName) => {
+  const handleBanUser = (userId) => {
     setUsers(users.map(user => 
-      user.name === userName ? { ...user, status: "Suspended" } : user
+      user.id === userId ? { ...user, status: "Suspended" } : user
+    ));
+    setAllUsers(allUsers.map(user => 
+      user.id === userId ? { ...user, status: "Suspended" } : user
     ));
   };
 
@@ -488,7 +798,6 @@ const fetchUsers = async (page = 1) => {
         </div>
       </div>
 
-
       {/* View User Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
@@ -682,34 +991,6 @@ const fetchUsers = async (page = 1) => {
                     </div>
                   </div>
                 </div>
-
-                {/* Account Details Card */}
-                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
-                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Account Information
-                  </h5>
-                  <div className="grid grid-cols-1 gap-2 text-sm">
-                    <div>
-                      <p className="text-gray-500">Joined</p>
-                      <p className="font-medium">{selectedUser.joined}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Last Login</p>
-                      <p className="font-medium">{selectedUser.lastLogin}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Verification Status</p>
-                      <p className="font-medium">{selectedUser.verificationStatus}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Phone Verified</p>
-                      <p className="font-medium">{selectedUser.phoneIsVerified ? 'Yes' : 'No'}</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -721,7 +1002,7 @@ const fetchUsers = async (page = 1) => {
               >
                 Close
               </button>
-             <button 
+              <button 
                 className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
                 onClick={() => handleEditUser(selectedUser)}
               >
@@ -790,19 +1071,6 @@ const fetchUsers = async (page = 1) => {
                       <option value="Gold">Gold</option>
                     </select>
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
-                  <select
-                    name="plan"
-                    value={editFormData.plan || ''}
-                    onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                  >
-                    <option value="Free">Free</option>
-                    <option value="Premium">Premium</option>
-                    <option value="Gold">Gold</option>
-                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>

@@ -401,6 +401,7 @@ if (quickFilters.education) {
   // Added: PDF download handler
   // Per-profile PDF download
 // Per-profile PDF download with persistent unlock for non-subscribed users
+// Modern Wedding Biodata PDF Generator with Magazine Style
 const handleDownloadProfile = async (profile) => {
   try {
     // Always fetch fresh user to read latest unlock/subscription
@@ -462,7 +463,7 @@ const handleDownloadProfile = async (profile) => {
       return;
     }
 
-    // ---------- PDF generation (your existing logic) ----------
+    // ---------- MAGAZINE-STYLE WEDDING BIODATA PDF GENERATION ----------
     const pdfDoc = await PDFDocument.create();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -474,178 +475,294 @@ const handleDownloadProfile = async (profile) => {
     const labelSize = 11;
     const valueSize = 11;
 
-const colorPrimary = rgb(0.86, 0.25, 0.35); // rose
-const colorAccent = rgb(0.98, 0.78, 0.38); // amber-like
-const colorTextMuted = rgb(0.5, 0.5, 0.5);
-const headerHeight = 60;
+    const colorPrimary = rgb(0.86, 0.25, 0.35); // rose
+    const colorAccent = rgb(0.98, 0.78, 0.38); // amber-like
+    const colorTextMuted = rgb(0.5, 0.5, 0.5);
+    
+    // Enhanced palette for professional layout
+    const colorText = rgb(0.12, 0.12, 0.12);
+    const colorMuted = rgb(0.55, 0.55, 0.55);
+    const cardBg = rgb(0.995, 0.985, 0.985);
 
+    // Taller header for better hierarchy
+    const headerHeight = 72;
 
     let page = pdfDoc.addPage();
     const { width, height } = page.getSize();
     let cursorY = height - pageMargin;
 
-    const drawText = (text, x, size = valueSize, isBold = false) => {
+    // Helper functions with maxWidth fix
+    const drawText = (text, x, y, size = valueSize, isBold = false, color = colorText, maxWidth = width - x - pageMargin) => {
       page.drawText(text || '-', {
-        x, y: cursorY, size,
+        x, y, size,
         font: isBold ? boldFont : font,
-        color: rgb(0.1, 0.1, 0.1),
+        color,
+        maxWidth: maxWidth || undefined,
       });
     };
+
     const newLine = (mult = 1) => { cursorY -= lineHeight * mult; };
+    
     const ensureSpace = (lines = 3) => {
       if (cursorY < pageMargin + lines * lineHeight) {
         page = pdfDoc.addPage();
         cursorY = page.getSize().height - pageMargin;
       }
     };
-   const section = (title) => {
-  ensureSpace(3);
-  // colored marker + title
-  page.drawRectangle({ x: pageMargin, y: cursorY - 2, width: 4, height: 14, color: colorAccent });
-  drawText(title, pageMargin + 10, sectionTitleSize, true);
-  newLine(1.2);
-  // divider
-  page.drawLine({ 
-    start: { x: pageMargin, y: cursorY }, 
-    end: { x: width - pageMargin, y: cursorY }, 
-    thickness: 1, 
-    color: colorTextMuted 
-  });
-  newLine(0.8);
-};
-    const row = (label, value) => {
-      ensureSpace(1);
-      drawText(`${label}:`, pageMargin, labelSize, true);
-      drawText(String(value ?? '-'), pageMargin + 100, valueSize);
-      newLine(1);
-    };
 
-   // Header bar (styled)
-page.drawRectangle({ x: 0, y: height - headerHeight, width, height: headerHeight, color: colorPrimary });
-page.drawText('ShivBandhan', { x: pageMargin, y: height - headerHeight + 22, size: 20, font: boldFont, color: rgb(1,1,1) });
-page.drawText('Profile Details', { x: pageMargin + 140, y: height - headerHeight + 26, size: 12, font, color: rgb(1,1,1) });
-cursorY = height - headerHeight - 20;
+    // ============ UNIQUE MAGAZINE-STYLE LAYOUT ============
+    
+    // Full-width colored header with diagonal pattern
+    const diagPatternSize = 20;
+    for (let x = 0; x < width; x += diagPatternSize) {
+      for (let y = height - headerHeight; y < height; y += diagPatternSize) {
+        const isDark = ((x + y) / diagPatternSize) % 2 === 0;
+        page.drawRectangle({
+          x, y, 
+          width: diagPatternSize, 
+          height: diagPatternSize,
+          color: isDark ? rgb(0.82, 0.22, 0.32) : rgb(0.86, 0.25, 0.35),
+          opacity: 0.95
+        });
+      }
+    }
+    
+    // Overlay gradient for depth
+    for (let i = 0; i < 10; i++) {
+      page.drawRectangle({
+        x: 0, y: height - headerHeight, 
+        width, height: headerHeight / 10,
+        color: rgb(0, 0, 0),
+        opacity: 0.02 * (10 - i)
+      });
+      page.drawLine({
+        start: { x: 0, y: height - headerHeight + (i * headerHeight / 10) },
+        end: { x: width, y: height - headerHeight + (i * headerHeight / 10) },
+        thickness: 0.3,
+        color: rgb(1, 1, 1),
+        opacity: 0.05
+      });
+    }
 
-    // Summary
-    const nameDisplay = profile?.name || 'N/A';
-    const ageDisplay = profile?.age ? `${profile.age} yrs` : '-';
-    const heightDisplay = profile?.height || '-';
-    const weightDisplay = profile?.weight ? `${profile.weight}` : '-';
-    const cityDisplay = profile?.currentCity || '-';
+    // Bold brand name with embossed effect
+    drawText('ShivBandhan', pageMargin + 2, height - 26, 28, true, rgb(0, 0, 0), 200);
+    drawText('ShivBandhan', pageMargin, height - 24, 28, true, rgb(1, 1, 1), 200);
+    
+    // Tagline with golden accent
+    page.drawRectangle({ x: pageMargin, y: height - 50, width: 4, height: 18, color: colorAccent });
+    drawText('MATRIMONY PROFILE', pageMargin + 10, height - 47, 10, true, rgb(1, 1, 1), 150);
 
-    // Name and summary badges
-page.drawText(`${nameDisplay}`, { x: pageMargin, y: cursorY, size: 15, font: boldFont, color: rgb(0.12,0.12,0.12) });
-newLine(1.2);
-const drawBadge = (text, x, y) => {
-  const paddingX = 6; 
-  const textWidth = boldFont.widthOfTextAtSize(text, 9);
-  const badgeWidth = textWidth + paddingX * 2;
-  page.drawRectangle({ x, y: y - 3, width: badgeWidth, height: 14, color: rgb(0.98, 0.9, 0.9) });
-  page.drawText(text, { x: x + paddingX, y, size: 9, font: boldFont, color: colorPrimary });
-  return x + badgeWidth + 6;
-};
-let __bx = pageMargin; 
-const __by = cursorY + 2;
-__bx = drawBadge(ageDisplay, __bx, __by);
-__bx = drawBadge(heightDisplay, __bx, __by);
-__bx = drawBadge(weightDisplay, __bx, __by);
-drawBadge(cityDisplay, __bx, __by);
-newLine(2);
+    cursorY = height - headerHeight - 20;
+
+    // ============ HORIZONTAL PHOTO BANNER ============
+    const bannerHeight = 200;
+    const photoWidth = 160;
+    const infoStartX = pageMargin + photoWidth + 30;
+    
+    // Photo container with frame effect
+    page.drawRectangle({ 
+      x: pageMargin - 3, 
+      y: cursorY - bannerHeight - 3, 
+      width: photoWidth + 6, 
+      height: bannerHeight + 6, 
+      color: colorAccent 
+    });
+    
+    page.drawRectangle({ 
+      x: pageMargin, 
+      y: cursorY - bannerHeight, 
+      width: photoWidth, 
+      height: bannerHeight, 
+      color: rgb(0.95, 0.95, 0.95) 
+    });
 
     if (profile?.profilePhoto) {
       try {
         const res = await fetch(profile.profilePhoto, { mode: 'cors' });
         const imgBytes = await res.arrayBuffer();
         const lower = profile.profilePhoto.toLowerCase();
-        const img = lower.endsWith('.png')
-          ? await pdfDoc.embedPng(imgBytes)
-          : await pdfDoc.embedJpg(imgBytes);
-
-        const targetWidth = 120;
-        const scale = targetWidth / img.width;
-        const drawWidth = targetWidth;
-        const drawHeight = img.height * scale;
-
-        page.drawImage(img, {
-          x: width - pageMargin - drawWidth,
-          y: height - pageMargin - drawHeight,
-          width: drawWidth,
-          height: drawHeight,
-        });
-
-        if (cursorY > height - pageMargin - drawHeight) {
-          cursorY = height - pageMargin - drawHeight - 12;
-        }
-      } catch (imgErr) {
-        console.warn('Skipping image embedding (fetch/embed failed):', imgErr);
+        const img = lower.endsWith('.png') ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
+        const scale = Math.min(photoWidth / img.width, bannerHeight / img.height);
+        const drawW = img.width * scale;
+        const drawH = img.height * scale;
+        const imgX = pageMargin + (photoWidth - drawW) / 2;
+        const imgY = cursorY - bannerHeight + (bannerHeight - drawH) / 2;
+        page.drawImage(img, { x: imgX, y: imgY, width: drawW, height: drawH });
+      } catch (err) {
+        drawText('Photo\nUnavailable', pageMargin + 40, cursorY - bannerHeight / 2, 12, true, colorMuted, 100);
       }
     }
 
-    // Sections
-    section('About');
-    row('Gender', profile?.gender);
-    row('Marital Status', profile?.maritalStatus);
-    row('Mother Tongue', profile?.motherTongue);
-    row('Complexion', profile?.complexion);
-    row('Caste', profile?.caste);
+    // ============ INFO CARDS NEXT TO PHOTO ============
+    const nameDisplay = profile?.name || 'N/A';
+    const ageDisplay = profile?.age || '-';
+    const heightDisplay = profile?.height || '-';
+    const cityDisplay = profile?.currentCity || '-';
+    
+    let infoY = cursorY - 15;
+    
+    // Name card with accent
+    page.drawRectangle({ 
+      x: infoStartX - 5, 
+      y: infoY - 28, 
+      width: width - infoStartX - pageMargin + 5, 
+      height: 32, 
+      color: rgb(0.98, 0.96, 0.96) 
+    });
+    page.drawRectangle({ x: infoStartX - 5, y: infoY - 28, width: 5, height: 32, color: colorPrimary });
+    drawText(nameDisplay, infoStartX + 5, infoY - 18, 18, true, colorPrimary, width - infoStartX - pageMargin - 10);
+    
+    infoY -= 50;
 
-    section('Location');
-    row('Current City', profile?.currentCity);
-    row('Native City', profile?.nativeCity);
-    row('Address', profile?.permanentAddress);
+    // Stats grid
+    const statBox = (label, value, x, y, color) => {
+      page.drawRectangle({ x, y: y - 42, width: 90, height: 45, color: rgb(0.99, 0.97, 0.97) });
+      page.drawRectangle({ x, y: y - 42, width: 90, height: 3, color });
+      drawText(label, x + 8, y - 15, 8, false, colorMuted, 74);
+      drawText(String(value), x + 8, y - 32, 12, true, colorText, 74);
+    };
 
-    section('Education');
-    row('Highest Degree', profile?.education);
-    row('Field of Study', profile?.fieldOfStudy);
-    row('College', profile?.college);
+    statBox('Age', `${ageDisplay} years`, infoStartX, infoY, rgb(0.2, 0.6, 0.8));
+    statBox('Height', heightDisplay, infoStartX + 100, infoY, rgb(0.8, 0.4, 0.6));
+    statBox('City', cityDisplay, infoStartX + 200, infoY, rgb(0.4, 0.7, 0.5));
 
-    section('Professional');
-    row('Occupation', profile?.occupation);
-    row('Company', profile?.company);
-    row('Income', profile?.income);
+    infoY -= 60;
 
-    section('Family');
-    row('Father', profile?.fatherName);
-    row('Mother', profile?.mother);
-    row('Siblings', `${profile?.brothers || 0} brothers, ${profile?.sisters || 0} sisters`);
-    row('Parent Occupation', profile?.parentOccupation);
+    // Quick info pills
+    const drawPill = (text, x, y, bgColor) => {
+      const textWidth = text.length * 5;
+      page.drawRectangle({ 
+        x, y: y - 16, 
+        width: textWidth + 16, 
+        height: 18, 
+        color: bgColor 
+      });
+      drawText(text, x + 8, y - 11, 9, false, rgb(1, 1, 1), textWidth);
+      return textWidth + 24;
+    };
 
-    section('Horoscope');
-    row('Rashi', profile?.rashi);
-    row('Nakshira', profile?.nakshira);
-    row('Gotra/Devak', profile?.gotraDevak);
-    row('Mangal', profile?.mangal ? 'Yes' : 'No');
+    let pillX = infoStartX;
+    if (profile?.gender) {
+      pillX += drawPill(profile.gender, pillX, infoY, rgb(0.5, 0.3, 0.7));
+    }
+    if (profile?.maritalStatus) {
+      pillX += drawPill(profile.maritalStatus, pillX, infoY, rgb(0.3, 0.6, 0.7));
+    }
+    if (profile?.education) {
+      pillX += drawPill(profile.education, pillX, infoY, rgb(0.7, 0.5, 0.3));
+    }
 
-    newLine(2);
-    drawText('Generated via ShivBandhan', pageMargin, 9);
+    cursorY -= bannerHeight + 40;
 
+    // ============ GRID LAYOUT FOR SECTIONS ============
+    const createSection = (title, data, startY, isLeftColumn) => {
+      const sectionWidth = (width - 3 * pageMargin) / 2;
+      const x = isLeftColumn ? pageMargin : pageMargin + sectionWidth + pageMargin;
+      let y = startY;
+      
+      // Section header with icon bar
+      page.drawRectangle({ x, y: y - 35, width: sectionWidth, height: 38, color: rgb(0.97, 0.95, 0.95) });
+      page.drawRectangle({ x, y: y - 35, width: 8, height: 38, color: colorAccent });
+      drawText(title.toUpperCase(), x + 18, y - 22, 12, true, colorPrimary, sectionWidth - 28);
+      
+      y -= 48;
+      
+      // Data rows with alternating background
+      data.forEach((item, idx) => {
+        if (idx % 2 === 0) {
+          page.drawRectangle({ 
+            x, y: y - 18, 
+            width: sectionWidth, 
+            height: 20, 
+            color: rgb(0.995, 0.99, 0.99) 
+          });
+        }
+        
+        drawText(item.label, x + 10, y - 13, 9, true, colorMuted, 120);
+        drawText(String(item.value || '-'), x + 140, y - 13, 9.5, false, colorText, sectionWidth - 150);
+        
+        y -= 22;
+      });
+      
+      return y - 15;
+    };
+
+    // Left column sections
+    let leftY = cursorY;
+    
+    leftY = createSection('Personal Details', [
+      { label: 'Gender', value: profile?.gender },
+      { label: 'Marital Status', value: profile?.maritalStatus },
+      { label: 'Mother Tongue', value: profile?.motherTongue },
+      { label: 'Complexion', value: profile?.complexion },
+      { label: 'Weight', value: profile?.weight },
+      { label: 'Mangal', value: profile?.mangal ? 'Yes' : 'No' }
+    ], leftY, true);
+
+    leftY = createSection('Education', [
+      { label: 'Highest Degree', value: profile?.education },
+      { label: 'Field of Study', value: profile?.fieldOfStudy },
+      { label: 'College/University', value: profile?.college }
+    ], leftY, true);
+
+    leftY = createSection('Family Background', [
+      { label: 'Father', value: profile?.fatherName },
+      { label: 'Mother', value: profile?.mother },
+      { label: 'Brothers', value: profile?.brothers || 0 },
+      { label: 'Sisters', value: profile?.sisters || 0 },
+      { label: 'Parent Occupation', value: profile?.parentOccupation }
+    ], leftY, true);
+
+    // Right column sections
+    let rightY = cursorY;
+    
+    rightY = createSection('Location', [
+      { label: 'Current City', value: profile?.currentCity },
+      { label: 'Native City', value: profile?.nativeCity },
+      { label: 'Address', value: profile?.permanentAddress }
+    ], rightY, false);
+
+    rightY = createSection('Professional', [
+      { label: 'Occupation', value: profile?.occupation },
+      { label: 'Company', value: profile?.company },
+      { label: 'Annual Income', value: profile?.income }
+    ], rightY, false);
+
+    rightY = createSection('Religious Details', [
+      { label: 'Caste', value: profile?.caste },
+      { label: 'Rashi', value: profile?.rashi },
+      { label: 'Nakshatra', value: profile?.nakshira },
+      { label: 'Gotra/Devak', value: profile?.gotraDevak }
+    ], rightY, false);
 
     // Footer on all pages
-const __pages = pdfDoc.getPages();
-const __total = __pages.length;
-const __dateStr = new Date().toLocaleDateString('en-IN');
-__pages.forEach((p, idx) => {
-  const { width: __pw } = p.getSize();
-  p.drawLine({ start: { x: pageMargin, y: 28 }, end: { x: __pw - pageMargin, y: 28 }, thickness: 0.5, color: colorTextMuted });
-  p.drawText('Generated by ShivBandhan', { x: pageMargin, y: 14, size: 9, font, color: colorTextMuted });
-  p.drawText(`${__dateStr}`, { x: __pw / 2 - 20, y: 14, size: 9, font, color: colorTextMuted });
-  p.drawText(`Page ${idx + 1} of ${__total}`, { x: __pw - pageMargin - 80, y: 14, size: 9, font, color: colorTextMuted });
-});
+    const __pages = pdfDoc.getPages();
+    const __total = __pages.length;
+    const __dateStr = new Date().toLocaleDateString('en-IN');
+    __pages.forEach((p, idx) => {
+      const { width: __pw } = p.getSize();
+      p.drawLine({ start: { x: pageMargin, y: 28 }, end: { x: __pw - pageMargin, y: 28 }, thickness: 0.5, color: colorTextMuted });
+      drawText('Generated by ShivBandhan', pageMargin, 14, 9, false, colorTextMuted, 150, p);
+      drawText(`${__dateStr}`, __pw / 2 - 20, 14, 9, false, colorTextMuted, 100, p);
+      drawText(`Page ${idx + 1} of ${__total}`, __pw - pageMargin - 80, 14, 9, false, colorTextMuted, 80, p);
+    });
 
+    // ============ SAVE AND DOWNLOAD PDF ============
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${(profile?.name || 'profile').toLowerCase().replace(/\\s+/g, '_')}_shivbandhan.pdf`;
+    a.download = `${(profile?.name || 'wedding_biodata').toLowerCase().replace(/\s+/g, '_')}_shivbandhan.pdf`;
+    
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast.success('Profile PDF downloaded');
+    toast.success('Wedding Biodata PDF downloaded successfully!');
   } catch (e) {
-    console.error('Profile PDF generation failed:', e);
-    toast.error('Failed to generate PDF');
+    console.error('Wedding Biodata PDF generation failed:', e);
+    toast.error('Failed to generate wedding biodata PDF');
   }
 };
 
