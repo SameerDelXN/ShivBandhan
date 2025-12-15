@@ -111,7 +111,6 @@ export default function WhyChooseUs() {
           </div>
 
           {/* Additional Info Section */}
-         {/* Additional Info Section */}
 <div className="mt-16 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-8 md:p-10 shadow-lg border border-orange-200/50">
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
