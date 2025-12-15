@@ -577,7 +577,7 @@ export default function UserManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
         <span className="ml-2 text-gray-600">Loading users...</span>
       </div>
     );
@@ -600,7 +600,7 @@ export default function UserManagement() {
   return (
     <div className="space-y-6">
       {/* User Management Header */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
           <div>
             <h2 className="text-xl font-bold text-gray-900">User Management</h2>
@@ -615,13 +615,13 @@ export default function UserManagement() {
             <input
               type="text"
               placeholder="Search users..."
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <select 
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -630,7 +630,7 @@ export default function UserManagement() {
             ))}
           </select>
           <select 
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             value={planFilter}
             onChange={(e) => setPlanFilter(e.target.value)}
           >
@@ -642,7 +642,7 @@ export default function UserManagement() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -658,11 +658,11 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {users.slice(startIndex, endIndex).map((user, index) => (
-                <tr key={user.id} className="border-b border-gray-100 hover:bg-rose-50/30 transition-colors">
+                <tr key={user.id} className="border-b border-gray-100 hover:bg-orange-50/30 transition-colors">
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-rose-500" />
+                      <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
+                        <Users className="w-5 h-5 text-orange-500" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
@@ -675,7 +675,7 @@ export default function UserManagement() {
                         user.status === "Active"
                           ? "bg-green-100 text-green-800"
                           : user.status === "Pending"
-                          ? "bg-amber-100 text-amber-800"
+                          ? "bg-amber-300 text-amber-800"
                           : user.status === "Inactive"
                           ? "bg-gray-100 text-gray-800"
                           : "bg-red-100 text-red-800"
@@ -688,7 +688,7 @@ export default function UserManagement() {
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                         user.plan === "Premium" || user.plan === "Gold"
-                          ? "bg-amber-100 text-amber-800"
+                          ? "bg-amber-300 text-amber-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
@@ -704,7 +704,7 @@ export default function UserManagement() {
                     <button
                       onClick={() => handleToggleAdminFill(user.id, user.adminWillFill)}
                       className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none ${
-                        user.adminWillFill ? 'bg-rose-500' : 'bg-gray-200'
+                        user.adminWillFill ? 'bg-orange-500' : 'bg-gray-200'
                       }`}
                     >
                       <span
@@ -771,7 +771,7 @@ export default function UserManagement() {
                       onClick={() => goToPage(pageNumber)}
                       className={`px-3 py-2 rounded-lg text-sm font-medium ${
                         currentPage === pageNumber
-                          ? 'bg-rose-500 text-white'
+                          ? 'bg-orange-500 text-white'
                           : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
                     >
@@ -801,16 +801,16 @@ export default function UserManagement() {
       {/* View User Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-4xl overflow-hidden max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl border border-orange-100/50 w-full max-w-4xl overflow-hidden max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center sticky top-0">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-150 px-6 py-4 border-b border-orange-100 flex justify-between items-center sticky top-0">
               <div>
-                <h3 className="text-xl font-bold text-rose-800">User Profile</h3>
-                <p className="text-sm text-rose-600/80">Detailed information about {selectedUser.name}</p>
+                <h3 className="text-xl font-bold text-orange-800">User Profile</h3>
+                <p className="text-sm text-orange-600/80">Detailed information about {selectedUser.name}</p>
               </div>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="text-rose-400 hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-rose-100/50"
+                className="text-orange-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-orange-100/50"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -821,8 +821,8 @@ export default function UserManagement() {
               {/* User Avatar and Basic Info */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-gradient-to-br from-rose-200 to-amber-200 rounded-full flex items-center justify-center shadow-md">
-                    <Users className="w-8 h-8 text-rose-600" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-orange-200 to-amber-400 rounded-full flex items-center justify-center shadow-md">
+                    <Users className="w-8 h-8 text-orange-600" />
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
@@ -832,7 +832,7 @@ export default function UserManagement() {
                           selectedUser.status === "Active"
                             ? "bg-green-100 text-green-800"
                             : selectedUser.status === "Pending"
-                            ? "bg-amber-100 text-amber-800"
+                            ? "bg-amber-300 text-amber-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
@@ -841,7 +841,7 @@ export default function UserManagement() {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           selectedUser.plan === "Premium" || selectedUser.plan === "Gold"
-                            ? "bg-amber-100 text-amber-800"
+                            ? "bg-amber-300 text-amber-800"
                             : "bg-gray-100 text-gray-800"
                         }`}
                       >
@@ -865,7 +865,7 @@ export default function UserManagement() {
                           onChange={(e) => handleToggleAdminFill(selectedUser.id, selectedUser.adminWillFill)}
                           className="sr-only peer"
                         />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                         <span className="ml-3 text-sm font-medium text-gray-700">
                           Admin Can Fill
                         </span>
@@ -877,7 +877,7 @@ export default function UserManagement() {
                 {/* Personal Details Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <Users className="h-4 w-4 mr-2 text-rose-500" />
+                    <Users className="h-4 w-4 mr-2 text-orange-500" />
                     Personal Details
                   </h5>
                   <div className="grid grid-cols-2 gap-3 text-sm">
@@ -911,7 +911,7 @@ export default function UserManagement() {
                 {/* Religious Details Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <Crown className="h-4 w-4 mr-2 text-rose-500" />
+                    <Crown className="h-4 w-4 mr-2 text-orange-500" />
                     Religious & Cultural Details
                   </h5>
                   <div className="grid grid-cols-2 gap-3 text-sm">
@@ -944,7 +944,7 @@ export default function UserManagement() {
                 {/* Address Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -956,7 +956,7 @@ export default function UserManagement() {
                 {/* Education & Career Card */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path d="M12 14l9-5-9-5-9 5 9 5z" />
                       <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                     </svg>
@@ -995,15 +995,15 @@ export default function UserManagement() {
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3 sticky bottom-0">
+            <div className="bg-gray-50 px-6 py-3 border-t border-orange-100 flex justify-end space-x-3 sticky bottom-0">
               <button
                 onClick={() => setSelectedUser(null)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 Close
               </button>
               <button 
-                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 onClick={() => handleEditUser(selectedUser)}
               >
                 Edit User
@@ -1016,16 +1016,16 @@ export default function UserManagement() {
       {/* Edit User Modal */}
       {editingUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-rose-100/50 w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl border border-orange-100/50 w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-rose-50 to-amber-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center sticky top-0">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-150 px-6 py-4 border-b border-orange-100 flex justify-between items-center sticky top-0">
               <div>
-                <h3 className="text-xl font-bold text-rose-800">Edit User</h3>
-                <p className="text-sm text-rose-600/80">Update information for {editingUser.name}</p>
+                <h3 className="text-xl font-bold text-orange-800">Edit User</h3>
+                <p className="text-sm text-orange-600/80">Update information for {editingUser.name}</p>
               </div>
               <button
                 onClick={() => setEditingUser(null)}
-                className="text-rose-400 hover:text-rose-600 transition-colors p-1 rounded-full hover:bg-rose-100/50"
+                className="text-orange-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-orange-100/50"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1040,7 +1040,7 @@ export default function UserManagement() {
                     name="name"
                     value={editFormData.name || ''}
                     onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -1050,7 +1050,7 @@ export default function UserManagement() {
                       name="status"
                       value={editFormData.status || ''}
                       onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
@@ -1064,7 +1064,7 @@ export default function UserManagement() {
                       name="plan"
                       value={editFormData.plan || ''}
                       onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     >
                       <option value="Free">Free</option>
                       <option value="Premium">Premium</option>
@@ -1078,7 +1078,7 @@ export default function UserManagement() {
                     name="gender"
                     value={editFormData.gender || ''}
                     onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -1093,7 +1093,7 @@ export default function UserManagement() {
                     name="education"
                     value={editFormData.education || ''}
                     onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1103,7 +1103,7 @@ export default function UserManagement() {
                     name="address"
                     value={editFormData.address || ''}
                     onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1113,23 +1113,23 @@ export default function UserManagement() {
                     name="familyBackground"
                     value={editFormData.familyBackground || ''}
                     onChange={handleEditChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-rose-100 flex justify-end space-x-3 sticky bottom-0">
+            <div className="bg-gray-50 px-6 py-3 border-t border-orange-100 flex justify-end space-x-3 sticky bottom-0">
               <button
                 onClick={() => setEditingUser(null)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-lg hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+                className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 Save Changes
               </button>

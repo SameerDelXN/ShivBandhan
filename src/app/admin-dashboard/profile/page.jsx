@@ -81,7 +81,7 @@ export default function AdminDashboard() {
     { title: 'Total Users', value: '12,453', change: '+12%', icon: Users, color: 'blue' },
     { title: 'Active Profiles', value: '8,721', change: '+8%', icon: UserCheck, color: 'green' },
     { title: 'Premium Members', value: '2,341', change: '+15%', icon: Crown, color: 'amber' },
-    { title: 'Daily Matches', value: '456', change: '+23%', icon: Heart, color: 'rose' },
+    { title: 'Daily Matches', value: '456', change: '+23%', icon: Heart, color: 'orange' },
     { title: 'Revenue (₹)', value: '4,56,780', change: '+18%', icon: DollarSign, color: 'emerald' },
     { title: 'Pending Verifications', value: '89', change: '-5%', icon: Shield, color: 'orange' },
   ];
@@ -112,13 +112,13 @@ export default function AdminDashboard() {
                 const colorClasses = {
                   blue: 'from-blue-500 to-blue-600 bg-blue-100 text-blue-600',
                   green: 'from-green-500 to-green-600 bg-green-100 text-green-600',
-                  amber: 'from-amber-500 to-amber-600 bg-amber-100 text-amber-600',
-                  rose: 'from-rose-500 to-rose-600 bg-rose-100 text-rose-600',
+                  amber: 'from-amber-700 to-amber-800 bg-amber-300 text-amber-800',
+                  orange: 'from-orange-500 to-orange-600 bg-orange-100 text-orange-600',
                   emerald: 'from-emerald-500 to-emerald-600 bg-emerald-100 text-emerald-600',
                   orange: 'from-orange-500 to-orange-600 bg-orange-100 text-orange-600',
                 };
                 return (
-                  <div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-shadow">
+                  <div key={index} className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50 hover:shadow-xl transition-shadow">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600">{stat.title}</p>
@@ -142,29 +142,29 @@ export default function AdminDashboard() {
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* User Growth Chart */}
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">User Growth</h3>
                   <select 
                     value={selectedTimeRange}
                     onChange={(e) => setSelectedTimeRange(e.target.value)}
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="text-sm border border-gray-300 rounded-lg px-3 py-1 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="7d">Last 7 days</option>
                     <option value="30d">Last 30 days</option>
                     <option value="90d">Last 90 days</option>
                   </select>
                 </div>
-                <div className="h-64 bg-gradient-to-br from-rose-50 to-amber-50 rounded-lg flex items-center justify-center">
+                <div className="h-64 bg-gradient-to-br from-orange-50 to-amber-150 rounded-lg flex items-center justify-center">
                   <div className="text-center">
-                    <TrendingUp className="w-12 h-12 text-rose-400 mx-auto mb-2" />
+                    <TrendingUp className="w-12 h-12 text-orange-400 mx-auto mb-2" />
                     <p className="text-gray-600">Chart visualization would go here</p>
                   </div>
                 </div>
               </div>
 
               {/* Match Success Rate */}
-              <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Match Success Rate</h3>
                 <div className="space-y-4">
                   <div>
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
                       <span className="font-medium">15%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full" style={{ width: '15%' }}></div>
+                      <div className="bg-gradient-to-r from-amber-700 to-amber-800 h-2 rounded-full" style={{ width: '15%' }}></div>
                     </div>
                   </div>
                   <div>
@@ -201,20 +201,20 @@ export default function AdminDashboard() {
             {/* Recent Activity Tables */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Recent Users */}
-              <div className="bg-white rounded-xl shadow-lg border border-rose-100/50">
+              <div className="bg-white rounded-xl shadow-lg border border-orange-100/50">
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Recent Users</h3>
-                    <button className="text-rose-600 hover:text-rose-700 font-medium text-sm">View All</button>
+                    <button className="text-orange-600 hover:text-orange-700 font-medium text-sm">View All</button>
                   </div>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
                     {recentUsers.map((user) => (
-                      <div key={user.id} className="flex items-center justify-between p-3 hover:bg-rose-50/50 rounded-lg transition-colors">
+                      <div key={user.id} className="flex items-center justify-between p-3 hover:bg-orange-50/50 rounded-lg transition-colors">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
-                            <Users className="w-5 h-5 text-rose-500" />
+                          <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
+                            <Users className="w-5 h-5 text-orange-500" />
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 text-sm">{user.name}</p>
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
                           <div className="flex items-center space-x-2">
                             <span className={`text-xs px-2 py-1 rounded-full ${
                               user.status === 'Active' ? 'bg-green-100 text-green-600' :
-                              user.status === 'Pending' ? 'bg-amber-100 text-amber-600' :
+                              user.status === 'Pending' ? 'bg-amber-300 text-amber-800' :
                               'bg-red-100 text-red-600'
                             }`}>
                               {user.status}
@@ -241,20 +241,20 @@ export default function AdminDashboard() {
               </div>
 
               {/* Pending Verifications */}
-              <div className="bg-white rounded-xl shadow-lg border border-rose-100/50">
+              <div className="bg-white rounded-xl shadow-lg border border-orange-100/50">
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Pending Verifications</h3>
-                    <button className="text-rose-600 hover:text-rose-700 font-medium text-sm">View All</button>
+                    <button className="text-orange-600 hover:text-orange-700 font-medium text-sm">View All</button>
                   </div>
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
                     {pendingVerifications.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-3 hover:bg-rose-50/50 rounded-lg transition-colors">
+                      <div key={item.id} className="flex items-center justify-between p-3 hover:bg-orange-50/50 rounded-lg transition-colors">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                            <Shield className="w-5 h-5 text-amber-600" />
+                          <div className="w-10 h-10 bg-amber-300 rounded-full flex items-center justify-center">
+                            <Shield className="w-5 h-5 text-amber-800" />
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 text-sm">{item.name}</p>
@@ -287,14 +287,14 @@ export default function AdminDashboard() {
         return (
           <div className="space-y-6">
             {/* User Management Header */}
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
               <div className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">User Management</h2>
                   <p className="text-gray-600">Manage all registered users and their profiles</p>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <button className="bg-rose-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors flex items-center">
+                  <button className="bg-orange-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors flex items-center">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Add User
                   </button>
@@ -312,16 +312,16 @@ export default function AdminDashboard() {
                   <input 
                     type="text" 
                     placeholder="Search users..." 
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
-                <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                   <option>All Status</option>
                   <option>Active</option>
                   <option>Inactive</option>
                   <option>Suspended</option>
                 </select>
-                <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                   <option>All Plans</option>
                   <option>Free</option>
                   <option>Premium</option>
@@ -335,7 +335,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
@@ -349,11 +349,11 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     {recentUsers.concat(recentUsers).map((user, index) => (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-rose-50/30 transition-colors">
+                      <tr key={index} className="border-b border-gray-100 hover:bg-orange-50/30 transition-colors">
                         <td className="py-4 px-6">
                           <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
-                              <Users className="w-5 h-5 text-rose-500" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
+                              <Users className="w-5 h-5 text-orange-500" />
                             </div>
                             <div>
                               <p className="font-medium text-gray-900">{user.name}</p>
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
                         <td className="py-4 px-6">
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                             user.status === 'Active' ? 'bg-green-100 text-green-800' :
-                            user.status === 'Pending' ? 'bg-amber-100 text-amber-800' :
+                            user.status === 'Pending' ? 'bg-amber-300 text-amber-800' :
                             'bg-red-100 text-red-800'
                           }`}>
                             {user.status}
@@ -372,7 +372,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="py-4 px-6">
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            user.plan === 'Premium' || user.plan === 'Gold' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800'
+                            user.plan === 'Premium' || user.plan === 'Gold' ? 'bg-amber-300 text-amber-800' : 'bg-gray-100 text-gray-800'
                           }`}>
                             {user.plan === 'Premium' || user.plan === 'Gold' ? <Crown className="w-3 h-3 mr-1" /> : null}
                             {user.plan}
@@ -404,7 +404,7 @@ export default function AdminDashboard() {
                   <p className="text-sm text-gray-600">Showing 1 to 10 of 12,453 users</p>
                   <div className="flex items-center space-x-2">
                     <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Previous</button>
-                    <button className="px-3 py-2 bg-rose-500 text-white rounded-lg text-sm font-medium">1</button>
+                    <button className="px-3 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium">1</button>
                     <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">2</button>
                     <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">3</button>
                     <button className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50">Next</button>
@@ -418,8 +418,8 @@ export default function AdminDashboard() {
       default:
         return (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Settings className="w-8 h-8 text-rose-500" />
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Settings className="w-8 h-8 text-orange-500" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
             <p className="text-gray-600">This section is under development</p>
@@ -429,14 +429,14 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-xl border-r border-rose-100/50 min-h-screen">
+        <div className="w-64 bg-white shadow-xl border-r border-orange-100/50 min-h-screen">
           {/* Admin Header */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-amber-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-700 rounded-lg flex items-center justify-center">
                 <Crown className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -457,8 +457,8 @@ export default function AdminDashboard() {
                     onClick={() => setActiveTab(section.id)}
                     className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                       activeTab === section.id 
-                        ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-lg' 
-                        : 'hover:bg-rose-50 text-gray-700 hover:text-gray-900'
+                        ? 'bg-gradient-to-r from-orange-500 to-amber-700 text-white shadow-lg' 
+                        : 'hover:bg-orange-50 text-gray-700 hover:text-gray-900'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -485,7 +485,7 @@ export default function AdminDashboard() {
         {/* Main Content */}
         <div className="flex-1">
           {/* Top Header */}
-          <div className="bg-rose-500 shadow-lg rounded-lg mx-6 mt-4 p-6 sticky top-4 z-10">
+          <div className="bg-orange-500 shadow-lg rounded-lg mx-6 mt-4 p-6 sticky top-4 z-10">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-white">
@@ -497,7 +497,7 @@ export default function AdminDashboard() {
               <div className="flex items-center space-x-4">
                 {/* System Alerts */}
                 <div className="relative">
-                  <button className="relative bg-rose-100 text-rose-600 p-2 rounded-lg hover:bg-rose-200 transition-colors">
+                  <button className="relative bg-orange-100 text-orange-600 p-2 rounded-lg hover:bg-orange-200 transition-colors">
                     <Bell className="w-5 h-5" />
                     <span className="absolute -top-1 -right-1 w-3 h-3 bg-black rounded-full"></span>
                   </button>

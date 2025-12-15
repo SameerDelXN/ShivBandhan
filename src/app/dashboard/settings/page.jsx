@@ -104,9 +104,9 @@
     
 
 //       {/* Phone Section */}
-//       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+//       <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
 //         <div className="flex items-center space-x-3 mb-4">
-//           <Phone className="w-5 h-5 text-rose-500" />
+//           <Phone className="w-5 h-5 text-orange-500" />
 //           <h3 className="text-lg font-bold text-gray-900">Phone Number</h3>
 //         </div>
 //         <div className="space-y-4">
@@ -116,7 +116,7 @@
 //               type="tel"
 //               value={user?.phone}
 //               disabled
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
 //             />
 //           </div>
         
@@ -130,9 +130,9 @@
 //   const renderPrivacySettings = () => (
 //     <div className="space-y-6">
 //       {/* Profile Visibility */}
-//       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+//       <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
 //         <div className="flex items-center space-x-3 mb-4">
-//           <Eye className="w-5 h-5 text-rose-500" />
+//           <Eye className="w-5 h-5 text-orange-500" />
 //           <h3 className="text-lg font-bold text-gray-900">Profile Visibility</h3>
 //         </div>
 //         <div className="space-y-4">
@@ -144,7 +144,7 @@
 //             <button
 //               onClick={() => setPrivacyData({...privacyData, showToRegisteredOnly: !privacyData.showToRegisteredOnly})}
 //               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-//                 privacyData.showToRegisteredOnly ? 'bg-rose-500' : 'bg-gray-200'
+//                 privacyData.showToRegisteredOnly ? 'bg-orange-500' : 'bg-gray-200'
 //               }`}
 //             >
 //               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -161,7 +161,7 @@
 //             <button
 //               onClick={() => setPrivacyData({...privacyData, blurPhotoUntilInterest: !privacyData.blurPhotoUntilInterest})}
 //               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-//                 privacyData.blurPhotoUntilInterest ? 'bg-rose-500' : 'bg-gray-200'
+//                 privacyData.blurPhotoUntilInterest ? 'bg-orange-500' : 'bg-gray-200'
 //               }`}
 //             >
 //               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -178,7 +178,7 @@
 //             <button
 //               onClick={() => setPrivacyData({...privacyData, hideProfileTemporarily: !privacyData.hideProfileTemporarily})}
 //               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-//                 privacyData.hideProfileTemporarily ? 'bg-rose-500' : 'bg-gray-200'
+//                 privacyData.hideProfileTemporarily ? 'bg-orange-500' : 'bg-gray-200'
 //               }`}
 //             >
 //               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -190,9 +190,9 @@
 //       </div>
 
 //       {/* Contact Details */}
-//       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+//       <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
 //         <div className="flex items-center space-x-3 mb-4">
-//           <Shield className="w-5 h-5 text-rose-500" />
+//           <Shield className="w-5 h-5 text-orange-500" />
 //           <h3 className="text-lg font-bold text-gray-900">Contact Details Visibility</h3>
 //         </div>
 //         <div>
@@ -200,7 +200,7 @@
 //           <select
 //             value={privacyData.contactDetailsVisibility}
 //             onChange={(e) => setPrivacyData({...privacyData, contactDetailsVisibility: e.target.value})}
-//             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+//             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
 //           >
 //             <option value="all">All premium members</option>
 //             <option value="mutual">Only mutual matches</option>
@@ -213,9 +213,9 @@
 
 //   const renderNotificationSettings = () => (
 //     <div className="space-y-6">
-//       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+//       <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
 //         <div className="flex items-center space-x-3 mb-4">
-//           <Bell className="w-5 h-5 text-rose-500" />
+//           <Bell className="w-5 h-5 text-orange-500" />
 //           <h3 className="text-lg font-bold text-gray-900">Notification Preferences</h3>
 //         </div>
 //         <div className="space-y-4">
@@ -227,7 +227,7 @@
 //             <button
 //               onClick={() => setNotificationData({...notificationData, allNotifications: !notificationData.allNotifications})}
 //               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-//                 notificationData.allNotifications ? 'bg-rose-500' : 'bg-gray-200'
+//                 notificationData.allNotifications ? 'bg-orange-500' : 'bg-gray-200'
 //               }`}
 //             >
 //               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -242,7 +242,7 @@
 //                 type="checkbox"
 //                 checked={notificationData.emailInterests}
 //                 onChange={(e) => setNotificationData({...notificationData, emailInterests: e.target.checked})}
-//                 className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+//                 className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
 //               />
 //               <div>
 //                 <p className="font-medium text-gray-900">Email for new interests</p>
@@ -255,7 +255,7 @@
 //                 type="checkbox"
 //                 checked={notificationData.smsMessages}
 //                 onChange={(e) => setNotificationData({...notificationData, smsMessages: e.target.checked})}
-//                 className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+//                 className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
 //               />
 //               <div>
 //                 <p className="font-medium text-gray-900">SMS for chat messages</p>
@@ -268,7 +268,7 @@
 //                 type="checkbox"
 //                 checked={notificationData.pushNotifications}
 //                 onChange={(e) => setNotificationData({...notificationData, pushNotifications: e.target.checked})}
-//                 className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+//                 className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
 //               />
 //               <div>
 //                 <p className="font-medium text-gray-900">Push notifications for profile views</p>
@@ -283,7 +283,7 @@
 
 //   const renderDeleteAccount = () => (
 //     <div className="space-y-6">
-//       <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+//       <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
 //         <div className="flex items-center space-x-3 mb-4">
 //           <AlertTriangle className="w-5 h-5 text-red-500" />
 //           <h3 className="text-lg font-bold text-gray-900">Delete Account</h3>
@@ -309,7 +309,7 @@
 //             <select
 //               value={deleteReason}
 //               onChange={(e) => setDeleteReason(e.target.value)}
-//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+//               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
 //             >
 //               <option value="">Select a reason</option>
 //               <option value="found-match">Found match outside platform</option>
@@ -347,16 +347,16 @@
 //   };
 
 //   return (
-//   <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-4 sm:p-6">
+//   <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-4 sm:p-6">
 //       <div className="max-w-6xl mx-auto">
 //         {/* Header */}
 //         <div className={`transform transition-all duration-1000 mb-4 sm:mb-6 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-//           <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-rose-100/50 relative overflow-hidden">
-//             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+//           <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-orange-100/50 relative overflow-hidden">
+//             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-50"></div>
 //             <div className="relative z-10">
 //               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 //                 <div className="flex items-center space-x-3 sm:space-x-4">
-//                   <button className="p-1 sm:p-2 hover:bg-rose-50 rounded-lg transition-colors">
+//                   <button className="p-1 sm:p-2 hover:bg-orange-50 rounded-lg transition-colors">
 //                     <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
 //                   </button>
 //                   <div>
@@ -374,7 +374,7 @@
 //         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
 //           {/* Navigation Sidebar - Horizontal scroll on mobile */}
 //           <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} lg:w-64`}>
-//             <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+//             <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 p-4 sm:p-6">
 //               <h2 className="font-bold text-gray-900 mb-3 sm:mb-4">Navigation</h2>
 //               <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
 //                 {navigationItems.map((item) => {
@@ -391,7 +391,7 @@
 //                       }}
 //                       className={`min-w-max lg:w-full flex items-center space-x-3 px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-colors text-left ${
 //                         currentView === item.id && !item.action
-//                           ? 'bg-rose-50 text-rose-700 border border-rose-200'
+//                           ? 'bg-orange-50 text-orange-700 border border-orange-200'
 //                           : 'text-gray-600 hover:bg-gray-50'
 //                       }`}
 //                     >
@@ -406,7 +406,7 @@
 
 //           {/* Main Content */}
 //           <div className={`flex-1 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-//             <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+//             <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 p-4 sm:p-6">
 //               {renderContent()}
 //             </div>
 //           </div>
@@ -431,7 +431,7 @@
 //               value={deleteConfirmation}
 //               onChange={(e) => setDeleteConfirmation(e.target.value)}
 //               placeholder="Type DELETE to confirm"
-//               className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent mb-3 sm:mb-4 text-sm sm:text-base"
+//               className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent mb-3 sm:mb-4 text-sm sm:text-base"
 //             />
             
 //             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -462,7 +462,7 @@
 //         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
 //           <div className="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full">
 //             <div className="flex items-center space-x-3 mb-3 sm:mb-4">
-//               <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-rose-500" />
+//               <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
 //               <h3 className="text-lg font-bold text-gray-900">Confirm Logout</h3>
 //             </div>
             
@@ -479,7 +479,7 @@
 //               </button>
 //               <button
 //                 onClick={handleLogout}
-//                 className="flex-1 px-3 py-2 sm:px-4 sm:py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors text-sm sm:text-base"
+//                 className="flex-1 px-3 py-2 sm:px-4 sm:py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm sm:text-base"
 //               >
 //                 Log Out
 //               </button>
@@ -582,9 +582,9 @@ export default function SettingsLayout() {
     
 
       {/* Phone Section */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex items-center space-x-3 mb-4">
-          <Phone className="w-5 h-5 text-rose-500" />
+          <Phone className="w-5 h-5 text-orange-500" />
           <h3 className="text-lg font-bold text-gray-900">Phone Number</h3>
         </div>
         <div className="space-y-4">
@@ -594,7 +594,7 @@ export default function SettingsLayout() {
               type="tel"
               value={user?.phone}
               disabled
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
         
@@ -608,9 +608,9 @@ export default function SettingsLayout() {
   const renderPrivacySettings = () => (
     <div className="space-y-6">
       {/* Profile Visibility */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex items-center space-x-3 mb-4">
-          <Eye className="w-5 h-5 text-rose-500" />
+          <Eye className="w-5 h-5 text-orange-500" />
           <h3 className="text-lg font-bold text-gray-900">Profile Visibility</h3>
         </div>
         <div className="space-y-4">
@@ -622,7 +622,7 @@ export default function SettingsLayout() {
             <button
               onClick={() => setPrivacyData({...privacyData, showToRegisteredOnly: !privacyData.showToRegisteredOnly})}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                privacyData.showToRegisteredOnly ? 'bg-rose-500' : 'bg-gray-200'
+                privacyData.showToRegisteredOnly ? 'bg-orange-500' : 'bg-gray-200'
               }`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -639,7 +639,7 @@ export default function SettingsLayout() {
             <button
               onClick={() => setPrivacyData({...privacyData, blurPhotoUntilInterest: !privacyData.blurPhotoUntilInterest})}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                privacyData.blurPhotoUntilInterest ? 'bg-rose-500' : 'bg-gray-200'
+                privacyData.blurPhotoUntilInterest ? 'bg-orange-500' : 'bg-gray-200'
               }`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -656,7 +656,7 @@ export default function SettingsLayout() {
             <button
               onClick={() => setPrivacyData({...privacyData, hideProfileTemporarily: !privacyData.hideProfileTemporarily})}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                privacyData.hideProfileTemporarily ? 'bg-rose-500' : 'bg-gray-200'
+                privacyData.hideProfileTemporarily ? 'bg-orange-500' : 'bg-gray-200'
               }`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -668,9 +668,9 @@ export default function SettingsLayout() {
       </div>
 
       {/* Contact Details */}
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex items-center space-x-3 mb-4">
-          <Shield className="w-5 h-5 text-rose-500" />
+          <Shield className="w-5 h-5 text-orange-500" />
           <h3 className="text-lg font-bold text-gray-900">Contact Details Visibility</h3>
         </div>
         <div>
@@ -678,7 +678,7 @@ export default function SettingsLayout() {
           <select
             value={privacyData.contactDetailsVisibility}
             onChange={(e) => setPrivacyData({...privacyData, contactDetailsVisibility: e.target.value})}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           >
             <option value="all">All premium members</option>
             <option value="mutual">Only mutual matches</option>
@@ -691,9 +691,9 @@ export default function SettingsLayout() {
 
   const renderNotificationSettings = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex items-center space-x-3 mb-4">
-          <Bell className="w-5 h-5 text-rose-500" />
+          <Bell className="w-5 h-5 text-orange-500" />
           <h3 className="text-lg font-bold text-gray-900">Notification Preferences</h3>
         </div>
         <div className="space-y-4">
@@ -705,7 +705,7 @@ export default function SettingsLayout() {
             <button
               onClick={() => setNotificationData({...notificationData, allNotifications: !notificationData.allNotifications})}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                notificationData.allNotifications ? 'bg-rose-500' : 'bg-gray-200'
+                notificationData.allNotifications ? 'bg-orange-500' : 'bg-gray-200'
               }`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -720,7 +720,7 @@ export default function SettingsLayout() {
                 type="checkbox"
                 checked={notificationData.emailInterests}
                 onChange={(e) => setNotificationData({...notificationData, emailInterests: e.target.checked})}
-                className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
               />
               <div>
                 <p className="font-medium text-gray-900">Email for new interests</p>
@@ -733,7 +733,7 @@ export default function SettingsLayout() {
                 type="checkbox"
                 checked={notificationData.smsMessages}
                 onChange={(e) => setNotificationData({...notificationData, smsMessages: e.target.checked})}
-                className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
               />
               <div>
                 <p className="font-medium text-gray-900">SMS for chat messages</p>
@@ -746,7 +746,7 @@ export default function SettingsLayout() {
                 type="checkbox"
                 checked={notificationData.pushNotifications}
                 onChange={(e) => setNotificationData({...notificationData, pushNotifications: e.target.checked})}
-                className="w-4 h-4 text-rose-600 border-gray-300 rounded focus:ring-rose-500"
+                className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
               />
               <div>
                 <p className="font-medium text-gray-900">Push notifications for profile views</p>
@@ -761,7 +761,7 @@ export default function SettingsLayout() {
 
   const renderDeleteAccount = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
         <div className="flex items-center space-x-3 mb-4">
           <AlertTriangle className="w-5 h-5 text-red-500" />
           <h3 className="text-lg font-bold text-gray-900">Delete Account</h3>
@@ -787,7 +787,7 @@ export default function SettingsLayout() {
             <select
               value={deleteReason}
               onChange={(e) => setDeleteReason(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Select a reason</option>
               <option value="found-match">Found match outside platform</option>
@@ -825,16 +825,16 @@ export default function SettingsLayout() {
   };
 
   return (
-  <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-4 sm:p-6">
+  <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className={`transform transition-all duration-1000 mb-4 sm:mb-6 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-rose-100/50 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+          <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-orange-100/50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-50"></div>
             <div className="relative z-10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center space-x-3 sm:space-x-4">
-                  <button className="p-1 sm:p-2 hover:bg-rose-50 rounded-lg transition-colors">
+                  <button className="p-1 sm:p-2 hover:bg-orange-50 rounded-lg transition-colors">
                     <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
                   </button>
                   <div>
@@ -852,7 +852,7 @@ export default function SettingsLayout() {
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Navigation Sidebar - Horizontal scroll on mobile */}
           <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'} lg:w-64`}>
-            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 p-4 sm:p-6">
               <h2 className="font-bold text-gray-900 mb-3 sm:mb-4">Navigation</h2>
               <nav className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
                 {navigationItems.map((item) => {
@@ -869,7 +869,7 @@ export default function SettingsLayout() {
                       }}
                       className={`min-w-max lg:w-full flex items-center space-x-3 px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-colors text-left ${
                         currentView === item.id && !item.action
-                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                          ? 'bg-orange-50 text-orange-700 border border-orange-200'
                           : 'text-gray-600 hover:bg-gray-50'
                       }`}
                     >
@@ -884,7 +884,7 @@ export default function SettingsLayout() {
 
           {/* Main Content */}
           <div className={`flex-1 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 p-4 sm:p-6">
               {renderContent()}
             </div>
           </div>
@@ -909,7 +909,7 @@ export default function SettingsLayout() {
               value={deleteConfirmation}
               onChange={(e) => setDeleteConfirmation(e.target.value)}
               placeholder="Type DELETE to confirm"
-              className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent mb-3 sm:mb-4 text-sm sm:text-base"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent mb-3 sm:mb-4 text-sm sm:text-base"
             />
             
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">

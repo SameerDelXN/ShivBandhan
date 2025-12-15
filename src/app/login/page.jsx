@@ -179,10 +179,10 @@ export default function MatrimonialLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50 flex items-center justify-center px-4 py-8 sm:px-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 flex items-center justify-center px-4 py-8 sm:px-6">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-24 h-24 sm:w-40 sm:h-40 rounded-full bg-rose-100 blur-xl sm:blur-2xl opacity-30"></div>
+        <div className="absolute top-10 sm:top-20 left-4 sm:left-10 w-24 h-24 sm:w-40 sm:h-40 rounded-full bg-orange-100 blur-xl sm:blur-2xl opacity-30"></div>
         <div className="absolute bottom-10 sm:bottom-20 right-4 sm:right-10 w-32 h-32 sm:w-56 sm:h-56 rounded-full bg-amber-100 blur-xl sm:blur-2xl opacity-40"></div>
       </div>
 
@@ -191,7 +191,7 @@ export default function MatrimonialLogin() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl border border-white/50 overflow-hidden">
           {/* Header */}
           <div className="text-center px-6 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-8">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3 hover:rotate-0 transition-all duration-300">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3 hover:rotate-0 transition-all duration-300">
               <span className="text-white text-xl sm:text-2xl font-bold">💕</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">Welcome Back</h1>
@@ -205,7 +205,7 @@ export default function MatrimonialLogin() {
               <div className="space-y-4 sm:space-y-6">
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3 flex items-center">
-                    <Phone size={14} className="mr-2 text-rose-500" />
+                    <Phone size={14} className="mr-2 text-orange-500" />
                     Enter Mobile Number
                   </label>
                   
@@ -213,7 +213,7 @@ export default function MatrimonialLogin() {
                     <select 
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      className="w-20 sm:w-24 px-2 sm:px-3 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+                      className="w-20 sm:w-24 px-2 sm:px-3 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
                     >
                       <option value="+91">🇮🇳 +91</option>
                       <option value="+1">🇺🇸 +1</option>
@@ -225,7 +225,7 @@ export default function MatrimonialLogin() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="98765 43210"
-                      className="flex-1 px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg"
+                      className="flex-1 px-3 sm:px-4 py-3 sm:py-4 border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 text-base sm:text-lg"
                       maxLength={10}
                     />
                   </div>
@@ -240,7 +240,7 @@ export default function MatrimonialLogin() {
                 <button
                   onClick={handleSendOTP}
                   disabled={isLoading}
-                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg sm:rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg sm:rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -279,7 +279,7 @@ export default function MatrimonialLogin() {
                         value={digit}
                         onChange={(e) => handleOTPChange(index, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(index, e)}
-                        className="w-10 h-10 sm:w-12 sm:h-12 text-center text-base sm:text-lg font-bold border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                        className="w-10 h-10 sm:w-12 sm:h-12 text-center text-base sm:text-lg font-bold border border-gray-200 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                         maxLength={1}
                       />
                     ))}
@@ -295,7 +295,7 @@ export default function MatrimonialLogin() {
                 <button
                   onClick={handleVerifyOTP}
                   disabled={isLoading}
-                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg sm:rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg sm:rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -311,7 +311,7 @@ export default function MatrimonialLogin() {
                   <button
                     onClick={handleResendOTP}
                     disabled={resendTimer > 0}
-                    className="text-rose-600 hover:text-rose-700 text-xs sm:text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="text-orange-600 hover:text-orange-700 text-xs sm:text-sm font-medium disabled:text-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                   >
                     <RotateCcw size={14} className="mr-1 sm:mr-2" />
                     {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}

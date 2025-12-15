@@ -196,10 +196,10 @@ export default function DynamicSubscriptionPlans() {
       },
       Premium: {
         icon: Crown,
-        color: "from-rose-500 to-pink-500",
-        bgColor: "bg-rose-100",
-        textColor: "text-rose-600",
-        badgeColor: "bg-rose-500",
+        color: "from-orange-500 to-orange-500",
+        bgColor: "bg-orange-100",
+        textColor: "text-orange-600",
+        badgeColor: "bg-orange-500",
         emoji: "💎",
       },
       Free: {
@@ -240,7 +240,7 @@ export default function DynamicSubscriptionPlans() {
      <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="text-center">
         {/* Simple Spinner */}
-        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4"></div>
         
         {/* Loading Text */}
         <p className="text-gray-600 text-lg">Loading Subscription Plans</p>
@@ -251,7 +251,7 @@ export default function DynamicSubscriptionPlans() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -264,12 +264,12 @@ export default function DynamicSubscriptionPlans() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full mb-6">
-            <Crown className="w-10 h-10 text-rose-500" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full mb-6">
+            <Crown className="w-10 h-10 text-orange-500" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Choose Your Perfect Plan
@@ -340,7 +340,7 @@ export default function DynamicSubscriptionPlans() {
             return (
               <div key={plan._id} className="relative">
                 <div
-                  className={`bg-white rounded-2xl p-8 shadow-2xl border border-rose-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
+                  className={`bg-white rounded-2xl p-8 shadow-2xl border border-orange-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
                     !plan.isActive ? "opacity-70" : ""
                   }`}
                 >
@@ -431,7 +431,7 @@ export default function DynamicSubscriptionPlans() {
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-white rounded-2xl p-8 shadow-lg border border-rose-100/50">
+        <div className="bg-white rounded-2xl p-8 shadow-lg border border-orange-100/50">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             Frequently Asked Questions
           </h2>

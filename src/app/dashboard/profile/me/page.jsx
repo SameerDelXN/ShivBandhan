@@ -454,7 +454,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder='Enter your full name'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -463,7 +463,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                    type="date"
                    value={formatDateToYYYYMMDD(formData?.dob)}
                    onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                    />
 
                 </div>
@@ -472,7 +472,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                  <select
                   value={formData.height}
                   onChange={(e) => setFormData({ ...formData, height: e.target.value })}
-                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                  >
                  <option value="">Select Height</option>
                    {Array.from({ length: 24 }, (_, i) => {
@@ -498,7 +498,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.weight}
                     onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                     placeholder="Enter your weight"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -506,7 +506,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Gender</option>
                     <option>Male</option>
@@ -519,7 +519,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <select
                   value={formData?.bloodGroup}
                   onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -539,7 +539,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   value={formData?.complexion}
                   onChange={(e) => setFormData({ ...formData, complexion: e.target.value })}
                   placeholder="E.g. Fair, Wheatish, etc."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
               </div>
@@ -549,7 +549,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.maritalStatus}
                     onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Status</option>
                     <option>Unmarried</option>
@@ -562,7 +562,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.motherTongue}
                     onChange={(e) => setFormData({ ...formData, motherTongue: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select language</option>
                     <option>Hindi</option>
@@ -577,7 +577,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.currentCity}
                     onChange={(e) => setFormData({ ...formData, currentCity: e.target.value })}
                     placeholder="Enter your city"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                        <div>
@@ -587,7 +587,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   value={formData?.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Enter your email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 </div>
                  <div>
@@ -597,7 +597,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.permanentAddress}
                     onChange={(e) => setFormData({ ...formData, permanentAddress: e.target.value })}
                     placeholder='Enter your permanent address'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
               <div>
@@ -605,7 +605,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                 <select
                   value={formData?.wearsLens ? 'Yes' : 'No'}
                   onChange={(e) => setFormData({ ...formData, wearsLens: e.target.value === 'Yes' })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 >
                   <option value="No">No</option>
                   <option value="Yes">Yes</option>
@@ -626,7 +626,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.religion}
                     onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Religion</option>
                     <option>Hindu</option>
@@ -642,7 +642,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.caste}
                     onChange={(e) => setFormData({ ...formData, caste: e.target.value })}
                     placeholder="Enter your caste" 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
               </div>
@@ -654,7 +654,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.subCaste || ""}
                     onChange={(e) => setFormData({ ...formData, subCaste: e.target.value })}
                     placeholder="Enter your sub-caste"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -664,7 +664,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.gothra}
                     onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
                     placeholder="Enter your gothra" 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
               </div>
@@ -682,7 +682,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.education}
                     onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Degree</option>
                     <option>Bachelor's Degree</option>
@@ -697,7 +697,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.fieldOfStudy}
                     onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
                     placeholder='Enter your study field'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -707,7 +707,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.college}
                     onChange={(e) => setFormData({ ...formData, college: e.target.value })}
                     placeholder='Enter your college name'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
               </div>
@@ -719,7 +719,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.occupation}
                     onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
                     placeholder='Enter your occupation'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -729,7 +729,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     value={formData?.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     placeholder='Enter your company name'
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -737,7 +737,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                   <select
                     value={formData?.income}
                     onChange={(e) => setFormData({ ...formData, income: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select Income</option>
                     <option>₹5-10 Lakhs</option>
@@ -802,7 +802,7 @@ const handlePhotoUploadSuccess = (result, photoId) => {
             <div className="mt-2 space-y-1">
               <button
                 onClick={() => open()}
-                className="w-full bg-rose-50 text-rose-600 py-1 px-2 rounded text-xs font-medium hover:bg-rose-100 transition-colors"
+                className="w-full bg-orange-50 text-orange-600 py-1 px-2 rounded text-xs font-medium hover:bg-orange-100 transition-colors"
               >
                 {photo.url ? 'Change' : 'Upload'}
               </button>
@@ -835,7 +835,7 @@ case 'relative':
                     value={formData.fatherName}
                     onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
                     placeholder="Enter father's name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -845,7 +845,7 @@ case 'relative':
                     value={formData.mother}
                     onChange={(e) => setFormData({ ...formData, mother: e.target.value })}
                     placeholder="Enter mother's name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -854,7 +854,7 @@ case 'relative':
                     type="number"
                     value={formData.brothers}
                     onChange={(e) => setFormData({ ...formData, brothers: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -863,7 +863,7 @@ case 'relative':
                     type="number"
                     value={formData.marriedBrothers}
                     onChange={(e) => setFormData({ ...formData, marriedBrothers: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -872,7 +872,7 @@ case 'relative':
                     type="number"
                     value={formData.sisters}
                     onChange={(e) => setFormData({ ...formData, sisters: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -881,7 +881,7 @@ case 'relative':
                     type="number"
                     value={formData.marriedSisters}
                     onChange={(e) => setFormData({ ...formData, marriedSisters: parseInt(e.target.value) || 0 })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                  {/* Relative Surnames Section */}
@@ -901,7 +901,7 @@ case 'relative':
                     });
                   }}
                   placeholder="Enter surname"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button
                   type="button"
@@ -926,7 +926,7 @@ case 'relative':
                   relativeSurname: [...(formData.relativeSurname || []), ""]
                 });
               }}
-              className="mt-2 px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+              className="mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             >
               Add Surname
             </button>
@@ -940,7 +940,7 @@ case 'relative':
                     value={formData.nativeDistrict}
                     onChange={(e) => setFormData({ ...formData, nativeDistrict: e.target.value })}
                     placeholder="Enter native district"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -950,7 +950,7 @@ case 'relative':
                     value={formData.nativeCity}
                     onChange={(e) => setFormData({ ...formData, nativeCity: e.target.value })}
                     placeholder="Enter native city"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -960,7 +960,7 @@ case 'relative':
                     value={formData.familyWealth}
                     onChange={(e) => setFormData({ ...formData, familyWealth: e.target.value })}
                     placeholder="Enter family wealth details"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -970,7 +970,7 @@ case 'relative':
                     value={formData.parentOccupation}
                     onChange={(e) => setFormData({ ...formData, parentOccupation: e.target.value })}
                     placeholder="Enter parent occupation"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -980,7 +980,7 @@ case 'relative':
                     value={formData.parentResidenceCity}
                     onChange={(e) => setFormData({ ...formData, parentResidenceCity: e.target.value })}
                     placeholder="Enter parent residence city"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -990,7 +990,7 @@ case 'relative':
                     value={formData.mamaSurname}
                     onChange={(e) => setFormData({ ...formData, mamaSurname: e.target.value })}
                     placeholder="Enter mama surname"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 
@@ -1011,7 +1011,7 @@ case 'relative':
                     value={formData.rashi}
                     onChange={(e) => setFormData({ ...formData, rashi: e.target.value })}
                     placeholder="Enter your rashi"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -1021,7 +1021,7 @@ case 'relative':
                     value={formData.nakshira}
                     onChange={(e) => setFormData({ ...formData, nakshira: e.target.value })}
                     placeholder="Enter your nakshira"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -1031,7 +1031,7 @@ case 'relative':
                     value={formData.charan}
                     onChange={(e) => setFormData({ ...formData, charan: e.target.value })}
                     placeholder="Enter your charan"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -1041,7 +1041,7 @@ case 'relative':
                     value={formData.gan}
                     onChange={(e) => setFormData({ ...formData, gan: e.target.value })}
                     placeholder="Enter your gan"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                  <div>
@@ -1051,7 +1051,7 @@ case 'relative':
                     value={formData.gotraDevak}
                     onChange={(e) => setFormData({ ...formData, gotraDevak: e.target.value })}
                     placeholder="Enter gotra/devak"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
               </div>
@@ -1063,7 +1063,7 @@ case 'relative':
                     value={formData.nadi}
                     onChange={(e) => setFormData({ ...formData, nadi: e.target.value })}
                     placeholder="Enter your nadi"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -1071,7 +1071,7 @@ case 'relative':
                   <select
                     value={formData.mangal ? 'Yes' : 'No'}
                     onChange={(e) => setFormData({ ...formData, mangal: e.target.value === 'Yes' })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
@@ -1084,7 +1084,7 @@ case 'relative':
                     value={formData.birthPlace}
                     onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
                     placeholder="Enter birth place"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                 <div>
@@ -1094,7 +1094,7 @@ case 'relative':
                     value={formData.birthTime}
                     onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
                     placeholder="Enter birth time"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
                
@@ -1114,7 +1114,7 @@ case 'relative':
               value={formData.expectedCaste}
               onChange={(e) => setFormData({ ...formData, expectedCaste: e.target.value })}
               placeholder="Enter expected caste"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
             />
           </div>
           <div>
@@ -1124,7 +1124,7 @@ case 'relative':
               value={formData.preferredCity}
               onChange={(e) => setFormData({ ...formData, preferredCity: e.target.value })}
               placeholder="Enter preferred city"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
             />
           </div>
           <div>
@@ -1132,7 +1132,7 @@ case 'relative':
             <select
               value={formData.expectedAgeDifference}
               onChange={(e) => setFormData({ ...formData, expectedAgeDifference: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Select age difference</option>
               <option>±1 year</option>
@@ -1146,7 +1146,7 @@ case 'relative':
             <select
               value={formData.expectedIncome}
               onChange={(e) => setFormData({ ...formData, expectedIncome: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Select income range</option>
               <option>₹5-10 Lakhs</option>
@@ -1161,7 +1161,7 @@ case 'relative':
             <select
               value={formData.expectedEducation}
               onChange={(e) => setFormData({ ...formData, expectedEducation: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Select education level</option>
               <option>Bachelor's Degree</option>
@@ -1174,7 +1174,7 @@ case 'relative':
             <select
               value={formData.divorcee ? 'Yes' : 'No'}
               onChange={(e) => setFormData({ ...formData, divorcee: e.target.value === 'Yes' })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="No">No</option>
               <option value="Yes">Yes</option>
@@ -1185,7 +1185,7 @@ case 'relative':
             <select
               value={formData.expectedHeight}
               onChange={(e) => setFormData({ ...formData, expectedHeight: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="">Select height range</option>
               <option>5'0" - 5'5"</option>
@@ -1200,7 +1200,7 @@ case 'relative':
                     value={formData.gotraDevak}
                     onChange={(e) => setFormData({ ...formData, gotraDevak: e.target.value })}
                     placeholder="Expected gotra"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent" 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>
         </div>
@@ -1210,8 +1210,8 @@ case 'relative':
       default:
         return (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Settings className="w-8 h-8 text-rose-500" />
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Settings className="w-8 h-8 text-orange-500" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
             <p className="text-gray-600">This section is under development</p>
@@ -1225,12 +1225,12 @@ case 'relative':
       !isLoaded ?<div className="flex items-center justify-center min-h-screen bg-gray-50">
        <div className="text-center">
         {/* Simple Spinner */}
-        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4"></div>
         
         {/* Loading Text */}
         <p className="text-gray-600 text-lg">Loading...</p>
       </div>
-    </div> : <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    </div> : <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Profile Header */}

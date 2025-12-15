@@ -3,177 +3,127 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, MapPin, Briefcase, Heart } from 'lucide-react';
 import Image from 'next/image';
 
-export default function FeaturedProfiles() {
+export default function FeaturedProfilesDynamic() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const carouselRef = useRef(null);
   const cardsRef = useRef([]);
   const autoPlayRef = useRef(null);
-  
-  const profiles = [
-    {
-      name: "Priya Jadhav",
-      age: 28,
-      city: "Mumbai",
-      profession: "Software Engineer",
-      photo: "/people/priya.jpg"
-    },
-    {
-      name: "Arjun Pawar",
-      age: 31,
-      city: "Pune",
-      profession: "Marketing Director",
-      photo: "/people/arjun.jpg"
-    },
-    {
-      name: "Ananya Kulkarni",
-      age: 27,
-      city: "Mumbai",
-      profession: "Doctor",
-      photo: "/people/ananya.jpg"
-    },
-    {
-      name: "Prathamesh Patil",
-      age: 30,
-      city: "Kolhapur",
-      profession: "Civil Engineer",
-      photo: "/people/vikram.jpg"
-    },
-    {
-      name: "Neha Shinde",
-      age: 29,
-      city: "Nagpur",
-      profession: "Software Engineer",
-      photo: "/people/neha.jpg"
-    },
-    {
-      name: "Rohan Mali",
-      age: 32,
-      city: "Pune",
-      profession: "Investment Banker",
-      photo: "/people/rohan.jpg"
-    },
-    {
-    name: "Aditya Chavan",
-    age: 29,
-    city: "Pune",
-    profession: "Software Developer",
-    photo: "/people/aditya.jpg"
-  },
-  {
-    name: "Ketaki Joshi",
-    age: 27,
-    city: "Nashik",
-    profession: "Architect",
-    photo: "/people/ketaki.jpg"
-  },
-  {
-    name: "Sneha Bhosale",
-    age: 26,
-    city: "Ratnagiri",
-    profession: "Interior Designer",
-    photo: "/people/sneha.jpg"
-  },
-  ];
+
+  const calculateAge = (dob) => {
+    if (!dob) return null;
+    const birthDate = new Date(dob);
+    const ageDiff = Date.now() - birthDate.getTime();
+    return Math.floor(ageDiff / (1000 * 60 * 60 * 24 * 365.25));
+  };
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch('/api/users/fetchAllUsers?limit=12&page=1', { cache: 'no-store' });
+        const data = await res.json();
+        if (!res.ok || !data?.success) {
+          throw new Error(data?.message || 'Failed to load featured profiles');
+        }
+        const mapped = (data?.data || [])
+          .filter(Boolean)
+          .filter((u) => {
+            const hasPhoto = !!u?.profilePhoto;
+            const hasName = !!u?.name;
+            const hasEmail = !!u?.email;
+            const hasNative = !!(u?.nativeCity || u?.nativeDistrict || u?.native);
+            const hasOccupationOrEducation = !!(u?.occupation || u?.education);
+            const hasValidDob = !!u?.dob && !isNaN(new Date(u.dob));
+            const verified = u?.isVerified === true && u?.phoneIsVerified === true;
+            return (
+              hasPhoto && hasName && hasEmail && hasNative && hasOccupationOrEducation && hasValidDob && verified
+            );
+          })
+          .map((u) => ({
+            name: u.name || 'Member',
+            age: calculateAge(u.dob),
+            city: u.currentCity || '—',
+            profession: u.occupation || u.education || '—',
+            photo: u.profilePhoto || 'https://via.placeholder.com/600x800?text=Profile',
+          }));
+        setProfiles(mapped);
+      } catch (e) {
+        setError(e?.message || 'Something went wrong');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeatured();
+  }, []);
 
   useEffect(() => {
     setIsLoaded(true);
     startAutoPlay();
-    
+
     return () => {
       if (autoPlayRef.current) {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, []);
+  }, [profiles.length]);
 
-  // Start auto play
   const startAutoPlay = () => {
     if (autoPlayRef.current) {
       clearInterval(autoPlayRef.current);
     }
-    
+    if (!profiles || profiles.length === 0) return;
+
     autoPlayRef.current = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         const nextIndex = prevIndex === profiles.length - 1 ? 0 : prevIndex + 1;
-        
-        // Scroll to the next card horizontally only
+
         if (cardsRef.current[nextIndex]) {
           const card = cardsRef.current[nextIndex];
           const container = carouselRef.current;
-          
-          // Calculate the scroll position to center the card horizontally
           const cardLeft = card.offsetLeft;
           const cardWidth = card.offsetWidth;
           const containerWidth = container.offsetWidth;
-          const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
-          
-          // Scroll horizontally without affecting vertical position
-          container.scrollTo({
-            left: scrollLeft,
-            behavior: 'smooth'
-          });
+          const scrollLeft = cardLeft - containerWidth / 2 + cardWidth / 2;
+          container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
         }
-        
         return nextIndex;
       });
-    }, 3000); // Change every 3 seconds
+    }, 3000);
   };
 
   const scrollToIndex = (index) => {
+    if (!profiles || profiles.length === 0) return;
     let newIndex;
-    if (index < 0) {
-      newIndex = profiles.length - 1;
-    } else if (index >= profiles.length) {
-      newIndex = 0;
-    } else {
-      newIndex = index;
-    }
+    if (index < 0) newIndex = profiles.length - 1;
+    else if (index >= profiles.length) newIndex = 0;
+    else newIndex = index;
     setCurrentIndex(newIndex);
-    
+
     if (cardsRef.current[newIndex] && carouselRef.current) {
       const card = cardsRef.current[newIndex];
       const container = carouselRef.current;
-      
-      // Calculate the scroll position to center the card horizontally
       const cardLeft = card.offsetLeft;
       const cardWidth = card.offsetWidth;
       const containerWidth = container.offsetWidth;
-      const scrollLeft = cardLeft - (containerWidth / 2) + (cardWidth / 2);
-      
-      // Scroll horizontally without affecting vertical position
-      container.scrollTo({
-        left: scrollLeft,
-        behavior: 'smooth'
-      });
+      const scrollLeft = cardLeft - containerWidth / 2 + cardWidth / 2;
+      container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
     }
-    
-    // Restart auto play after manual interaction
-    restartAutoPlay();
-  };
 
-  const scrollLeft = () => {
-    scrollToIndex(currentIndex - 1);
-  };
-
-  const scrollRight = () => {
-    scrollToIndex(currentIndex + 1);
-  };
-
-  const restartAutoPlay = () => {
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
-    }
+    if (autoPlayRef.current) clearInterval(autoPlayRef.current);
     startAutoPlay();
   };
 
-  const handleDotClick = (index) => {
-    scrollToIndex(index);
-  };
+  const scrollLeft = () => scrollToIndex(currentIndex - 1);
+  const scrollRight = () => scrollToIndex(currentIndex + 1);
+  const handleDotClick = (index) => scrollToIndex(index);
 
   return (
     <div className="relative py-24 w-full overflow-hidden bg-gradient-to-l from-orange-50 via-amber-50 to-orange-100 lg:px-20">
-      {/* Decorative elements - matching hero section colors */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-40 left-20 w-72 h-72 rounded-full bg-gradient-to-r from-orange-200/40 to-amber-200/40 blur-3xl opacity-60"></div>
         <div className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-gradient-to-r from-orange-200/30 to-amber-200/30 blur-3xl opacity-50"></div>
@@ -181,7 +131,11 @@ export default function FeaturedProfiles() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className={`text-center mb-16 transition-all duration-700 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <div
+          className={`text-center mb-16 transition-all duration-700 transform ${
+            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+          }`}
+        >
           <h2 className="text-4xl font-bold text-gray-800 mb-4 font-serif">Featured Profiles</h2>
           <p className="text-lg text-[#7b2b2a] max-w-2xl mx-auto">
             Meet some of our exceptional members looking for meaningful connections
@@ -189,16 +143,25 @@ export default function FeaturedProfiles() {
         </div>
 
         <div className="relative">
-          {/* Carousel navigation buttons */}
-          <button 
+          {loading && (
+            <div className="text-center text-gray-600 py-6">Loading featured profiles...</div>
+          )}
+          {error && (
+            <div className="text-center text-red-600 py-6">{error}</div>
+          )}
+          {!loading && !error && profiles.length === 0 && (
+            <div className="text-center text-gray-600 py-6">No featured profiles available right now.</div>
+          )}
+
+          <button
             onClick={scrollLeft}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 backdrop-blur-md text-orange-600 rounded-full p-3 shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 md:-left-6 hover:-translate-x-1 border border-orange-100"
             aria-label="Previous profile"
           >
             <ChevronLeft size={24} />
           </button>
-          
-          <button 
+
+          <button
             onClick={scrollRight}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/80 backdrop-blur-md text-orange-600 rounded-full p-3 shadow-lg hover:bg-white hover:shadow-xl transition-all duration-300 md:-right-6 hover:translate-x-1 border border-orange-100"
             aria-label="Next profile"
@@ -206,47 +169,47 @@ export default function FeaturedProfiles() {
             <ChevronRight size={24} />
           </button>
 
-          {/* Carousel container */}
-          <div 
+          <div
             ref={carouselRef}
             className="flex gap-8 overflow-x-auto pb-8 pt-4 px-2 snap-x snap-mandatory scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {profiles.map((profile, index) => (
-              <div 
-                key={index} 
-                ref={el => cardsRef.current[index] = el}
+              <div
+                key={index}
+                ref={(el) => (cardsRef.current[index] = el)}
                 className={`flex-shrink-0 w-80 transition-all duration-500 transform snap-center ${
                   index === currentIndex ? 'scale-105 opacity-100' : 'scale-95 opacity-80'
                 }`}
                 style={{ transitionDelay: `${50 * Math.abs(currentIndex - index)}ms` }}
               >
-                <div className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${
-                  index === currentIndex ? 'border-2 border-orange-300' : 'border border-orange-100'
-                }`}>
-                  {/* Profile image */}
+                <div
+                  className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${
+                    index === currentIndex ? 'border-2 border-orange-300' : 'border border-orange-100'
+                  }`}
+                >
                   <div className="relative h-96 overflow-hidden">
                     <Image
                       width={1920}
-                      height={1080} 
-                      src={profile.photo} 
-                      alt={profile.name} 
+                      height={1080}
+                      src={profile.photo}
+                      alt={profile.name}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10"></div>
-                    
-                    {/* Like button overlay */}
+
                     <button className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full hover:bg-white/60 transition-all duration-300 hover:scale-110">
                       <Heart size={20} className="text-white hover:text-orange-600 transition-colors duration-300" />
                     </button>
-                    
-                    {/* Name overlay */}
+
                     <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-                      <h3 className="text-2xl font-semibold mb-1">{profile.name}, {profile.age}</h3>
+                      <h3 className="text-2xl font-semibold mb-1">
+                        {profile.name}
+                        {profile.age ? `, ${profile.age}` : ''}
+                      </h3>
                     </div>
                   </div>
-                  
-                  {/* Profile info */}
+
                   <div className="p-5 bg-white">
                     <div className="space-y-3 mb-4">
                       <div className="flex items-center text-gray-700">
@@ -258,7 +221,7 @@ export default function FeaturedProfiles() {
                         <span>{profile.profession}</span>
                       </div>
                     </div>
-                    
+
                     <button className="w-full py-3 px-4 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-xl font-medium hover:from-orange-700 hover:to-amber-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:scale-95">
                       View Profile
                     </button>
@@ -269,14 +232,15 @@ export default function FeaturedProfiles() {
           </div>
         </div>
 
-        {/* Pagination dots */}
         <div className="flex justify-center mt-8 space-x-2">
           {profiles.map((_, index) => (
             <button
               key={index}
               onClick={() => handleDotClick(index)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex ? 'w-8 bg-gradient-to-r from-orange-600 to-amber-600' : 'w-2 bg-orange-200 hover:bg-orange-300'
+                index === currentIndex
+                  ? 'w-8 bg-gradient-to-r from-orange-600 to-amber-600'
+                  : 'w-2 bg-orange-200 hover:bg-orange-300'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

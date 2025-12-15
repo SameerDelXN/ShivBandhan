@@ -652,7 +652,7 @@ const EditProfileModal = ({
             <button
               onClick={() => onSave(formData)}
               disabled={isSaving}
-              className="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md hover:bg-rose-600 flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 flex items-center gap-2 disabled:opacity-50"
             >
               {isSaving ? (
                 <>
@@ -892,7 +892,7 @@ export default function Verification() {
           transition={{ duration: 0.3 }}
           className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden border border-gray-100 relative"
         >
-          <div className="absolute top-3 right-3 text-amber-600 text-sm font-medium">
+          <div className="absolute top-3 right-3 text-amber-800 text-sm font-medium">
             {activeTab === 'pending' ? 'Pending Verification' : 'Requires Admin Setup'}
           </div>
 
@@ -919,7 +919,7 @@ export default function Verification() {
                 <h2 className="text-lg font-bold text-gray-800 truncate">{u.name}</h2>
                 <p className="text-sm text-gray-600 truncate">{u.email || u.phone}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">
                     {u.age} yrs
                   </span>
                   <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
@@ -937,13 +937,13 @@ export default function Verification() {
             <div className="mt-2">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-medium text-gray-500">Profile Completion</span>
-                <span className="text-xs font-bold text-rose-600">
+                <span className="text-xs font-bold text-orange-600">
                   {u.profileCompletion}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
-                  className="h-2 rounded-full bg-gradient-to-r from-rose-400 to-indigo-500" 
+                  className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-indigo-500" 
                   style={{ width: `${u.profileCompletion}%` }}
                 />
               </div>
@@ -954,7 +954,7 @@ export default function Verification() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedProfile(u)}
-                className="flex-1 bg-gradient-to-r from-rose-50 to-white hover:from-rose-100 hover:to-white text-rose-600 px-3 py-2 rounded-lg text-sm font-medium border border-rose-200 transition-all flex items-center justify-center gap-1"
+                className="flex-1 bg-gradient-to-r from-orange-50 to-white hover:from-orange-100 hover:to-white text-orange-600 px-3 py-2 rounded-lg text-sm font-medium border border-orange-200 transition-all flex items-center justify-center gap-1"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -1106,7 +1106,7 @@ export default function Verification() {
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             selectedProfile.isVerified 
                               ? 'bg-green-100 text-green-800' 
-                              : 'bg-amber-100 text-amber-800'
+                              : 'bg-amber-300 text-amber-800'
                           }`}>
                             {selectedProfile.isVerified ? 'Verified' : 'Pending'}
                           </span>
@@ -1114,14 +1114,14 @@ export default function Verification() {
 
                         <div className="flex justify-between items-center">
                           <h3 className="font-medium text-gray-700">Profile Completion</h3>
-                          <span className="text-sm font-bold text-rose-600">
+                          <span className="text-sm font-bold text-orange-600">
                             {selectedProfile.profileCompletion}%
                           </span>
                         </div>
 
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="h-2 rounded-full bg-gradient-to-r from-rose-400 to-indigo-500" 
+                            className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-indigo-500" 
                             style={{ width: `${selectedProfile.profileCompletion}%` }}
                           />
                         </div>
@@ -1132,7 +1132,7 @@ export default function Verification() {
     <div className="grid grid-cols-2 gap-3">
       <button
         onClick={() => handleVerification(selectedProfile._id, 'REJECT')}
-        className="px-4 py-2 text-sm font-medium text-rose-700 bg-rose-100 rounded-md hover:bg-rose-200 flex items-center justify-center gap-2"
+        className="px-4 py-2 text-sm font-medium text-orange-700 bg-orange-100 rounded-md hover:bg-orange-200 flex items-center justify-center gap-2"
       >
         <XCircle size={16} /> Reject
       </button>

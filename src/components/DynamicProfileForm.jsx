@@ -547,7 +547,7 @@ const DynamicProfileForm = () => {
           <select
             value={value}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           >
             <option value="">Select {field.label}</option>
             {field.options?.map(option => (
@@ -561,7 +561,7 @@ const DynamicProfileForm = () => {
           <select
             value={value ? 'Yes' : 'No'}
             onChange={(e) => handleInputChange(field.name, e.target.value === 'Yes')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           >
             <option value="No">No</option>
             <option value="Yes">Yes</option>
@@ -574,7 +574,7 @@ const DynamicProfileForm = () => {
             type="date"
             value={formatDateToYYYYMMDD(value)}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         );
 
@@ -584,7 +584,7 @@ const DynamicProfileForm = () => {
             type="number"
             value={value}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         );
 
@@ -595,7 +595,7 @@ const DynamicProfileForm = () => {
             value={value}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             placeholder={field.placeholder}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         );
     }
@@ -647,12 +647,12 @@ const DynamicProfileForm = () => {
     if (currentSection.label.toLowerCase().includes('photo')) {
       return (
         <div className="space-y-6">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="bg-amber-150 border border-amber-400 rounded-lg p-4">
             <div className="flex items-start">
-              <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 mr-2" />
+              <AlertCircle className="w-5 h-5 text-amber-800 mt-0.5 mr-2" />
               <div>
                 <p className="text-sm text-amber-800 font-medium">Add more photos to increase profile visibility</p>
-                <p className="text-xs text-amber-700 mt-1">Profiles with 3+ photos get 5x more interest!</p>
+                <p className="text-xs text-amber-900 mt-1">Profiles with 3+ photos get 5x more interest!</p>
               </div>
             </div>
           </div>
@@ -692,7 +692,7 @@ const DynamicProfileForm = () => {
                       <div className="mt-2 space-y-1">
                         <button
                           onClick={() => open()}
-                          className="w-full bg-rose-50 text-rose-600 py-1 px-2 rounded text-xs font-medium hover:bg-rose-100 transition-colors"
+                          className="w-full bg-orange-50 text-orange-600 py-1 px-2 rounded text-xs font-medium hover:bg-orange-100 transition-colors"
                         >
                           {photo.url ? 'Change' : 'Upload'}
                         </button>
@@ -722,7 +722,7 @@ const DynamicProfileForm = () => {
             <div key={field._id} className="space-y-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 {field.label}
-                {field.required && <span className="text-rose-500 ml-1">*</span>}
+                {field.required && <span className="text-orange-500 ml-1">*</span>}
               </label>
               {renderFieldInput(field)}
             </div>
@@ -744,11 +744,11 @@ const DynamicProfileForm = () => {
   }
 //sample
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
   <div className="max-w-7xl mx-auto space-y-6">
     {/* Profile Header */}
-    <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+    <div className="bg-white rounded-2xl p-8 shadow-xl border border-orange-100/50 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-50"></div>
       <div className="relative z-10">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
           <div className="xs:flex-col lg:flex-row flex items-center space-x-6 mb-6 lg:mb-0">
@@ -778,14 +778,14 @@ const DynamicProfileForm = () => {
                       </div>
                     ) : (
                       <div
-                        className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
+                        className="w-24 h-24 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow-md"
                         onClick={() => open()}
                       >
-                        <User className="w-12 h-12 text-rose-500" />
+                        <User className="w-12 h-12 text-orange-500" />
                       </div>
                     )}
                     <button
-                      className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm z-20"
+                      className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center hover:bg-orange-600 transition-colors shadow-sm z-20"
                       onClick={(e) => {
                         e.stopPropagation();
                         open();
@@ -825,22 +825,22 @@ const DynamicProfileForm = () => {
           </div>
 
           <div className="flex flex-col space-y-3">
-            <div className="bg-rose-50 rounded-lg p-4 min-w-[200px]">
+            <div className="bg-orange-50 rounded-lg p-4 min-w-[200px]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">Profile Completion</span>
-                <span className="text-sm font-bold text-rose-600">
+                <span className="text-sm font-bold text-orange-600">
                   {profileCompletion}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                 <div
-                  className="bg-gradient-to-r from-rose-500 to-rose-600 h-2 rounded-full"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full"
                   style={{ width: `${profileCompletion}%` }}
                 ></div>
               </div>
               <button
                 onClick={handleProfileUpdate}
-                className="w-full bg-rose-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition-colors"
+                className="w-full bg-orange-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors"
                 disabled={isSaving}
               >
                 {isSaving ? 'Saving...' : "Save Profile"}
@@ -855,7 +855,7 @@ const DynamicProfileForm = () => {
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
       {/* Left Sidebar - Profile Sections */}
       <div className="lg:col-span-1 space-y-4">
-        <div className="bg-white rounded-xl p-4 shadow-lg border border-rose-100/50">
+        <div className="bg-white rounded-xl p-4 shadow-lg border border-orange-100/50">
           <h3 className="font-bold text-gray-900 mb-4">Profile Sections</h3>
           <div className="space-y-2">
             {formSections.map((section) => {
@@ -871,7 +871,7 @@ const DynamicProfileForm = () => {
                   key={section._id}
                   onClick={() => setActiveTab(section._id)}
                   className={`w-full px-4 flex items-center p-3 rounded-lg transition-all duration-200 ${activeTab === section._id
-                      ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                      ? 'bg-orange-50 text-orange-600 border border-orange-200'
                       : 'text-gray-700'
                     }`}
                 >
@@ -885,7 +885,7 @@ const DynamicProfileForm = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-400 to-rose-500 rounded-xl p-4 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-amber-600 to-orange-500 rounded-xl p-4 text-white shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold">{formData.subscription?.plan || 'Free Plan'}</h3>
             <Crown className="w-5 h-5 text-yellow-200" />
@@ -918,7 +918,7 @@ const DynamicProfileForm = () => {
 
       {/* Main Profile Content */}
       <div className="lg:col-span-3">
-        <div className="bg-white rounded-xl shadow-lg border border-rose-100/50">
+        <div className="bg-white rounded-xl shadow-lg border border-orange-100/50">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900">
@@ -942,7 +942,7 @@ const DynamicProfileForm = () => {
               <button
                 onClick={handleProfileUpdate}
                 disabled={isSaving}
-                className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
               </button>

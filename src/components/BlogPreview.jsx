@@ -52,17 +52,17 @@ export default function BlogPreview() {
     <div className="relative w-full overflow-hidden bg-white py-20">
       {/* Decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-rose-50 blur-3xl opacity-40"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-orange-50 blur-3xl opacity-40"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-amber-50 blur-3xl opacity-30"></div>
       </div>
 
       <div className="container mx-auto px-4">
         <div className={`text-center mb-16 transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
-          <span className="px-4 py-1 rounded-full bg-rose-100 text-rose-600 text-sm font-medium">
+          <span className="px-4 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium">
             Insights & Advice
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mt-4 mb-6 font-serif">
-            Relationship <span className="text-rose-600">Wisdom</span>
+            Relationship <span className="text-orange-600">Wisdom</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto font-sans">
             Expert advice and thoughtful perspectives to guide your journey
@@ -79,7 +79,7 @@ export default function BlogPreview() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white text-rose-600 text-xs font-medium">
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white text-orange-600 text-xs font-medium">
                   {post.category}
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function BlogPreview() {
                 
                 <a 
                   href="#" 
-                  className="inline-flex items-center text-rose-600 hover:text-rose-700 font-medium font-sans transition-colors duration-300"
+                  className="inline-flex items-center text-orange-600 hover:text-orange-700 font-medium font-sans transition-colors duration-300"
                 >
                   Read More
                   <ArrowRight size={16} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
@@ -112,7 +112,7 @@ export default function BlogPreview() {
         </div>
 
         <div className={`text-center mt-16 transition-all duration-1000 delay-500 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <button className="px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl font-sans">
+          <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl font-sans">
             View All Articles
           </button>
         </div>

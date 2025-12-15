@@ -1,209 +1,166 @@
-"use client"
-import { useState, useEffect } from 'react';
-import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+"use client";
+import { useState, useEffect } from "react";
+import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function SuccessStories() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Sample success stories data
   const successStories = [
     {
       id: 1,
       name: "Ravi & Priya",
       location: "Mumbai, India",
-      story: "We connected instantly through our shared values and interests. After 6 months of getting to know each other, we knew we were meant to be. Forever grateful for this platform!",
-      image: "/api/placeholder/120/120"
+      story:
+        "We connected instantly through our shared values and interests. After 6 months of getting to know each other, we knew we were meant to be.",
+      image: "/images/couple1.jpeg",
     },
     {
       id: 2,
       name: "John & Sarah",
       location: "Toronto, Canada",
-      story: "Despite living in different cities, we found each other here and knew it was fate. The compatibility matching was spot on! We just celebrated our first anniversary.",
-      image: "/api/placeholder/120/120"
+      story:
+        "Despite living in different cities, we found each other here and knew it was fate.",
+      image: "/images/couple2.jpeg",
     },
     {
       id: 3,
       name: "Ahmed & Fatima",
       location: "Dubai, UAE",
-      story: "Our families were thrilled when we found each other through this platform. The traditional values combined with modern approach helped us find true compatibility.",
-      image: "/api/placeholder/120/120"
+      story:
+        "Traditional values with a modern approach helped us find true compatibility.",
+      image: "/images/couple3.jpeg",
     },
-    {
-      id: 4,
-      name: "Michael & Jessica",
-      location: "Sydney, Australia",
-      story: "After unsuccessful attempts on other platforms, we found each other here. The detailed profiles helped us connect on a deeper level before we even met in person.",
-      image: "/api/placeholder/120/120"
-    },
-    {
-      id: 5,
-      name: "Raj & Anita",
-      location: "London, UK",
-      story: "Living abroad, we wanted someone who shared our cultural roots. This platform connected us, and now we're building our future together with shared values.",
-      image: "/api/placeholder/120/120"
-    },
-    {
-      id: 6,
-      name: "David & Lisa",
-      location: "New York, USA",
-      story: "We both had specific preferences that were important to us. The advanced matching algorithm brought us together, and it's been perfect ever since our first date.",
-      image: "/api/placeholder/120/120"
-    }
   ];
 
-  // Number of cards to show per view based on screen size
-  const getVisibleCards = () => {
-    if (typeof window !== 'undefined') {
-      if (window.innerWidth >= 1280) return 3;
-      if (window.innerWidth >= 768) return 2;
-    }
-    return 1;
-  };
-
-  const [visibleCards, setVisibleCards] = useState(3);
-
+  /* Auto slide */
   useEffect(() => {
-    setIsLoaded(true);
-    setVisibleCards(getVisibleCards());
+    const interval = setInterval(() => {
+      setActiveIndex((prev) =>
+        prev === successStories.length - 1 ? 0 : prev + 1
+      );
+    }, 4000);
 
-    const handleResize = () => {
-      setVisibleCards(getVisibleCards());
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    return () => clearInterval(interval);
+  }, [successStories.length]);
 
   const nextSlide = () => {
-    setActiveIndex((prevIndex) => 
-      prevIndex + visibleCards >= successStories.length 
-        ? 0 
-        : prevIndex + visibleCards
+    setActiveIndex((prev) =>
+      prev === successStories.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevSlide = () => {
-    setActiveIndex((prevIndex) => 
-      prevIndex - visibleCards < 0 
-        ? Math.max(0, successStories.length - visibleCards) 
-        : prevIndex - visibleCards
+    setActiveIndex((prev) =>
+      prev === 0 ? successStories.length - 1 : prev - 1
     );
   };
 
+  const story = successStories[activeIndex];
+
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-r from-rose-50 to-amber-50 py-20">
-      {/* Decorative elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-40 left-20 w-64 h-64 rounded-full bg-rose-100 blur-3xl opacity-30"></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 rounded-full bg-amber-100 blur-3xl opacity-40"></div>
+    <section className="relative w-full py-24 bg-[#8b1d1d] overflow-visible">
+      {/* Header */}
+      <div className="text-center text-white mb-16 px-4">
+        <h2 className="text-3xl md:text-4xl font-bold mb-3">
+          Celebrating Successful Matches
+        </h2>
+        <p className="max-w-2xl mx-auto text-white/80">
+          Real love stories from couples who found their life partner with us.
+        </p>
       </div>
 
-      <div className="container mx-auto px-4">
-        <div className={`transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          {/* Section header */}
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="px-4 py-1 rounded-full bg-rose-100 text-rose-600 text-sm font-medium">
-                Love Stories
-              </span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Celebrating <span className="text-rose-600">Success</span> Stories
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Thousands of couples have found their perfect match through our platform. 
-              Here are some heartwarming journeys to inspire your own love story.
+      {/* Card Wrapper */}
+      <div className="relative max-w-5xl mx-auto px-4">
+        {/* Navigation */}
+        <div className="absolute inset-y-1/2 left-2 right-2 md:left-0 md:right-0 flex justify-between z-20">
+          <button
+            onClick={prevSlide}
+            className="w-11 h-11 rounded-full bg-white text-[#8b1d1d] flex items-center justify-center shadow"
+          >
+            <ChevronLeft />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="w-11 h-11 rounded-full bg-white text-[#8b1d1d] flex items-center justify-center shadow"
+          >
+            <ChevronRight />
+          </button>
+        </div>
+
+        {/* Card */}
+        <div
+          className="
+            relative bg-white rounded-3xl shadow-2xl 
+            flex flex-col md:flex-row
+            h-auto md:h-[320px]
+            overflow-visible
+            px-6
+          "
+        >
+          {/* Image */}
+          <div
+            className="
+              relative md:absolute
+              md:-top-12 md:-bottom-12
+              w-full md:w-56
+              h-64 md:h-[380px]
+              rounded-2xl
+              overflow-hidden
+              shadow-xl
+              border-4 border-orange-500
+              mx-auto md:mx-0
+            "
+          >
+            <img
+              src={story.image}
+              alt={story.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Content */}
+          <div
+            className="
+              mt-6 md:mt-0
+              md:ml-56
+              p-4 md:p-8
+              flex flex-col
+              justify-center
+              text-center md:text-left
+            "
+          >
+            <Quote className="text-[#8b1d1d] mb-3 mx-auto md:mx-0" />
+
+            <p className="text-gray-700 italic mb-6">
+              "{story.story}"
             </p>
-          </div>
 
-          {/* Testimonial cards */}
-          <div className="relative">
-            {/* Carousel navigation */}
-            <div className="flex justify-between absolute top-1/2 left-0 right-0 -mt-6 px-2 md:px-4 z-10">
-              <button 
-                onClick={prevSlide}
-                className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all"
-                aria-label="Previous testimonials"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button 
-                onClick={nextSlide}
-                className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all"
-                aria-label="Next testimonials"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
+            <h4 className="font-semibold text-gray-900">
+              {story.name}
+            </h4>
 
-            {/* Cards container with smooth transitions */}
-            <div className="overflow-hidden py-8">
-              <div 
-                className="flex transition-transform duration-500 ease-in-out" 
-                style={{ transform: `translateX(-${(activeIndex * 100) / visibleCards}%)` }}
-              >
-                {successStories.map((story) => (
-                  <div 
-                    key={story.id} 
-                    className={`w-full md:w-1/2 xl:w-1/3 flex-shrink-0 px-4`}
-                  >
-                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-full transform hover:-translate-y-1 transition-all duration-300">
-                      <div className="relative">
-                        {/* Decorative top border */}
-                        <div className="h-2 bg-gradient-to-r from-rose-400 to-amber-400"></div>
-                        
-                        {/* Quote icon */}
-                        <div className="absolute -bottom-6 right-6 w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center shadow-md">
-                          <Quote size={18} className="text-rose-500" />
-                        </div>
-                      </div>
-                      
-                      <div className="p-6 pb-8 pt-10">
-                        <p className="text-gray-600 italic mb-6">"{story.story}"</p>
-                        
-                        <div className="flex items-center">
-                          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-rose-100">
-                            <img src={story.image} alt={story.name} className="w-full h-full object-cover" />
-                          </div>
-                          <div className="ml-4">
-                            <h4 className="font-semibold text-gray-800">{story.name}</h4>
-                            <p className="text-sm text-rose-600">{story.location}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Dots indicator */}
-          <div className="flex justify-center mt-8 space-x-2">
-            {Array.from({ length: Math.ceil(successStories.length / visibleCards) }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index * visibleCards)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  Math.floor(activeIndex / visibleCards) === index 
-                    ? 'w-6 bg-rose-500' 
-                    : 'bg-gray-300 hover:bg-rose-300'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* CTA Section */}
-          <div className="mt-16 text-center">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Ready to write your own success story?</h3>
-            <button className="px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-              <span className="font-medium">Start Your Journey Today</span>
-            </button>
+            <p className="text-sm text-[#8b1d1d] font-medium">
+              {story.location}
+            </p>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Dots Indicator */}
+      <div className="flex justify-center gap-3 mt-8">
+        {successStories.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              activeIndex === index
+                ? "bg-orange-500 scale-125"
+                : "bg-white/60 hover:bg-white"
+            }`}
+            aria-label={`Go to story ${index + 1}`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }

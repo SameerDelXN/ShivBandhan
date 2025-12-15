@@ -41,7 +41,7 @@ export default function AuthBanner() {
       <div className="absolute inset-0">
         {/* Dynamic Gradient Orbs */}
         <div
-          className="absolute  bg-gradient-to-r from-pink-500/30 to-orange-500/30 rounded-full blur-3xl transition-transform duration-1000 ease-out"
+          className="absolute  bg-gradient-to-r from-orange-500/30 to-orange-500/30 rounded-full blur-3xl transition-transform duration-1000 ease-out"
           style={{
             transform: `translate(${-150 + mousePosition.x * 0.5}px, ${
               -150 + mousePosition.y * 0.5
@@ -49,7 +49,7 @@ export default function AuthBanner() {
           }}
         />
         <div
-          className="absolute bottom-0 right-0  bg-gradient-to-r from-red-400/20 to-pink-400/20 rounded-full blur-3xl transition-transform duration-1000 ease-out"
+          className="absolute bottom-0 right-0  bg-gradient-to-r from-red-400/20 to-orange-400/20 rounded-full blur-3xl transition-transform duration-1000 ease-out"
           style={{
             transform: `translate(${100 - mousePosition.x * 0.3}px, ${
               100 - mousePosition.y * 0.3
@@ -74,11 +74,11 @@ export default function AuthBanner() {
               }}
             >
               {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-orange-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 scale-110" />
 
               {/* Rotating Border */}
               <div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-r from-pink-400 via-red-400 to-orange-400 opacity-0 group-hover:opacity-20 transition-opacity duration-700 animate-pulse"
+                className="absolute inset-0 rounded-3xl bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 opacity-0 group-hover:opacity-20 transition-opacity duration-700 animate-pulse"
                 style={{ padding: "2px" }}
               >
                 <div className="w-full h-full rounded-3xl bg-transparent" />
@@ -127,7 +127,7 @@ export default function AuthBanner() {
                 isHovered ? "scale-105 text-white" : "scale-100 text-white/95"
               }`}
             >
-              <span className="bg-gradient-to-r from-white via-pink-100 to-orange-100 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-white via-orange-100 to-orange-100 bg-clip-text text-transparent">
                 ShivBandhan
               </span>
             </h1>

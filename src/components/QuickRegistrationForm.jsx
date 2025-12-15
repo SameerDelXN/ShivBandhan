@@ -116,7 +116,7 @@ export default function QuickRegistrationForm() {
 
   return (
     <div className="w-full lg:w-auto lg:pl-8">
-      <div className="bg-white p-6 rounded-2xl shadow-xl border border-rose-50 w-full max-w-md">
+      <div className="bg-white p-6 rounded-2xl shadow-xl border border-orange-50 w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Find Your Match Today
         </h2>
@@ -126,11 +126,11 @@ export default function QuickRegistrationForm() {
           {[1, 2].map((stepNumber) => (
             <div key={stepNumber} className="flex flex-col items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center 
-                ${step >= stepNumber ? 'bg-rose-600 text-white' : 'bg-gray-200 text-gray-600'} 
-                ${step === stepNumber ? 'ring-4 ring-rose-200' : ''}`}>
+                ${step >= stepNumber ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-600'} 
+                ${step === stepNumber ? 'ring-4 ring-orange-200' : ''}`}>
                 {step > stepNumber ? <Check size={16} /> : stepNumber}
               </div>
-              <span className={`text-xs mt-1 ${step >= stepNumber ? 'text-rose-600 font-medium' : 'text-gray-500'}`}>
+              <span className={`text-xs mt-1 ${step >= stepNumber ? 'text-orange-600 font-medium' : 'text-gray-500'}`}>
                 Step {stepNumber}
               </span>
             </div>
@@ -151,7 +151,7 @@ export default function QuickRegistrationForm() {
                   value={formData.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-rose-200 focus:border-rose-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-orange-200 focus:border-orange-500`}
                   placeholder="Enter your full name"
                 />
                 {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -169,7 +169,7 @@ export default function QuickRegistrationForm() {
                         checked={formData.gender === gender}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300"
+                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300"
                       />
                       <span className="text-gray-700">{gender}</span>
                     </label>
@@ -190,7 +190,7 @@ export default function QuickRegistrationForm() {
                         checked={formData.lookingFor === option}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        className="h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300"
+                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300"
                       />
                       <span className="text-gray-700">{option}</span>
                     </label>
@@ -202,7 +202,7 @@ export default function QuickRegistrationForm() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md flex items-center justify-center group"
+                className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md flex items-center justify-center group"
               >
                 <span className="font-medium">Continue</span>
                 <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform duration-200" />
@@ -221,7 +221,7 @@ export default function QuickRegistrationForm() {
                   value={formData.dob}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 rounded-lg border ${errors.dob ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-rose-200 focus:border-rose-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${errors.dob ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-orange-200 focus:border-orange-500`}
                 />
                 {errors.dob && <p className="mt-1 text-sm text-red-600">{errors.dob}</p>}
               </div>
@@ -237,7 +237,7 @@ export default function QuickRegistrationForm() {
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-rose-200 focus:border-rose-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-orange-200 focus:border-orange-500`}
                   placeholder="your@email.com"
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -254,7 +254,7 @@ export default function QuickRegistrationForm() {
                   value={formData.mobile}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={`w-full px-4 py-2 rounded-lg border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-rose-200 focus:border-rose-500`}
+                  className={`w-full px-4 py-2 rounded-lg border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-orange-200 focus:border-orange-500`}
                   placeholder="+1 123 456 7890"
                 />
                 {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
@@ -264,7 +264,7 @@ export default function QuickRegistrationForm() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="flex-1 px-6 py-3 bg-white text-rose-600 rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-md flex items-center justify-center border border-gray-200"
+                  className="flex-1 px-6 py-3 bg-white text-orange-600 rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-md flex items-center justify-center border border-gray-200"
                 >
                   Back
                 </button>
@@ -272,7 +272,7 @@ export default function QuickRegistrationForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-lg hover:from-rose-600 hover:to-rose-700 transition-all duration-300 shadow-md flex items-center justify-center disabled:opacity-70"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md flex items-center justify-center disabled:opacity-70"
                 >
                   {isSubmitting ? 'Processing...' : 'Start Finding Matches'}
                 </button>

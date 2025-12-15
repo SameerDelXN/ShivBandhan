@@ -57,7 +57,7 @@ export default function MatrimonialDashboard() {
         month: 'short', 
         day: 'numeric' 
       }),
-      color: isSubscribed && !isExpired ? 'bg-gradient-to-br from-amber-400 to-rose-500' : 'bg-gradient-to-br from-amber-400 to-rose-500'
+      color: isSubscribed && !isExpired ? 'bg-gradient-to-br from-amber-600 to-orange-500' : 'bg-gradient-to-br from-amber-600 to-orange-500'
     };
   };
 
@@ -84,24 +84,24 @@ export default function MatrimonialDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Welcome Section */}
         {!isLoaded ? (
           <SkeletonCard height="h-32" />
         ) : (
           <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-gradient-to-r from-rose-500 to-rose-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
                     <h1 className="text-2xl font-bold mb-2">Welcome back, {user?.name}! 👋</h1>
-                    <p className="text-rose-100">Your perfect match is just a click away</p>
+                    <p className="text-orange-100">Your perfect match is just a click away</p>
                   </div>
                   <div className="hidden md:block">
-                    <Sparkles className="w-12 h-12 text-rose-200" />
+                    <Sparkles className="w-12 h-12 text-orange-200" />
                   </div>
                 </div>
               </div>
@@ -119,7 +119,7 @@ export default function MatrimonialDashboard() {
         ) : (
           <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transform transition-all duration-1000 delay-200 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             {/* Profile Status */}
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50 hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-800">Profile Status</h3>
                 <div className="flex items-center space-x-1">
@@ -155,10 +155,10 @@ export default function MatrimonialDashboard() {
             </div>
 
             {/* Contact Information */}
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-orange-100/50 hover:shadow-xl transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-800">Contact Info</h3>
-                <Phone className="w-5 h-5 text-rose-500" />
+                <Phone className="w-5 h-5 text-orange-500" />
               </div>
               <div className="space-y-3">
                 <div>
@@ -205,18 +205,18 @@ export default function MatrimonialDashboard() {
         ) : (
           <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             {/* My Profile Card */}
-            <div className="lg:col-span-1 bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+            <div className="lg:col-span-1 bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
               <div className="text-center">
                 <div className="relative inline-block mb-4">
                   {user?.profilePhoto ? (
                     <img 
                       src={user.profilePhoto} 
                       alt={user.name}
-                      className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-rose-100"
+                      className="w-24 h-24 rounded-full object-cover mx-auto border-4 border-orange-100"
                     />
                   ) : (
-                    <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center mx-auto">
-                      <User className="w-12 h-12 text-rose-500" />
+                    <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center mx-auto">
+                      <User className="w-12 h-12 text-orange-500" />
                     </div>
                   )}
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -233,21 +233,21 @@ export default function MatrimonialDashboard() {
                 <div className="text-xs text-gray-500 mb-4">
                   {subscriptionInfo.plan} Member
                 </div>
-                <Link href="/dashboard/profile/me" className="w-full block bg-gradient-to-r px-3 from-rose-500 to-rose-600 text-white py-2 rounded-lg font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300 text-center">
+                <Link href="/dashboard/profile/me" className="w-full block bg-gradient-to-r px-3 from-orange-500 to-orange-600 text-white py-2 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 text-center">
                   Edit Profile
                 </Link>
               </div>
             </div>
 
             {/* Quick Actions Dashboard */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-lg border border-rose-100/50">
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-lg border border-orange-100/50">
   <div className="flex items-center justify-between mb-6">
     <h3 className="font-bold text-gray-900 text-lg">Quick Actions</h3>
   </div>
   
   <div className="flex flex-col gap-4 mb-6">
-    <Link href={"/dashboard/matches"} className="flex items-center p-4 bg-rose-50 rounded-lg hover:bg-rose-100 transition-colors">
-      <Heart className="w-6 h-6 text-rose-500 mr-3" />
+    <Link href={"/dashboard/matches"} className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+      <Heart className="w-6 h-6 text-orange-500 mr-3" />
       <div className="text-left">
         <div className="font-medium text-gray-900">Browse Matches</div>
         <div className="text-sm text-gray-600">Find your perfect match</div>
@@ -273,11 +273,11 @@ export default function MatrimonialDashboard() {
           <SkeletonCard height="h-24" />
         ) : (
           <div className={`transform transition-all duration-1000 delay-500 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-gradient-to-r from-rose-500 to-amber-500 rounded-xl p-6 text-white shadow-xl">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-700 rounded-xl p-6 text-white shadow-xl">
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <div className="mb-4 md:mb-0">
                   <h3 className="font-bold text-xl mb-2">Ready to find your perfect match?</h3>
-                  <p className="text-rose-100">Explore personalized matches based on your preferences</p>
+                  <p className="text-orange-100">Explore personalized matches based on your preferences</p>
                 </div>
                 <div className="flex space-x-3">
                   <Link href={"/dashboard/matches"}  className="cursor-pointer bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg font-medium hover:bg-white/30 transition-all duration-300 flex items-center">
@@ -285,7 +285,7 @@ export default function MatrimonialDashboard() {
                     Browse Matches
                   </Link>
                   {subscriptionInfo.status !== 'Active' && (
-                    <button className="bg-white text-rose-600 px-6 py-3 rounded-lg font-medium hover:bg-rose-50 transition-all duration-300 flex items-center">
+                    <button className="bg-white text-orange-600 px-6 py-3 rounded-lg font-medium hover:bg-orange-50 transition-all duration-300 flex items-center">
                       <Gift className="w-4 h-4 mr-2" />
                       Upgrade Plan
                     </button>

@@ -200,7 +200,7 @@ export default function SubscriptionPlans() {
     } else if (lowerName.includes("premium")) {
       return {
         icon: Star,
-        color: "from-purple-500 to-pink-500",
+        color: "from-purple-500 to-orange-500",
         bgColor: "bg-purple-100",
         textColor: "text-purple-600",
         badgeColor: "bg-purple-500",
@@ -246,15 +246,15 @@ export default function SubscriptionPlans() {
   // Loading and error states
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
-        <Loader2 className="w-12 h-12 text-rose-500 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
+        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
         <div className="text-center p-6 bg-white rounded-lg shadow-lg max-w-md">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-8 h-8 text-red-500" />
@@ -265,7 +265,7 @@ export default function SubscriptionPlans() {
           <p className="text-gray-700 mb-4">{error}</p>
           <button
             onClick={fetchPlans}
-            className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors"
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
           >
             Retry
           </button>
@@ -275,12 +275,12 @@ export default function SubscriptionPlans() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full mb-6 shadow-lg">
-            <Crown className="w-10 h-10 text-rose-500" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full mb-6 shadow-lg">
+            <Crown className="w-10 h-10 text-orange-500" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Subscription Plans
@@ -299,7 +299,7 @@ export default function SubscriptionPlans() {
               placeholder="Search plans..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
             />
           </div>
 
@@ -316,7 +316,7 @@ export default function SubscriptionPlans() {
               });
               setShowAddModal(true);
             }}
-            className="flex items-center px-5 py-2.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-md hover:shadow-lg whitespace-nowrap"
+            className="flex items-center px-5 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-md hover:shadow-lg whitespace-nowrap"
           >
             <Plus className="w-5 h-5 mr-2" />
             Add New Plan
@@ -416,7 +416,7 @@ export default function SubscriptionPlans() {
                         });
                         setShowAddModal(true);
                       }}
-                      className="p-2 text-gray-500 hover:text-rose-500 rounded-full hover:bg-gray-100 transition-colors"
+                      className="p-2 text-gray-500 hover:text-orange-500 rounded-full hover:bg-gray-100 transition-colors"
                       title="Edit"
                     >
                       <Edit className="w-5 h-5" />
@@ -467,7 +467,7 @@ export default function SubscriptionPlans() {
                     onClick={() => setCurrentPage(page)}
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       currentPage === page
-                        ? "bg-rose-500 text-white"
+                        ? "bg-orange-500 text-white"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
@@ -499,13 +499,13 @@ export default function SubscriptionPlans() {
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-gray-100">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-rose-50 to-amber-50 p-6 border-b border-gray-200">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-150 p-6 border-b border-gray-200">
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">
                     {editingPlan ? "Edit Plan" : "Create New Plan"}
                   </h3>
-                  <p className="text-rose-600 mt-1 text-sm">
+                  <p className="text-orange-600 mt-1 text-sm">
                     Customize your subscription offering
                   </p>
                 </div>
@@ -525,14 +525,14 @@ export default function SubscriptionPlans() {
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <span>Plan Name</span>
-                    <span className="text-rose-500 ml-1">*</span>
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all shadow-sm"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all shadow-sm"
                     placeholder="e.g. Premium Plan"
                     required
                   />
@@ -554,8 +554,8 @@ export default function SubscriptionPlans() {
                     <button
                       type="button"
                       onClick={toggleFreePlan}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 ${
-                        formData.isFree ? "bg-rose-500" : "bg-gray-300"
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                        formData.isFree ? "bg-orange-500" : "bg-gray-300"
                       }`}
                     >
                       <span
@@ -571,7 +571,7 @@ export default function SubscriptionPlans() {
                     <div className="mt-4 space-y-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                         <span>Price</span>
-                        <span className="text-rose-500 ml-1">*</span>
+                        <span className="text-orange-500 ml-1">*</span>
                       </label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -582,7 +582,7 @@ export default function SubscriptionPlans() {
                           name="price"
                           value={formData.price}
                           onChange={handleChange}
-                          className="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all shadow-sm"
+                          className="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all shadow-sm"
                           placeholder="299"
                           min="1"
                           required
@@ -596,7 +596,7 @@ export default function SubscriptionPlans() {
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <span>Duration</span>
-                    <span className="text-rose-500 ml-1">*</span>
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
                   <div className="grid grid-cols-4 gap-2">
                     {[
@@ -616,7 +616,7 @@ export default function SubscriptionPlans() {
                         }
                         className={`py-2 px-3 rounded-lg border transition-all ${
                           formData.durationInDays === item.days
-                            ? "bg-rose-500 text-white border-rose-500 shadow-md"
+                            ? "bg-orange-500 text-white border-orange-500 shadow-md"
                             : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
                         }`}
                       >
@@ -639,7 +639,7 @@ export default function SubscriptionPlans() {
                       onKeyDown={(e) =>
                         e.key === "Enter" && (e.preventDefault(), addFeature())
                       }
-                      className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 transition-all shadow-sm"
+                      className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all shadow-sm"
                       placeholder="Enter feature (e.g. '24/7 Support')"
                     />
                     <button
@@ -648,7 +648,7 @@ export default function SubscriptionPlans() {
                       disabled={!newFeature.trim()}
                       className={`px-4 py-3 rounded-lg transition-all flex items-center ${
                         newFeature.trim()
-                          ? "bg-rose-500 text-white hover:bg-rose-600 shadow-md"
+                          ? "bg-orange-500 text-white hover:bg-orange-600 shadow-md"
                           : "bg-gray-100 text-gray-400 cursor-not-allowed"
                       }`}
                     >
@@ -697,7 +697,7 @@ export default function SubscriptionPlans() {
                           isActive: !prev.isActive,
                         }))
                       }
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 ${
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
                         formData.isActive ? "bg-green-500" : "bg-gray-300"
                       }`}
                     >
@@ -721,7 +721,7 @@ export default function SubscriptionPlans() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all shadow-md hover:shadow-lg flex items-center"
+                    className="px-5 py-3 bg-gradient-to-r from-orange-500 to-orange-500 text-white rounded-lg hover:from-orange-600 hover:to-orange-600 transition-all shadow-md hover:shadow-lg flex items-center"
                   >
                     <Check className="w-5 h-5 mr-2" />
                     {editingPlan ? "Update Plan" : "Create Plan"}

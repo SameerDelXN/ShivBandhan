@@ -74,11 +74,11 @@ export default function AdminLayout({ children }) {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-amber-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-700 rounded-lg flex items-center justify-center">
               <Crown className="w-4 h-4 text-white" />
             </div>
             <h2 className="font-bold text-gray-900">Admin Panel</h2>
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }) {
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-amber-500 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-700 rounded-lg flex items-center justify-center">
                         <Crown className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -132,8 +132,8 @@ export default function AdminLayout({ children }) {
                           }}
                           className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                             activeTab === section.id 
-                              ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-lg' 
-                              : 'hover:bg-rose-50 text-gray-700 hover:text-gray-900'
+                              ? 'bg-gradient-to-r from-orange-500 to-amber-700 text-white shadow-lg' 
+                              : 'hover:bg-orange-50 text-gray-700 hover:text-gray-900'
                           }`}
                         >
                           <Icon className="w-5 h-5" />
@@ -158,10 +158,10 @@ export default function AdminLayout({ children }) {
           )}
 
           {/* Sidebar - Desktop */}
-          <div className="hidden lg:block w-64 bg-white shadow-xl border-r border-rose-100/50 min-h-screen">
+          <div className="hidden lg:block w-64 bg-white shadow-xl border-r border-orange-100/50 min-h-screen">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-amber-500 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-700 rounded-lg flex items-center justify-center">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -186,8 +186,8 @@ export default function AdminLayout({ children }) {
                       }}
                       className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${
                         activeTab === section.id 
-                          ? 'bg-gradient-to-r from-rose-500 to-amber-500 text-white shadow-lg' 
-                          : 'hover:bg-rose-50 text-gray-700 hover:text-gray-900'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-700 text-white shadow-lg' 
+                          : 'hover:bg-orange-50 text-gray-700 hover:text-gray-900'
                       }`}
                     >
                       <Icon className="w-5 h-5" />
@@ -212,7 +212,7 @@ export default function AdminLayout({ children }) {
           {/* Main Content */}
           <div className="flex-1">
             {/* Top Header */}
-            <div className="bg-rose-500 shadow-lg rounded-lg mx-2 lg:mx-6 mt-2 lg:mt-4 p-4 lg:p-6">
+            <div className="bg-orange-500 shadow-lg rounded-lg mx-2 lg:mx-6 mt-2 lg:mt-4 p-4 lg:p-6">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between">
                 <div className="mb-4 lg:mb-0">
                   <h1 className="text-xl lg:text-2xl font-bold text-white">
