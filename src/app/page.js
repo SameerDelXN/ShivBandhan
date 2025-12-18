@@ -1,9 +1,10 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import Choice from "@/components/Choice";
 import QuickRegistrationForm from "@/components/QuickRegistrationForm";
 import SearchMatchesWidget from "@/components/SearchMatchesWidget";
 import WhyChooseUs from "@/components/WhyChooseUs";
-import FeaturedProfiles from "@/components/FeaturedProfiles";
+import FeaturedProfiles from "@/components/FeaturedProfilesDynamic";
 import SuccessStories from "@/components/SuccessStories";
 import AppDownload from "@/components/AppDownload";
 import UserTestimonials from "@/components/UserTestimonials";
@@ -15,14 +16,17 @@ export default function HomePage() {
     <>
       <Navbar />
       <HeroSection />
-      {/* <QuickRegistrationForm /> */}
       <SearchMatchesWidget />
-      <WhyChooseUs />
+      <Choice />
+      {/* <QuickRegistrationForm /> */}
+      
+      {/* <WhyChooseUs /> */}
       <FeaturedProfiles />
       {/* <SuccessStories /> */}
       <AppDownload />
-      <UserTestimonials />
-      {/* <BlogPreview /> */}
+      {/* <UserTestimonials /> */}
+      <SuccessStories />
+      <BlogPreview />
       <Footer />
     </>
   );

@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/logo.png"/>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-rose-50 to-amber-50`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-r from-orange-50 to-amber-50`}
       >
         <AuthProvider>
         <SessionProvider>

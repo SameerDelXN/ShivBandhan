@@ -56,7 +56,7 @@ export default function Verification() {
             <img
               src={u.photo}
               alt={u.name}
-              className="w-24 h-24 rounded-full object-cover border-2 border-rose-400"
+              className="w-24 h-24 rounded-full object-cover border-2 border-orange-400"
             />
             <div>
               <h2 className="text-lg font-semibold text-gray-800">{u.name}</h2>
@@ -102,7 +102,7 @@ export default function Verification() {
               <img
                 src={selectedProfile.photo}
                 alt={selectedProfile.name}
-                className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-rose-500"
+                className="w-24 h-24 mx-auto rounded-full object-cover border-2 border-orange-500"
               />
               <h2 className="text-xl font-bold text-gray-800 mt-4">
                 {selectedProfile.name}

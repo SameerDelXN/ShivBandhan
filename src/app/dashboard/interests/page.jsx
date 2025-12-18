@@ -178,7 +178,7 @@ export default function InterestsPage() {
   const getBadgeStyle = (badge) => {
     switch(badge) {
       case 'New': return 'bg-blue-100 text-blue-800';
-      case 'Premium': return 'bg-amber-100 text-amber-800';
+      case 'Premium': return 'bg-amber-300 text-amber-800';
       case 'Verified': return 'bg-green-100 text-green-800';
       case 'Recently Active': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -192,7 +192,7 @@ export default function InterestsPage() {
     
     return (
       <motion.div 
-        className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-rose-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-rose-200"
+        className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md sm:shadow-lg border border-orange-100/50 hover:shadow-sm sm:hover:shadow-xl transition-all duration-300 hover:border-orange-200"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -201,7 +201,7 @@ export default function InterestsPage() {
           {/* Profile Image with blur effect for non-subscribers */}
           <div className="relative flex-shrink-0 self-center sm:self-start">
             <motion.div 
-              className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-rose-300 transition-all ${
+              className={`w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:ring-2 hover:ring-orange-300 transition-all ${
                 !hasSubscription && profileImage ? 'blur-sm' : ''
               }`}
               onClick={() => {
@@ -228,7 +228,7 @@ export default function InterestsPage() {
                   )}
                 </>
               ) : (
-                <User className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500" />
+                <User className="w-6 h-6 sm:w-8 sm:h-8 text-orange-500" />
               )}
             </motion.div>
             {profile?.isOnline && (
@@ -308,7 +308,7 @@ export default function InterestsPage() {
                 {(type === 'sent' || type === 'received')  && (
                   <motion.button 
                     onClick={() => handleViewProfile(person, type)}
-                    className="flex items-center px-2 sm:px-3 py-1 bg-rose-50 text-rose-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-rose-100 transition-colors"
+                    className="flex items-center px-2 sm:px-3 py-1 bg-orange-50 text-orange-600 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium hover:bg-orange-100 transition-colors"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     disabled={checkingSubscription}
@@ -336,7 +336,7 @@ export default function InterestsPage() {
       whileHover={{ x: 5 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      <Icon className="w-5 h-5 text-rose-500 mt-0.5 mr-3 flex-shrink-0" />
+      <Icon className="w-5 h-5 text-orange-500 mt-0.5 mr-3 flex-shrink-0" />
       <div>
         <div className="text-sm font-medium text-gray-500">{label}</div>
         <div className="text-gray-900">{value || 'Not specified'}</div>
@@ -387,7 +387,7 @@ export default function InterestsPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="text-center">
         {/* Simple Spinner */}
-        <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4"></div>
         
         {/* Loading Text */}
         <p className="text-gray-600 text-lg">Loading your Interests</p>
@@ -407,7 +407,7 @@ export default function InterestsPage() {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={handleRefresh}
-            className="bg-rose-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-rose-600 transition-colors"
+            className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors"
           >
             Try Again
           </button>
@@ -417,7 +417,7 @@ export default function InterestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
       {/* Expanded Image Viewer */}
       <AnimatePresence>
         {expandedImage && (
@@ -429,21 +429,21 @@ export default function InterestsPage() {
             onClick={() => setExpandedImage(null)}
           >
             <motion.div 
-              className="relative bg-white rounded-lg shadow-xl border-2 border-rose-500 overflow-hidden w-full max-w-md mx-4"
+              className="relative bg-white rounded-lg shadow-xl border-2 border-orange-500 overflow-hidden w-full max-w-md mx-4"
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
               transition={{ type: "spring" }}
             >
               {/* Header */}
-              <div className="bg-rose-500 p-2 flex justify-between items-center">
+              <div className="bg-orange-500 p-2 flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <Heart className="w-5 h-5 text-white" />
                   <span className="text-white font-medium">Profile Picture</span>
                 </div>
                 <motion.button
                   onClick={() => setExpandedImage(null)}
-                  className="p-1 rounded-full hover:bg-rose-600 transition-colors"
+                  className="p-1 rounded-full hover:bg-orange-600 transition-colors"
                   whileHover={{ rotate: 90 }}
                   whileTap={{ scale: 0.8 }}
                 >
@@ -463,8 +463,8 @@ export default function InterestsPage() {
               </div>
               
               {/* Footer */}
-              <div className="bg-rose-50 p-3 border-t border-rose-200 flex justify-center">
-                <span className="text-rose-800 text-sm font-medium">
+              <div className="bg-orange-50 p-3 border-t border-orange-200 flex justify-center">
+                <span className="text-orange-800 text-sm font-medium">
                   Shivbandhan Matrimony
                 </span>
               </div>
@@ -475,12 +475,12 @@ export default function InterestsPage() {
 
       <div className="max-w-5xl mx-auto space-y-6">
        <motion.div 
-          className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-rose-100/50 relative overflow-hidden"
+          className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-lg sm:shadow-xl border border-orange-100/50 relative overflow-hidden"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-rose-50 rounded-full blur-xl sm:blur-2xl opacity-50"></div>
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-orange-50 rounded-full blur-xl sm:blur-2xl opacity-50"></div>
           <div className="relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -504,7 +504,7 @@ export default function InterestsPage() {
               <motion.button 
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="p-1 sm:p-2 text-gray-500 hover:text-rose-600 transition-colors"
+                className="p-1 sm:p-2 text-gray-500 hover:text-orange-600 transition-colors"
                 whileHover={{ rotate: 180 }}
                 whileTap={{ scale: 0.8 }}
               >
@@ -515,7 +515,7 @@ export default function InterestsPage() {
         </motion.div>
 
         <motion.div 
-          className="bg-white rounded-xl shadow-lg border border-rose-100/50"
+          className="bg-white rounded-xl shadow-lg border border-orange-100/50"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -533,7 +533,7 @@ export default function InterestsPage() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`py-4 px-2 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
                       activeTab === tab.id
-                        ? 'border-rose-500 text-rose-600'
+                        ? 'border-orange-500 text-orange-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                     whileHover={{ scale: 1.05 }}
@@ -543,7 +543,7 @@ export default function InterestsPage() {
                     <span>{tab.label}</span>
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       activeTab === tab.id 
-                        ? 'bg-rose-100 text-rose-600' 
+                        ? 'bg-orange-100 text-orange-600' 
                         : 'bg-gray-100 text-gray-600'
                     }`}>
                       {tab.count}
@@ -562,8 +562,8 @@ export default function InterestsPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-rose-500" />
+                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-8 h-8 text-orange-500" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {activeTab === 'sent' ? 'No Interests Sent Yet' : 'No Interests Received Yet'}
@@ -615,7 +615,7 @@ export default function InterestsPage() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-rose-500 to-amber-500 p-4 z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-amber-700 p-4 z-10">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">
               {selectedProfile.name}'s Profile
@@ -634,7 +634,7 @@ export default function InterestsPage() {
           {/* Profile Header */}
           <div className="flex items-start mb-6">
             <div className="relative mr-6">
-              <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center overflow-hidden">
                 <img 
                   src={selectedProfile?.image || selectedProfile?.profilePhoto} 
                   alt={selectedProfile.name} 

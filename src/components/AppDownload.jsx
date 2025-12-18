@@ -20,11 +20,11 @@ export default function AppDownloadSection() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden bg-rose-900 py-20 lg:px-20">
+    <div className="relative w-full overflow-hidden bg-orange-50 py-20 lg:px-20">
       {/* Decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-rose-800/50 blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-amber-800/30 blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-orange-200/50 blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-amber-200/30 blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4">
@@ -32,16 +32,16 @@ export default function AppDownloadSection() {
           {/* Left Content - Text and Download Buttons */}
           <div className={`max-w-lg transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="inline-block mb-4">
-              <span className="px-4 py-1 rounded-full bg-rose-800/50 text-rose-100 text-sm font-medium">
+              <span className="px-4 py-1 rounded-full bg-orange-100/70 text-orange-800 text-sm font-medium border border-orange-200/50">
                 Mobile Experience
               </span>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
-              Find Your Perfect Match <span className="text-amber-300">Anytime, Anywhere</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+              Find Your Perfect Match <span className="text-orange-600">Anytime, Anywhere</span>
             </h2>
             
-            <p className="text-rose-100 text-lg mb-8">
+            <p className="text-gray-700 text-lg mb-8">
               Take your search for love on the go with our feature-rich mobile app. Get instant notifications, browse profiles, and connect with potential matches—all from your smartphone.
             </p>
             
@@ -49,8 +49,8 @@ export default function AppDownloadSection() {
             <div className="mb-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {appFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-2 text-rose-50">
-                    <CheckCircle size={18} className="text-amber-300 flex-shrink-0" />
+                  <div key={index} className="flex items-center space-x-2 text-gray-800">
+                    <CheckCircle size={18} className="text-orange-500 flex-shrink-0" />
                     <span>{feature}</span>
                   </div>
                 ))}
@@ -64,18 +64,18 @@ export default function AppDownloadSection() {
                   <Star 
                     key={star} 
                     size={18} 
-                    className="text-amber-400 fill-amber-400"
+                    className="text-amber-500 fill-amber-500"
                   />
                 ))}
               </div>
-              <span className="text-white font-medium">4.9</span>
-              <span className="text-rose-200 ml-1">• 10k+ Reviews</span>
+              <span className="text-gray-900 font-medium">4.9</span>
+              <span className="text-gray-600 ml-1">• 10k+ Reviews</span>
             </div>
             
             {/* Download buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               {/* App Store Button */}
-              <Link href={"https://www.facebook.com/shivbandhanmatrimony/"} className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
+              <button className="px-6 py-3 bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-lg flex items-center justify-center group border border-orange-200/50">
                 <div className="flex items-center">
                   <div className="mr-3">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" className="text-gray-900">
@@ -87,10 +87,10 @@ export default function AppDownloadSection() {
                     <div className="text-sm font-semibold text-gray-900">App Store</div>
                   </div>
                 </div>
-              </Link>
+              </button>
               
               {/* Google Play Button */}
-              <Link href={"https://www.facebook.com/shivbandhanmatrimony/"} className="px-6 py-3 bg-white rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg flex items-center justify-center group">
+              <button className="px-6 py-3 bg-white rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-lg flex items-center justify-center group border border-orange-200/50">
                 <div className="flex items-center">
                   <div className="mr-3">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" className="text-gray-900">
@@ -102,35 +102,40 @@ export default function AppDownloadSection() {
                     <div className="text-sm font-semibold text-gray-900">Google Play</div>
                   </div>
                 </div>
-              </Link>
+              </button>
             </div>
             
             {/* QR Code option */}
             <div className="mt-8 flex items-center">
-              <div className="w-16 h-16 bg-white p-1 rounded-lg shadow-lg mr-4">
+              <div className="w-16 h-16 bg-white p-1 rounded-lg shadow-lg mr-4 border border-orange-200/50">
                 <Image
-                    width={1920}
-                    height={1080} 
+                  width={1920}
+                  height={1080} 
                   src="/qr.png" 
                   alt="QR Code" 
                   className="w-full h-full object-cover"
                 />
               </div>
-             
+              <div>
+                <p className="text-gray-700 text-sm">Or scan QR code</p>
+                <button className="flex items-center text-orange-600 text-sm font-medium mt-1 hover:text-orange-700 group">
+                  Learn more <ChevronRight size={16} className="ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+                </button>
+              </div>
             </div>
           </div>
           
           {/* Right Content - Phone Mockup */}
-          <div className={`flex justify-center  transition-all duration-1000 delay-300 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className={`flex justify-center transition-all duration-1000 delay-300 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="relative">
               {/* Main phone mockup */}
               <div className="relative z-10">
                 <div className="w-64 md:w-72 bg-gray-900 rounded-[3rem] p-3 shadow-xl">
                   <div className="w-full rounded-[2.5rem] overflow-hidden border-8 border-gray-900">
                     <Image
-                        width={1920}
-                        height={1080} 
-                      src="/mobileView.png" 
+                      width={1920}
+                      height={1080} 
+                      src="/mobileView1.png" 
                       alt="App Screenshot" 
                       className="w-full aspect-[9/17] object-cover"
                     />
@@ -146,9 +151,9 @@ export default function AppDownloadSection() {
                 <div className="w-64 transform -rotate-6 bg-gray-900 rounded-[3rem] p-3 opacity-70 shadow-xl">
                   <div className="w-full rounded-[2.5rem] overflow-hidden border-8 border-gray-900">
                     <Image
-                        width={1920}
-                        height={1080} 
-                      src="/mobileView.png" 
+                      width={1920}
+                      height={1080} 
+                      src="/mobileView1.png" 
                       alt="App Screenshot" 
                       className="w-full aspect-[9/16] object-cover"
                     />
@@ -158,9 +163,9 @@ export default function AppDownloadSection() {
               
               {/* Floating feature indicators */}
               <div className="absolute top-20 -left-16 z-20 hidden lg:block">
-                <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg flex items-center space-x-3 transform -rotate-6">
-                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
-                    <Download size={16} className="text-rose-600" />
+                <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg flex items-center space-x-3 transform -rotate-6 border border-orange-200/50">
+                  <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Download size={16} className="text-orange-600" />
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">Downloads</div>
@@ -170,7 +175,7 @@ export default function AppDownloadSection() {
               </div>
               
               <div className="absolute bottom-20 -left-8 z-20 hidden lg:block">
-                <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg flex items-center space-x-3 transform rotate-3">
+                <div className="bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-lg flex items-center space-x-3 transform rotate-3 border border-orange-200/50">
                   <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                     <Star size={16} className="text-amber-600" />
                   </div>
@@ -182,8 +187,8 @@ export default function AppDownloadSection() {
               </div>
               
               {/* Decorative elements */}
-              <div className="absolute -z-10 -bottom-10 -left-10 w-40 h-40 rounded-full border-8 border-rose-800/40 opacity-60"></div>
-              <div className="absolute -z-10 top-10 right-10 w-24 h-24 rounded-full border-8 border-amber-700/30 opacity-50"></div>
+              <div className="absolute -z-10 -bottom-10 -left-10 w-40 h-40 rounded-full border-8 border-orange-200/40 opacity-60"></div>
+              <div className="absolute -z-10 top-10 right-10 w-24 h-24 rounded-full border-8 border-amber-200/30 opacity-50"></div>
             </div>
           </div>
         </div>

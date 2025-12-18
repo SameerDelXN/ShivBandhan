@@ -133,13 +133,13 @@ export default function ChatSection() {
   // Conversation List View - Default "Coming Soon" state
   if (currentView === 'list') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
         <div className="max-w-4xl mx-auto space-y-6">
           
           {/* Header */}
           <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-white rounded-2xl p-8 shadow-xl border border-rose-100/50 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-2xl opacity-50"></div>
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-orange-100/50 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full blur-2xl opacity-50"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
                   <div>
@@ -153,9 +153,9 @@ export default function ChatSection() {
 
           {/* Coming Soon Section */}
           <div className={`transform transition-all duration-1000 delay-100 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-rose-100/50 text-center">
-              <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Settings className="w-8 h-8 text-rose-500" />
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-orange-100/50 text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Settings className="w-8 h-8 text-orange-500" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
               <p className="text-gray-600">This section is under development</p>
@@ -170,23 +170,23 @@ export default function ChatSection() {
   const messages = getMessagesForChat(selectedChat?.id);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 flex flex-col">
       {/* Chat Header */}
-      <div className="bg-white shadow-lg border-b border-rose-100/50 sticky top-0 z-10">
+      <div className="bg-white shadow-lg border-b border-orange-100/50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setCurrentView('list')}
-                className="p-2 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 hover:bg-orange-50 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-600" />
               </button>
               
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-rose-500" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-orange-500" />
                   </div>
                 </div>
                 
@@ -207,8 +207,8 @@ export default function ChatSection() {
       {/* Messages Area */}
       <div className="flex-1 max-w-4xl mx-auto w-full px-6 py-4 overflow-y-auto">
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Settings className="w-8 h-8 text-rose-500" />
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Settings className="w-8 h-8 text-orange-500" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">Coming Soon</h3>
           <p className="text-gray-600">This section is under development</p>
@@ -216,7 +216,7 @@ export default function ChatSection() {
       </div>
 
       {/* Message Input */}
-      <div className="bg-white border-t border-rose-100/50 sticky bottom-0">
+      <div className="bg-white border-t border-orange-100/50 sticky bottom-0">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center space-x-3">
             <div className="flex-1 relative">

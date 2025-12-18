@@ -51,20 +51,20 @@ export default function UserTestimonials() {
   };
 
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-b from-amber-50 to-rose-50 py-10 md:py-20">
+    <div className="relative w-full overflow-hidden bg-gradient-to-b from-amber-50 to-orange-50 py-10 md:py-20">
       {/* Decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-rose-100 blur-3xl opacity-30"></div>
+        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-orange-100 blur-3xl opacity-30"></div>
         <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-amber-100 blur-3xl opacity-40"></div>
       </div>
 
       <div className="container mx-auto px-4">
         <div className={`text-center mb-8 md:mb-16 transition-all duration-1000 transform ${isLoaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'}`}>
-          <span className="px-4 py-1 rounded-full bg-rose-100 text-rose-600 text-sm font-medium">
+          <span className="px-4 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium">
             Love Stories
           </span>
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 mt-4 mb-4 md:mb-6">
-            Success <span className="text-rose-600">Stories</span>
+            Success <span className="text-orange-600">Stories</span>
           </h2>
           <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Hear from couples who found their life partners through our platform
@@ -85,7 +85,7 @@ export default function UserTestimonials() {
                   <div className="flex flex-col md:flex-row">
                     {/* Image Section */}
                     <div className="w-full h-96  md:h-auto md:w-1/3 relative bg-red-400">
-                      <div className="absolute inset-0 bg-gradient-to-b from-rose-100 to-amber-100 opacity-30"></div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-orange-100 to-amber-100 opacity-30"></div>
                       <Image
                         width={1920}
                         height={1080}
@@ -95,13 +95,13 @@ export default function UserTestimonials() {
                       />
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 md:p-6">
                         <h3 className="text-white text-lg md:text-xl font-bold">{testimonial.name}</h3>
-                        <p className="text-rose-100 text-xs md:text-sm">{testimonial.location}</p>
+                        <p className="text-orange-100 text-xs md:text-sm">{testimonial.location}</p>
                       </div>
                     </div>
                     
                     {/* Content Section */}
                     <div className="md:w-2/3 p-5 md:p-12 flex flex-col justify-center">
-                      <Quote className="text-rose-200 w-6 h-6 md:w-8 md:h-8 mb-3 md:mb-4" />
+                      <Quote className="text-orange-200 w-6 h-6 md:w-8 md:h-8 mb-3 md:mb-4" />
                       <p className="text-gray-700 text-base md:text-xl mb-4 md:mb-6">
                         "{testimonial.content}"
                       </p>
@@ -118,17 +118,17 @@ export default function UserTestimonials() {
           {/* Navigation Arrows - Properly positioned for mobile */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-2 top-20 sm:top-1/4 md:top-1/2 md:-translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-rose-50 transition-colors duration-300 z-20"
+            className="absolute left-2 top-20 sm:top-1/4 md:top-1/2 md:-translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-orange-50 transition-colors duration-300 z-20"
             aria-label="Previous testimonial"
           >
-            <ChevronLeft className="text-rose-600 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            <ChevronLeft className="text-orange-600 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
           <button
             onClick={nextTestimonial}
-            className="absolute right-2 top-20 sm:top-1/4 md:top-1/2 md:-translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-rose-50 transition-colors duration-300 z-20"
+            className="absolute right-2 top-20 sm:top-1/4 md:top-1/2 md:-translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-white/90 shadow-md flex items-center justify-center hover:bg-orange-50 transition-colors duration-300 z-20"
             aria-label="Next testimonial"
           >
-            <ChevronRight className="text-rose-600 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            <ChevronRight className="text-orange-600 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
 
           {/* Dots Indicator */}
@@ -137,7 +137,7 @@ export default function UserTestimonials() {
               <button
                 key={index}
                 onClick={() => setCurrentTestimonial(index)}
-                className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-rose-600 w-4 md:w-6' : 'bg-rose-200'}`}
+                className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${index === currentTestimonial ? 'bg-orange-600 w-4 md:w-6' : 'bg-orange-200'}`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
@@ -153,7 +153,7 @@ export default function UserTestimonials() {
             { value: "24/7", label: "Support" },
           ].map((stat, index) => (
             <div key={index} className="bg-white/70 backdrop-blur-sm rounded-xl p-3 md:p-6 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
-              <div className="text-xl md:text-3xl font-bold text-rose-600 mb-1 md:mb-2">{stat.value}</div>
+              <div className="text-xl md:text-3xl font-bold text-orange-600 mb-1 md:mb-2">{stat.value}</div>
               <div className="text-xs md:text-base text-gray-600">{stat.label}</div>
             </div>
           ))}

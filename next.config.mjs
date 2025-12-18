@@ -28,6 +28,7 @@ const nextConfig = {
       'plus.unsplash.com',
       'lh3.googleusercontent.com',
       'res.cloudinary.com', // for your own uploads if you ever use Cloudinary
+      'via.placeholder.com',
     ],
   },
 };

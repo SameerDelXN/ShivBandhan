@@ -213,13 +213,13 @@ export default function SearchProfilesPage() {
   );
 
   const ProfileCard = ({ profile }) => (
-    <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 hover:shadow-xl transition-all duration-300 overflow-hidden">
       <div className="relative">
         {/* Profile Image */}
-        <div className="aspect-[4/5] bg-gradient-to-br from-rose-100 to-amber-100 flex items-center justify-center relative">
+        <div className="aspect-[4/5] bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center relative">
           {profile.hasPhoto ? (
             <div className={`w-full h-full flex items-center justify-center ${profile.isBlurred ? 'blur-md' : ''}`}>
-              <User className="w-16 h-16 text-rose-500" />
+              <User className="w-16 h-16 text-orange-500" />
             </div>
           ) : (
             <div className="text-center">
@@ -247,7 +247,7 @@ export default function SearchProfilesPage() {
               </div>
             )}
             {profile.premium && (
-              <div className="bg-gradient-to-r from-amber-400 to-rose-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
+              <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
                 <Crown className="w-3 h-3 mr-1" />
                 Premium
               </div>
@@ -294,7 +294,7 @@ export default function SearchProfilesPage() {
 
           {/* Action Buttons */}
           <div className="flex space-x-2">
-            <button className="flex-1 bg-rose-50 text-rose-600 py-2 px-3 rounded-lg text-sm font-medium hover:bg-rose-100 transition-colors flex items-center justify-center">
+            <button className="flex-1 bg-orange-50 text-orange-600 py-2 px-3 rounded-lg text-sm font-medium hover:bg-orange-100 transition-colors flex items-center justify-center">
               <Heart className="w-4 h-4 mr-1" />
               Interest
             </button>
@@ -311,16 +311,16 @@ export default function SearchProfilesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30">
       <div className="max-w-7xl mx-auto p-6">
         
         {/* Header Section */}
         <div className={`transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="bg-gradient-to-r from-rose-500 to-rose-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden mb-6">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
             <div className="relative z-10">
               <h1 className="text-2xl font-bold mb-2">Find Your Perfect Match</h1>
-              <p className="text-rose-100">Discover profiles that align with your preferences</p>
+              <p className="text-orange-100">Discover profiles that align with your preferences</p>
             </div>
           </div>
         </div>
@@ -334,10 +334,10 @@ export default function SearchProfilesPage() {
             <div className="lg:hidden mb-4">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="w-full bg-white rounded-xl p-4 shadow-lg border border-rose-100/50 flex items-center justify-between"
+                className="w-full bg-white rounded-xl p-4 shadow-lg border border-orange-100/50 flex items-center justify-between"
               >
                 <div className="flex items-center">
-                  <Filter className="w-5 h-5 text-rose-500 mr-2" />
+                  <Filter className="w-5 h-5 text-orange-500 mr-2" />
                   <span className="font-semibold text-gray-900">Filters</span>
                 </div>
                 <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
@@ -345,13 +345,13 @@ export default function SearchProfilesPage() {
             </div>
 
             {/* Filter Panel */}
-          <div className={`bg-white rounded-xl shadow-lg border border-rose-100/50 ${showFilters || !isMobile ? 'block' : 'hidden'} lg:block`}>
+          <div className={`bg-white rounded-xl shadow-lg border border-orange-100/50 ${showFilters || !isMobile ? 'block' : 'hidden'} lg:block`}>
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Filters</h2>
                   <button
                     onClick={resetFilters}
-                    className="flex items-center text-rose-600 hover:text-rose-700 text-sm font-medium"
+                    className="flex items-center text-orange-600 hover:text-orange-700 text-sm font-medium"
                   >
                     <RotateCcw className="w-4 h-4 mr-1" />
                     Reset
@@ -385,7 +385,7 @@ export default function SearchProfilesPage() {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Height Range</label>
                       <div className="flex space-x-2">
-                        <select className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                        <select className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                           <option>4'6" - 5'0"</option>
                           <option>5'0" - 5'6"</option>
                           <option>5'6" - 6'0"</option>
@@ -399,7 +399,7 @@ export default function SearchProfilesPage() {
                   <FilterSection title="Community" section="community">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Religion</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any Religion</option>
                         <option>Hindu</option>
                         <option>Muslim</option>
@@ -412,7 +412,7 @@ export default function SearchProfilesPage() {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Caste</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any Caste</option>
                         <option>Brahmin</option>
                         <option>Kshatriya</option>
@@ -429,13 +429,13 @@ export default function SearchProfilesPage() {
                       <input
                         type="text"
                         placeholder="Enter city name"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
                       />
                     </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any State</option>
                         <option>Maharashtra</option>
                         <option>Delhi</option>
@@ -450,7 +450,7 @@ export default function SearchProfilesPage() {
                   <FilterSection title="Education & Profession" section="education">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Education</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any Education</option>
                         <option>Bachelor's</option>
                         <option>Master's</option>
@@ -461,7 +461,7 @@ export default function SearchProfilesPage() {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Profession</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any Profession</option>
                         <option>Software Engineer</option>
                         <option>Doctor</option>
@@ -473,7 +473,7 @@ export default function SearchProfilesPage() {
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Income Range (Lakhs/year)</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent text-sm">
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm">
                         <option value="">Any Income</option>
                         <option>0-5 Lakhs</option>
                         <option>5-10 Lakhs</option>
@@ -494,7 +494,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             lifestyle: { ...prev.lifestyle, vegetarian: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Vegetarian only</span>
                       </label>
@@ -507,7 +507,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             lifestyle: { ...prev.lifestyle, nonSmoker: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Non-smoker</span>
                       </label>
@@ -520,7 +520,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             lifestyle: { ...prev.lifestyle, nonDrinker: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Non-drinker</span>
                       </label>
@@ -533,7 +533,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             lifestyle: { ...prev.lifestyle, manglik: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Manglik only</span>
                       </label>
@@ -551,7 +551,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             preferences: { ...prev.preferences, verifiedOnly: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Verified profiles only</span>
                       </label>
@@ -564,7 +564,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             preferences: { ...prev.preferences, withPhotoOnly: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">With photos only</span>
                       </label>
@@ -577,7 +577,7 @@ export default function SearchProfilesPage() {
                             ...prev,
                             preferences: { ...prev.preferences, activeRecently: e.target.checked }
                           }))}
-                          className="rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+                          className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                         />
                         <span className="ml-2 text-sm text-gray-700">Active in last 30 days</span>
                       </label>
@@ -587,7 +587,7 @@ export default function SearchProfilesPage() {
 
                 {/* Apply Filters Button */}
                 <div className="mt-6 pt-6 border-t border-gray-200">
-                  <button className="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white py-3 rounded-lg font-medium hover:from-rose-600 hover:to-rose-700 transition-all duration-300">
+                  <button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300">
                     Apply Filters
                   </button>
                 </div>
@@ -599,7 +599,7 @@ export default function SearchProfilesPage() {
           <div className={`flex-1 transform transition-all duration-1000 delay-300 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
             
             {/* Search Bar & Controls */}
-            <div className="bg-white rounded-xl shadow-lg border border-rose-100/50 p-4 mb-6">
+            <div className="bg-white rounded-xl shadow-lg border border-orange-100/50 p-4 mb-6">
               <div className="flex flex-col md:flex-row gap-4">
                 
                 {/* Search Input */}
@@ -610,7 +610,7 @@ export default function SearchProfilesPage() {
                     placeholder="Search by name, caste, city..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
 
@@ -619,7 +619,7 @@ export default function SearchProfilesPage() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                    className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="relevance">Sort by Relevance</option>
                     <option value="newest">Newest First</option>
@@ -631,13 +631,13 @@ export default function SearchProfilesPage() {
                   <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-3 ${viewMode === 'grid' ? 'bg-rose-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                      className={`p-3 ${viewMode === 'grid' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
                     >
                       <Grid3X3 className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-3 ${viewMode === 'list' ? 'bg-rose-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                      className={`p-3 ${viewMode === 'list' ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
                     >
                       <List className="w-5 h-5" />
                     </button>
@@ -651,7 +651,7 @@ export default function SearchProfilesPage() {
                   <TrendingUp className="w-4 h-4 mr-1" />
                   <span>{resultsCount} profiles found</span>
                 </div>
-                <div className="flex items-center text-sm text-rose-600">
+                <div className="flex items-center text-sm text-orange-600">
                   <Sparkles className="w-4 h-4 mr-1" />
                   <span>Upgrade to see more matches</span>
                 </div>
@@ -670,7 +670,7 @@ export default function SearchProfilesPage() {
               <button
                 onClick={() => setIsLoading(true)}
                 disabled={isLoading}
-                className="bg-white border border-rose-300 text-rose-600 px-8 py-3 rounded-lg font-medium hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-white border border-orange-300 text-orange-600 px-8 py-3 rounded-lg font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Loading...' : 'Load More Profiles'}
               </button>

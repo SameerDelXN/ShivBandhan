@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-rose-500"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-500"></div>
       </div>
     );
   }
@@ -44,12 +44,12 @@ export default function AdminDashboard() {
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center max-w-md p-6 rounded-xl bg-rose-50 border border-rose-100">
-          <h2 className="text-xl font-bold text-rose-600 mb-2">Error loading dashboard</h2>
-          <p className="text-rose-500 mb-4">{error}</p>
+        <div className="text-center max-w-md p-6 rounded-xl bg-orange-50 border border-orange-100">
+          <h2 className="text-xl font-bold text-orange-600 mb-2">Error loading dashboard</h2>
+          <p className="text-orange-500 mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-all shadow hover:shadow-md"
+            className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all shadow hover:shadow-md"
           >
             Retry
           </button>
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                     {new Date(user.lastLogin || user.createdAt).toLocaleDateString('en-US')}
                   </td>
                   {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <button className="text-rose-600 hover:text-rose-900">Edit</button>
+                    <button className="text-orange-600 hover:text-orange-900">Edit</button>
                   </td> */}
                 </tr>
               ))}

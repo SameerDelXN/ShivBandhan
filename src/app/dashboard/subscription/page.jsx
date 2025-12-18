@@ -183,34 +183,34 @@
       }
     };
 
-    // Get plan configuration based on name
-    const getPlanConfig = (planName) => {
-      const configs = {
-        Gold: {
-          icon: Crown,
-          color: "from-yellow-400 to-yellow-600",
-          bgColor: "bg-yellow-100",
-          textColor: "text-yellow-600",
-          badgeColor: "bg-yellow-500",
-          emoji: "👑",
-        },
-        Premium: {
-          icon: Crown,
-          color: "from-rose-500 to-pink-500",
-          bgColor: "bg-rose-100",
-          textColor: "text-rose-600",
-          badgeColor: "bg-rose-500",
-          emoji: "💎",
-        },
-        Free: {
-          icon: Gift,
-          color: "from-gray-400 to-gray-600",
-          bgColor: "bg-gray-100",
-          textColor: "text-gray-600",
-          badgeColor: "bg-gray-500",
-          emoji: "🆓",
-        },
-      };
+  // Get plan configuration based on name
+  const getPlanConfig = (planName) => {
+    const configs = {
+      Gold: {
+        icon: Crown,
+        color: "from-yellow-400 to-yellow-600",
+        bgColor: "bg-yellow-100",
+        textColor: "text-yellow-600",
+        badgeColor: "bg-yellow-500",
+        emoji: "👑",
+      },
+      Premium: {
+        icon: Crown,
+        color: "from-orange-500 to-orange-500",
+        bgColor: "bg-orange-100",
+        textColor: "text-orange-600",
+        badgeColor: "bg-orange-500",
+        emoji: "💎",
+      },
+      Free: {
+        icon: Gift,
+        color: "from-gray-400 to-gray-600",
+        bgColor: "bg-gray-100",
+        textColor: "text-gray-600",
+        badgeColor: "bg-gray-500",
+        emoji: "🆓",
+      },
+    };
 
       if (!planName) return configs["Premium"];
       if (planName.toLowerCase().includes("gold")) return configs["Gold"];
@@ -235,50 +235,50 @@
       return `${duration} days`;
     };
 
-    if (loading) {
-      return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+  if (loading) {
+    return (
+     <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="text-center">
+        {/* Simple Spinner */}
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4"></div>
+        
+        {/* Loading Text */}
+        <p className="text-gray-600 text-lg">Loading Subscription Plans</p>
+      </div>
+    </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6 flex items-center justify-center">
         <div className="text-center">
-          {/* Simple Spinner */}
-          <div className="w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto mb-4"></div>
-          
-          {/* Loading Text */}
-          <p className="text-gray-600 text-lg">Loading Subscription Plans</p>
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Error Loading Plans
+          </h2>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
-      );
-    }
+    );
+  }
 
-    if (error) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6 flex items-center justify-center">
-          <div className="text-center">
-            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Error Loading Plans
-            </h2>
-            <p className="text-gray-600">{error}</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 p-6">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full mb-6">
+            <Crown className="w-10 h-10 text-orange-500" />
           </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Choose Your Perfect Plan
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Unlock premium features and find your perfect match faster with our
+            subscription plans
+          </p>
         </div>
-      );
-    }
-
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 p-6">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-rose-100 to-amber-100 rounded-full mb-6">
-              <Crown className="w-10 h-10 text-rose-500" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Choose Your Perfect Plan
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Unlock premium features and find your perfect match faster with our
-              subscription plans
-            </p>
-          </div>
 
           {/* Plans Grid */}
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
@@ -337,38 +337,38 @@
               const isButtonLoading =
                 isSubscribing && activeButtonId === plan._id;
 
-              return (
-                <div key={plan._id} className="relative">
-                  <div
-                    className={`bg-white rounded-2xl p-8 shadow-2xl border border-rose-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
-                      !plan.isActive ? "opacity-70" : ""
-                    }`}
-                  >
-                    <div className="relative z-10 pt-6">
-                      <div className="text-center mb-8">
-                        <div className="flex justify-center mb-4">
-                          <div
-                            className={`w-16 h-16 ${config.bgColor} rounded-full flex items-center justify-center`}
-                          >
-                            <IconComponent
-                              className={`w-8 h-8 ${config.textColor}`}
-                            />
-                          </div>
-                        </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                          {config.emoji} {plan.name}
-                        </h3>
-                        <div className="flex items-center justify-center space-x-2">
-                          <span
-                            className={`text-4xl font-bold ${config.textColor}`}
-                          >
-                            ₹{formatPrice(plan.price)}
-                          </span>
-                          <span className="text-gray-600">
-                            /{getDurationText(plan.durationInDays)}
-                          </span>
+            return (
+              <div key={plan._id} className="relative">
+                <div
+                  className={`bg-white rounded-2xl p-8 shadow-2xl border border-orange-100/50 relative overflow-hidden transform hover:scale-105 transition-transform duration-300 ${
+                    !plan.isActive ? "opacity-70" : ""
+                  }`}
+                >
+                  <div className="relative z-10 pt-6">
+                    <div className="text-center mb-8">
+                      <div className="flex justify-center mb-4">
+                        <div
+                          className={`w-16 h-16 ${config.bgColor} rounded-full flex items-center justify-center`}
+                        >
+                          <IconComponent
+                            className={`w-8 h-8 ${config.textColor}`}
+                          />
                         </div>
                       </div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        {config.emoji} {plan.name}
+                      </h3>
+                      <div className="flex items-center justify-center space-x-2">
+                        <span
+                          className={`text-4xl font-bold ${config.textColor}`}
+                        >
+                          ₹{formatPrice(plan.price)}
+                        </span>
+                        <span className="text-gray-600">
+                          /{getDurationText(plan.durationInDays)}
+                        </span>
+                      </div>
+                    </div>
 
                       <div className="space-y-4 mb-8">
                         {plan.features?.map((feature, idx) => (
@@ -430,42 +430,42 @@
             })}
           </div>
 
-          {/* FAQ Section */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-rose-100/50">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Frequently Asked Questions
-            </h2>
-            <div className="space-y-4">
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Can I change my subscription plan?
-                </h3>
-                <p className="text-gray-600">
-                  Yes! When you subscribe to a new plan, your current subscription
-                  will be automatically replaced.
-                </p>
-              </div>
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  Is my payment information secure?
-                </h3>
-                <p className="text-gray-600">
-                  Absolutely! We use industry-standard encryption and work with
-                  trusted payment providers.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  What happens when I change plans?
-                </h3>
-                <p className="text-gray-600">
-                  Your new plan will take effect immediately, replacing your
-                  current subscription.
-                </p>
-              </div>
+        {/* FAQ Section */}
+        <div className="bg-white rounded-2xl p-8 shadow-lg border border-orange-100/50">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
+            <div className="border-b border-gray-200 pb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Can I change my subscription plan?
+              </h3>
+              <p className="text-gray-600">
+                Yes! When you subscribe to a new plan, your current subscription
+                will be automatically replaced.
+              </p>
+            </div>
+            <div className="border-b border-gray-200 pb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Is my payment information secure?
+              </h3>
+              <p className="text-gray-600">
+                Absolutely! We use industry-standard encryption and work with
+                trusted payment providers.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                What happens when I change plans?
+              </h3>
+              <p className="text-gray-600">
+                Your new plan will take effect immediately, replacing your
+                current subscription.
+              </p>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}

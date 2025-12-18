@@ -41,11 +41,11 @@ export default function EmployeeLoginForm() {
   }
 
   return (
-    <div className="min-h-screen  bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg mx-auto p-8 bg-white rounded-2xl border border-rose-100 shadow-xl shadow-rose-50/50 transition-all duration-300 hover:shadow-rose-100/50">
+    <div className="min-h-screen  bg-gradient-to-br from-orange-50/50 via-white to-amber-50/30 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg mx-auto p-8 bg-white rounded-2xl border border-orange-100 shadow-xl shadow-orange-50/50 transition-all duration-300 hover:shadow-orange-100/50">
         {/* Header with crown icon matching admin panel */}
         <div className="text-center mb-8">
-          <div className="w-22 h-20 bg-gradient-to-br from-rose-500 to-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-22 h-20 bg-gradient-to-br from-orange-500 to-amber-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Crown className="h-10 w-10 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Admin Portal</h2>
@@ -54,7 +54,7 @@ export default function EmployeeLoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Role selection - updated to match theme */}
-          <div className="relative bg-rose-50/50 p-1 rounded-xl">
+          <div className="relative bg-orange-50/50 p-1 rounded-xl">
             <div className="grid grid-cols-2 gap-1">
               <button
                 type="button"
@@ -80,7 +80,7 @@ export default function EmployeeLoginForm() {
               </button>
             </div>
             <div 
-              className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-gradient-to-r from-rose-500 to-amber-500 rounded-lg transition-all duration-300 ${
+              className={`absolute top-1 bottom-1 w-[calc(50%-0.25rem)] bg-gradient-to-r from-orange-500 to-amber-700 rounded-lg transition-all duration-300 ${
                 role === 'employee' ? 'left-1' : 'left-[calc(50%+0.25rem)]'
               }`}
             />
@@ -93,13 +93,13 @@ export default function EmployeeLoginForm() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-rose-400" />
+                <Mail className="h-5 w-5 text-orange-400" />
               </div>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 bg-white border border-rose-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 hover:border-rose-200"
+                className="block w-full pl-10 pr-3 py-3 bg-white border border-orange-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:border-orange-200"
                 placeholder="employee@example.com"
                 required
               />
@@ -113,13 +113,13 @@ export default function EmployeeLoginForm() {
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-rose-400" />
+                <Lock className="h-5 w-5 text-orange-400" />
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 bg-white border border-rose-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 hover:border-rose-200"
+                className="block w-full pl-10 pr-3 py-3 bg-white border border-orange-100 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:border-orange-200"
                 placeholder="••••••••"
                 required
               />
@@ -128,7 +128,7 @@ export default function EmployeeLoginForm() {
 
           {/* Error message */}
           {error && (
-            <div className="animate-fade-in p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-600 text-center">
+            <div className="animate-fade-in p-3 bg-orange-50 border border-orange-200 rounded-xl text-orange-600 text-center">
               {error}
             </div>
           )}
@@ -137,7 +137,7 @@ export default function EmployeeLoginForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full group relative flex justify-center py-3 px-4 border border-transparent rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-white font-medium hover:from-rose-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 shadow-lg hover:shadow-rose-400/30 transition-all duration-300 overflow-hidden"
+            className="w-full group relative flex justify-center py-3 px-4 border border-transparent rounded-xl bg-gradient-to-r from-orange-500 to-amber-700 text-white font-medium hover:from-orange-600 hover:to-amber-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-lg hover:shadow-orange-400/30 transition-all duration-300 overflow-hidden"
           >
             <span className={`relative z-10 flex items-center gap-2 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
               Sign In <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -147,7 +147,7 @@ export default function EmployeeLoginForm() {
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               </div>
             )}
-            <span className="absolute inset-0 bg-gradient-to-r from-rose-600 to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="absolute inset-0 bg-gradient-to-r from-orange-600 to-amber-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </form>
 
