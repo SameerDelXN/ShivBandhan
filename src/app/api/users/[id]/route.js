@@ -6,7 +6,7 @@ import User from "@/models/User";
 export async function GET(req, { params }) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
 
     const user = await User.findById(id);
     if (!user) {
