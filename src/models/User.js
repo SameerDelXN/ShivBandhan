@@ -161,7 +161,6 @@
       showContact: { type: Boolean, default: false },
     },
 
-    // Subscription
   subscription: {
     plan: {
       type: String,
