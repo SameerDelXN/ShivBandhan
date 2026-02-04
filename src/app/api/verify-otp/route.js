@@ -24,15 +24,13 @@ export async function POST(req) {
       );
     }
 
-    const cleanPhone = phoneNumber.replace(/\s+/g, '');
-    const fullPhoneNumber = `+91${phoneNumber}`; // Note: Keeping original for DB consistency if needed, but using clean for logic is safer.
-    // Actually, let's normalize DB lookup to use the same format. 
-    // If send-otp stored with raw phoneNumber, we're stuck. 
-    // BUT for static OTP, we bypass store.
+    // Robust normalization: Cast to string, remove non-digits, take last 10
+    const normalizedPhone = String(phoneNumber).replace(/\D/g, '').slice(-10);
+    const fullPhoneNumber = `+91${phoneNumber}`; 
 
     let storedOTP;
 
-    if (cleanPhone === '8080407364') {
+    if (normalizedPhone === '8080407364') {
        // Static OTP Bypass
        if (otp.toString() === '123456') {
          storedOTP = '123456';
@@ -47,7 +45,7 @@ export async function POST(req) {
        
        // Fallback: try checking clean number if raw failed
        if (!storedOTP) {
-         storedOTP = otpStore.get(`+91${cleanPhone}`);
+         storedOTP = otpStore.get(`+91${normalizedPhone}`);
        }
     }
 
