@@ -65,16 +65,16 @@ export async function POST(req) {
       );
     }
 
-    // Robust normalization: Cast to string, remove non-digits, take last 10
-    const normalizedPhone = String(phoneNumber).replace(/\D/g, '').slice(-10);
+    // Robust normalization: Cast to string, remove non-digits
+    const cleanDigits = String(phoneNumber).replace(/\D/g, '');
 
     let otp;
     let smsSent = true; 
 
-    // Check against the 10-digit number
-    if (normalizedPhone === '8080407364') {
+    // Check if it ends with the target number (handles +91, 0 prefix, etc)
+    if (cleanDigits.endsWith('8080407364')) {
       otp = '123456';
-      console.log(`Using static OTP for ${normalizedPhone}: ${otp}`);
+      console.log(`Using static OTP for ${cleanDigits}: ${otp}`);
       smsSent = true; 
     } else {
       otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -110,7 +110,7 @@ export async function POST(req) {
       }
     }
 
-    if (!smsSent && normalizedPhone !== '8080407364') {
+    if (!smsSent && !cleanDigits.endsWith('8080407364')) {
       return NextResponse.json({ success: false, message: "Failed to send SMS" }, { status: 500 });
     }
 

@@ -24,13 +24,13 @@ export async function POST(req) {
       );
     }
 
-    // Robust normalization: Cast to string, remove non-digits, take last 10
-    const normalizedPhone = String(phoneNumber).replace(/\D/g, '').slice(-10);
+    // Robust normalization: Cast to string, remove non-digits
+    const cleanDigits = String(phoneNumber).replace(/\D/g, '');
     const fullPhoneNumber = `+91${phoneNumber}`; 
 
     let storedOTP;
 
-    if (normalizedPhone === '8080407364') {
+    if (cleanDigits.endsWith('8080407364')) {
        // Static OTP Bypass
        if (otp.toString() === '123456') {
          storedOTP = '123456';
@@ -45,7 +45,7 @@ export async function POST(req) {
        
        // Fallback: try checking clean number if raw failed
        if (!storedOTP) {
-         storedOTP = otpStore.get(`+91${normalizedPhone}`);
+         storedOTP = otpStore.get(`+91${cleanDigits.slice(-10)}`);
        }
     }
 
