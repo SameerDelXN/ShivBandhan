@@ -52,8 +52,9 @@
 //   });
 // }
  
-import otpStore from "../../../lib/otpStore";
 import { NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
+import User from "@/models/User";
  
 export async function POST(req) {
   try {
@@ -67,20 +68,21 @@ export async function POST(req) {
  
     const fullPhoneNumber = `+91${phoneNumber}`;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
- 
+    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
+
     // Send OTP via Fast2SMS (DLT template)
     const fast2smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
       method: "POST",
       headers: {
-        Authorization: process.env.FAST2SMS_API_KEY, // ✅ keep in .env
+        Authorization: process.env.FAST2SMS_API_KEY, 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         route: "dlt",
-        sender_id: "SHVBDN", // Your approved sender id
-        message: "197321",   // 👈 Your template_id (replace with yours)
-        variables_values: otp, // OTP fills {#var#}
-        numbers: phoneNumber,  // Send without +91
+        sender_id: "SHVBDN", 
+        message: "197321",   
+        variables_values: otp, 
+        numbers: phoneNumber,  
       }),
     });
  
@@ -90,12 +92,30 @@ export async function POST(req) {
       throw new Error(responseData.message || "Failed to send OTP via Fast2SMS");
     }
  
-    // Store OTP in memory
-    otpStore.set(fullPhoneNumber, otp);
-    setTimeout(() => otpStore.delete(fullPhoneNumber), 5 * 60 * 1000);
+    // Store OTP in Database
+    await dbConnect();
+    
+    let user = await User.findOne({ phone: fullPhoneNumber });
+    
+    if (!user) {
+        // Create new user with OTP
+        user = await User.create({
+            phone: fullPhoneNumber,
+            otp: otp,
+            otpExpiresAt: otpExpiresAt,
+            isVerified: false,
+            phoneIsVerified: false
+        });
+    } else {
+        // Update existing user with new OTP
+        user.otp = otp;
+        user.otpExpiresAt = otpExpiresAt;
+        await user.save();
+    }
  
     return NextResponse.json({ success: true, message: "OTP sent successfully" });
   } catch (error) {
+    console.error("Error sending OTP:", error);
     return NextResponse.json(
       { success: false, message: "Error sending OTP", error: error.message },
       { status: 500 }
