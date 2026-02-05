@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
 import { createToken, setTokenCookie } from "@/lib/auth";
-
+ 
 // Define CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'http://localhost:8081', // Or your specific origin
@@ -11,11 +11,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Credentials' : true,
 };
-
+ 
 export async function POST(req) {
   try {
     const { phoneNumber, otp } = await req.json();
-
+ 
     // Input validation
     if (!phoneNumber || phoneNumber.length !== 10 || !otp || otp.length !== 6) {
       return new NextResponse(
@@ -23,10 +23,10 @@ export async function POST(req) {
         { status: 400, headers: corsHeaders }
       );
     }
-
+ 
     const fullPhoneNumber = `+91${phoneNumber}`;
     const storedOTP = otpStore.get(fullPhoneNumber);
-
+ 
     // OTP verification
     if (!storedOTP) {
       return new NextResponse(
@@ -34,20 +34,20 @@ export async function POST(req) {
         { status: 400, headers: corsHeaders }
       );
     }
-
+ 
     if (storedOTP !== otp.toString()) {
       return new NextResponse(
         JSON.stringify({ success: false, error: "Invalid OTP" }),
         { status: 400, headers: corsHeaders }
       );
     }
-
+ 
     await dbConnect();
-
+ 
     // Find or create user
     let user = await User.findOne({ phone: fullPhoneNumber });
     const isNewUser = !user;
-
+ 
     if (!user) {
       user = new User({
         phone: fullPhoneNumber,
@@ -62,9 +62,9 @@ export async function POST(req) {
       if (!user.isVerified) user.isVerified = false;
       await user.save();
     }
-
+ 
     otpStore.delete(fullPhoneNumber);
-
+ 
     // Create session token
     const token = createToken(user._id);
     const response = new NextResponse(
@@ -81,12 +81,12 @@ export async function POST(req) {
       }),
       { headers: corsHeaders }
     );
-
+ 
     // Set HTTP-only cookie
     setTokenCookie(response, token);
-
+ 
     return response;
-
+ 
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return new NextResponse(
@@ -95,10 +95,11 @@ export async function POST(req) {
     );
   }
 }
-
+ 
 // Add OPTIONS handler for preflight requests
 export async function OPTIONS() {
   return new NextResponse(null, {
     headers: corsHeaders
   });
 }
+ 
