@@ -24,30 +24,8 @@ export async function POST(req) {
       );
     }
 
-    // Robust normalization: Cast to string, remove non-digits
-    const cleanDigits = String(phoneNumber).replace(/\D/g, '');
-    const fullPhoneNumber = `+91${phoneNumber}`; 
-
-    let storedOTP;
-
-    if (cleanDigits.endsWith('8080407364')) {
-       // Static OTP Bypass
-       if (otp.toString() === '123456') {
-         storedOTP = '123456';
-       } else {
-         return new NextResponse(
-            JSON.stringify({ success: false, error: "Invalid OTP" }),
-            { status: 400, headers: corsHeaders }
-         );
-       }
-    } else {
-       storedOTP = otpStore.get(fullPhoneNumber);
-       
-       // Fallback: try checking clean number if raw failed
-       if (!storedOTP) {
-         storedOTP = otpStore.get(`+91${cleanDigits.slice(-10)}`);
-       }
-    }
+    const fullPhoneNumber = `+91${phoneNumber}`;
+    const storedOTP = otpStore.get(fullPhoneNumber);
 
     // OTP verification
     if (!storedOTP) {

@@ -65,57 +65,32 @@ export async function POST(req) {
       );
     }
 
-    // Robust normalization: Cast to string, remove non-digits
-    const cleanDigits = String(phoneNumber).replace(/\D/g, '');
+    const fullPhoneNumber = `+91${phoneNumber}`;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    let otp;
-    let smsSent = true; 
+    // Send OTP via Fast2SMS (DLT template)
+    const fast2smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+      method: "POST",
+      headers: {
+        Authorization: process.env.FAST2SMS_API_KEY, // ✅ keep in .env
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        route: "dlt",
+        sender_id: "SHVBDN", // Your approved sender id
+        message: "197321",   // 👈 Your template_id (replace with yours)
+        variables_values: otp, // OTP fills {#var#}
+        numbers: phoneNumber,  // Send without +91
+      }),
+    });
 
-    // Check if it ends with the target number (handles +91, 0 prefix, etc)
-    if (cleanDigits.endsWith('8080407364')) {
-      otp = '123456';
-      console.log(`Using static OTP for ${cleanDigits}: ${otp}`);
-      smsSent = true; 
-    } else {
-      otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const responseData = await fast2smsResponse.json();
 
-      // Send OTP via Fast2SMS (DLT template)
-      try {
-        const fast2smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-          method: "POST",
-          headers: {
-            Authorization: process.env.FAST2SMS_API_KEY, // ✅ keep in .env
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            route: "dlt",
-            sender_id: "SHVBDN", // Your approved sender id
-            message: "197321",   // 👈 Your template_id (replace with yours)
-            variables_values: otp, // OTP fills {#var#}
-            numbers: phoneNumber,  // Send without +91
-          }),
-        });
-
-        const responseData = await fast2smsResponse.json();
-
-        if (!responseData.return) {
-          console.error("Fast2SMS Error:", responseData);
-          smsSent = false;
-          throw new Error(responseData.message || "Failed to send OTP via Fast2SMS");
-        }
-      } catch (error) {
-        console.error("SMS Send Error:", error);
-        smsSent = false;
-        throw error; // Re-throw to be caught by the outer catch block
-      }
-    }
-
-    if (!smsSent && !cleanDigits.endsWith('8080407364')) {
-      return NextResponse.json({ success: false, message: "Failed to send SMS" }, { status: 500 });
+    if (!responseData.return) {
+      throw new Error(responseData.message || "Failed to send OTP via Fast2SMS");
     }
 
     // Store OTP in memory
-    const fullPhoneNumber = `+91${phoneNumber}`;
     otpStore.set(fullPhoneNumber, otp);
     setTimeout(() => otpStore.delete(fullPhoneNumber), 5 * 60 * 1000);
 
