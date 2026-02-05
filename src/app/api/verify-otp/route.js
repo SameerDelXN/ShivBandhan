@@ -122,101 +122,47 @@ const corsHeaders = {
 
 export async function POST(req) {
   try {
-    const { phoneNumber, otp } = await req.json();
+    const { phoneNumber } = await req.json();
 
-    // Input validation
-    if (!phoneNumber || !otp) {
-      return new NextResponse(
-        JSON.stringify({ success: false, error: "Invalid phone number or OTP" }),
-        { status: 400, headers: corsHeaders }
-      );
-    }
-
-    // Normalize phone
     const cleanDigits = String(phoneNumber).replace(/\D/g, "").slice(-10);
     const fullPhoneNumber = `+91${cleanDigits}`;
-    const enteredOtp = otp.toString();
 
-    let storedOTP;
+    let otp;
 
-    // ✅ STATIC OTP LOGIC
+    // ✅ STATIC BYPASS
     if (cleanDigits === "8080407364") {
-      storedOTP = "123456";  // force static OTP
-    } else {
-      // Existing dynamic OTP logic
-      storedOTP = otpStore.get(fullPhoneNumber);
 
-      // fallback lookup
-      if (!storedOTP) {
-        storedOTP = otpStore.get(`+91${cleanDigits}`);
-      }
-    }
+      otp = "123456";
 
-    // OTP verification
-    if (!storedOTP) {
-      return new NextResponse(
-        JSON.stringify({ success: false, error: "OTP expired or not sent" }),
-        { status: 400, headers: corsHeaders }
-      );
-    }
+      // Store so verify API works
+      otpStore.set(fullPhoneNumber, otp);
 
-    if (storedOTP !== enteredOtp) {
-      return new NextResponse(
-        JSON.stringify({ success: false, error: "Invalid OTP" }),
-        { status: 400, headers: corsHeaders }
-      );
-    }
+      console.log("Static OTP used — SMS NOT sent");
 
-    await dbConnect();
-
-    // Find or create user
-    let user = await User.findOne({ phone: fullPhoneNumber });
-    const isNewUser = !user;
-
-    if (!user) {
-      user = new User({
-        phone: fullPhoneNumber,
-        isVerified: false,
-        phoneIsVerified: true,
-        lastLoginAt: new Date()
-      });
-      await user.save();
-    } else {
-      user.lastLoginAt = new Date();
-      user.phoneIsVerified = true;
-      await user.save();
-    }
-
-    // delete only if it was dynamic OTP
-    if (cleanDigits !== "8080407364") {
-      otpStore.delete(fullPhoneNumber);
-    }
-
-    // Create session token
-    const token = createToken(user._id);
-    const response = new NextResponse(
-      JSON.stringify({
+      return NextResponse.json({
         success: true,
-        message: "OTP verified successfully",
-        userId: user._id,
-        isNewUser,
-        user: {
-          phone: user.phone,
-          isVerified: user.isVerified,
-          phoneIsVerified: user.phoneIsVerified
-        }
-      }),
-      { headers: corsHeaders }
-    );
+        message: "OTP generated (static mode)"
+      });
+    }
 
-    setTokenCookie(response, token);
-    return response;
+    // ✅ NORMAL FLOW (Dynamic)
+    otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return new NextResponse(
-      JSON.stringify({ success: false, error: "Error verifying OTP" }),
-      { status: 500, headers: corsHeaders }
+    otpStore.set(fullPhoneNumber, otp);
+
+    // 🔥 YOUR SMS PROVIDER CALL
+    await sendSMS(fullPhoneNumber, otp);
+
+    return NextResponse.json({
+      success: true,
+      message: "OTP sent successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { success: false, error: "Failed to send OTP" },
+      { status: 500 }
     );
   }
 }
