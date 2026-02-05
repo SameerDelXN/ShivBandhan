@@ -25,48 +25,45 @@ export async function POST(req) {
     }
  
     const fullPhoneNumber = `+91${phoneNumber}`;
+    const storedOTP = otpStore.get(fullPhoneNumber);
  
-    await dbConnect();
- 
-    // Find user with OTP fields explicitly selected
-    let user = await User.findOne({ phone: fullPhoneNumber }).select("+otp +otpExpiresAt");
- 
-    if (!user || !user.otp || !user.otpExpiresAt) {
+    // OTP verification
+    if (!storedOTP) {
       return new NextResponse(
         JSON.stringify({ success: false, error: "OTP expired or not sent" }),
         { status: 400, headers: corsHeaders }
       );
     }
-
-    // Check expiration
-    if (new Date() > user.otpExpiresAt) {
-        return new NextResponse(
-            JSON.stringify({ success: false, error: "OTP has expired" }),
-            { status: 400, headers: corsHeaders }
-        );
-    }
  
-    // OTP verification
-    if (user.otp !== otp.toString()) {
+    if (storedOTP !== otp.toString()) {
       return new NextResponse(
         JSON.stringify({ success: false, error: "Invalid OTP" }),
         { status: 400, headers: corsHeaders }
       );
     }
  
-    // OTP is valid
-    // Clear OTP fields
-    user.otp = undefined;
-    user.otpExpiresAt = undefined;
-    
-    // Update verification status
-    user.lastLoginAt = new Date();
-    user.phoneIsVerified = true;
-    if (!user.isVerified) user.isVerified = false;
-    
-    await user.save();
-    
-    const isNewUser = false; // Logic for new user detection can be refined if needed based on creation time or other flags
+    await dbConnect();
+ 
+    // Find or create user
+    let user = await User.findOne({ phone: fullPhoneNumber });
+    const isNewUser = !user;
+ 
+    if (!user) {
+      user = new User({
+        phone: fullPhoneNumber,
+        isVerified: false,
+        phoneIsVerified: true,
+        lastLoginAt: new Date()
+      });
+      await user.save();
+    } else {
+      user.lastLoginAt = new Date();
+      user.phoneIsVerified = true;
+      if (!user.isVerified) user.isVerified = false;
+      await user.save();
+    }
+ 
+    otpStore.delete(fullPhoneNumber);
  
     // Create session token
     const token = createToken(user._id);

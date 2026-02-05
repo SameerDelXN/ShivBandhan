@@ -10,16 +10,12 @@
         type:String
       },
     profileCompletion: { type: Number, default: 0 },
-    },
-    
-    // OTP fields for persistence
-    otp: {
-      type: String,
-      select: false, // Do not return by default
-    },
-    otpExpiresAt: {
-      type: Date,
-      select: false,
+      // validate: {
+      //   validator: function(v) {
+      //     return /^\+91\d{10}$/.test(v); // Validates Indian phone numbers with +91 prefix
+      //   },
+      //   message: props => `${props.value} is not a valid Indian phone number!`
+      // }
     },
 
     // Verification status
