@@ -160,6 +160,9 @@
       showPhoto: { type: Boolean, default: false },
       showContact: { type: Boolean, default: false },
     },
+    
+    // Push Notification Token
+    pushToken: { type: String },
 
   subscription: {
     plan: {

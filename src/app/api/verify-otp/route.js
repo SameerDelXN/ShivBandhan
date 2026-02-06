@@ -25,7 +25,13 @@ export async function POST(req) {
     }
  
     const fullPhoneNumber = `+91${phoneNumber}`;
+
+    console.log("fullPhoneNumber", fullPhoneNumber);
+
     const storedOTP = otpStore.get(fullPhoneNumber);
+
+    console.log("storedOTP", storedOTP);
+    console.log("Entered otp", otp);
  
     // OTP verification
     if (!storedOTP) {
@@ -41,6 +47,7 @@ export async function POST(req) {
         { status: 400, headers: corsHeaders }
       );
     }
+
  
     await dbConnect();
  

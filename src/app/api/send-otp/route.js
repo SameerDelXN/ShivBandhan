@@ -67,6 +67,9 @@ export async function POST(req) {
  
     const fullPhoneNumber = `+91${phoneNumber}`;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    console.log("fullPhoneNumber", fullPhoneNumber);
+    console.log("Generated otp", otp);
  
     // Send OTP via Fast2SMS (DLT template)
     const fast2smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
