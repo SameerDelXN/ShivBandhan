@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "bd699da1-8757-4a71-87ab-82c61751f224"
+      }
+    },
+    "android": {
+      "package": "com.sameerdelxn.app"
+    }
+  }
+}
