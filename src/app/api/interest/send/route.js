@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/dbConnect";
 import Interest from "@/models/Interest";
 import User from "@/models/User"; // Import User model
+import Notification from "@/models/Notification";
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -45,6 +46,31 @@ export async function POST(req) {
     // Create new interest
     const interest = new Interest({ senderId, receiverId });
     await interest.save();
+
+    // --- Create Notification & Send Push ---
+    try {
+        const senderName = senderExists.name || "A user";
+        const title = "New Interest Received";
+        const message = `${senderName} sent you an interest!`;
+
+        // 1. Create DB Notification
+        await Notification.create({
+            userId: receiverId,
+            title,
+            message,
+            type: "interest",
+            data: { interestId: interest._id, senderId }
+        });
+
+        // 2. Send Push Notification if token exists
+        if (receiverExists.pushToken) {
+             const { sendPushNotification } = await import("@/lib/pushNotifications");
+             await sendPushNotification(receiverExists.pushToken, title, message, { type: 'interest', interestId: interest._id });
+        }
+    } catch (notifyError) {
+        console.error("Failed to send notification/push for interest:", notifyError);
+        // Don't fail the request just because notification failed
+    }
 
     return NextResponse.json({ 
       message: "Interest sent successfully",
