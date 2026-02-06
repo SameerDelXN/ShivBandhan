@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/dbConnect";
 import Interest from "@/models/Interest";
+import User from "@/models/User";
+import Notification from "@/models/Notification";
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -24,6 +26,37 @@ export async function PATCH(req) {
 
   interest.status = status;
   await interest.save();
+
+  // --- Notification Logic ---
+  if (status === 'accepted') {
+    try {
+      const sender = await User.findById(interest.senderId);
+      const receiver = await User.findById(interest.receiverId); // The one who accepted
+
+      if (sender && receiver) {
+        const receiverName = receiver.name || "A user";
+        const title = "It's a Match!";
+        const message = `${receiverName} accepted your interest!`;
+
+        // 1. Create DB Notification
+        await Notification.create({
+          userId: sender._id,
+          title,
+          message,
+          type: "match", // Using 'match' type for acceptance
+          data: { interestId: interest._id, receiverId: receiver._id }
+        });
+
+        // 2. Send Push
+        if (sender.pushToken) {
+           const { sendPushNotification } = await import("@/lib/pushNotifications");
+           await sendPushNotification(sender.pushToken, title, message, { type: 'match', interestId: interest._id });
+        }
+      }
+    } catch (error) {
+      console.error("Error sending acceptance notification:", error);
+    }
+  }
 
   return NextResponse.json({ message: "Status updated", interest },{headers:corsHeaders});
 }
