@@ -64,11 +64,14 @@ export async function POST(req) {
 
         // 2. Send Push Notification if token exists
         if (receiverExists.pushToken) {
+             console.log(`[API] Found push token for receiver: ${receiverExists.pushToken}`);
              const { sendPushNotification } = await import("@/lib/pushNotifications");
              await sendPushNotification(receiverExists.pushToken, title, message, { type: 'interest', interestId: interest._id });
+        } else {
+             console.log(`[API] NO push token found for receiver ${receiverId}`);
         }
     } catch (notifyError) {
-        console.error("Failed to send notification/push for interest:", notifyError);
+        console.error("[API] Failed to send notification/push for interest:", notifyError);
         // Don't fail the request just because notification failed
     }
 

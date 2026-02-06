@@ -49,12 +49,15 @@ export async function PATCH(req) {
 
         // 2. Send Push
         if (sender.pushToken) {
+           console.log(`[API] Found push token for sender: ${sender.pushToken}`);
            const { sendPushNotification } = await import("@/lib/pushNotifications");
            await sendPushNotification(sender.pushToken, title, message, { type: 'match', interestId: interest._id });
+        } else {
+           console.log(`[API] NO push token found for sender ${sender._id}`);
         }
       }
     } catch (error) {
-      console.error("Error sending acceptance notification:", error);
+      console.error("[API] Error sending acceptance notification:", error);
     }
   }
 

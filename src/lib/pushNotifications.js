@@ -9,6 +9,7 @@ export async function sendPushNotification(pushToken, title, message, data = {})
     return false;
   }
 
+  console.log(`[Push] Attempting to send to token: ${pushToken}`);
   const chunks = expo.chunkPushNotifications([
     {
       to: pushToken,
@@ -22,11 +23,12 @@ export async function sendPushNotification(pushToken, title, message, data = {})
   const tickets = [];
   for (const chunk of chunks) {
     try {
+      console.log('[Push] Sending chunk...');
       const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      console.log('Push Notification Ticket:', ticketChunk);
+      console.log('[Push] Ticket received:', ticketChunk);
       tickets.push(...ticketChunk);
     } catch (error) {
-      console.error('Error sending push notification chunk:', error);
+      console.error('[Push] Error sending chunk:', error);
     }
   }
   
