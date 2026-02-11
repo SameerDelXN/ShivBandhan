@@ -1,9 +1,9 @@
 // import otpStore from "../../../lib/otpStore";
 // import { NextResponse } from "next/server";
 // import twilio from "twilio";
-
+ 
 // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
+ 
 // // Define CORS headers
 // const corsHeaders = {
 //   'Access-Control-Allow-Origin': 'http://localhost:8081',
@@ -11,29 +11,29 @@
 //   'Access-Control-Allow-Headers': 'Content-Type',
 //   'Access-Control-Allow-Credentials' : true,
 // };
-
+ 
 // export async function POST(req) {
 //   try {
 //     const { phoneNumber } = await req.json();
 //     if (!phoneNumber || phoneNumber.length !== 10) {
 //       return new NextResponse(
-//         JSON.stringify({ success: false, message: "Invalid phone number" }), 
+//         JSON.stringify({ success: false, message: "Invalid phone number" }),
 //         { status: 400, headers: corsHeaders }
 //       );
 //     }
-
+ 
 //     const fullPhoneNumber = `+91${phoneNumber}`;
 //     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
+ 
 //     await client.messages.create({
 //       body: `Your OTP is ${otp}`,
 //       from: process.env.TWILIO_PHONE_NUMBER,
 //       to: fullPhoneNumber,
 //     });
-
+ 
 //     otpStore.set(fullPhoneNumber, otp);
 //     setTimeout(() => otpStore.delete(fullPhoneNumber), 5 * 60 * 1000);
-
+ 
 //     return new NextResponse(
 //       JSON.stringify({ success: true, message: "OTP sent successfully" }),
 //       { headers: corsHeaders }
@@ -45,16 +45,16 @@
 //     );
 //   }
 // }
-
+ 
 // export async function OPTIONS() {
 //   return new NextResponse(null, {
 //     headers: corsHeaders
 //   });
 // }
-
-import otpStore from "../../../lib/otpStore"; 
+ 
+import otpStore from "../../../lib/otpStore";
 import { NextResponse } from "next/server";
-
+ 
 export async function POST(req) {
   try {
     const { phoneNumber } = await req.json();
@@ -64,10 +64,13 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-
+ 
     const fullPhoneNumber = `+91${phoneNumber}`;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+    console.log("fullPhoneNumber", fullPhoneNumber);
+    console.log("Generated otp", otp);
+ 
     // Send OTP via Fast2SMS (DLT template)
     const fast2smsResponse = await fetch("https://www.fast2sms.com/dev/bulkV2", {
       method: "POST",
@@ -83,17 +86,17 @@ export async function POST(req) {
         numbers: phoneNumber,  // Send without +91
       }),
     });
-
+ 
     const responseData = await fast2smsResponse.json();
-
+ 
     if (!responseData.return) {
       throw new Error(responseData.message || "Failed to send OTP via Fast2SMS");
     }
-
+ 
     // Store OTP in memory
     otpStore.set(fullPhoneNumber, otp);
     setTimeout(() => otpStore.delete(fullPhoneNumber), 5 * 60 * 1000);
-
+ 
     return NextResponse.json({ success: true, message: "OTP sent successfully" });
   } catch (error) {
     return NextResponse.json(
