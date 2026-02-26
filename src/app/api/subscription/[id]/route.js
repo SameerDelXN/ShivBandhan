@@ -7,7 +7,8 @@ export async function GET(_, { params }) {
   await connectDB();
 
   try {
-    const plan = await Subscription.findById(params.id);
+    const { id } = await params;
+    const plan = await Subscription.findById(id);
     if (!plan) return NextResponse.json({ message: "Not found" }, { status: 404 });
     return NextResponse.json(plan);
   } catch (err) {
@@ -21,7 +22,8 @@ export async function PUT(req, { params }) {
   const updates = await req.json();
 
   try {
-    const updated = await Subscription.findByIdAndUpdate(params.id, updates, { new: true });
+    const { id } = await params;
+    const updated = await Subscription.findByIdAndUpdate(id, updates, { new: true });
     return NextResponse.json(updated);
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 400 });
@@ -33,7 +35,8 @@ export async function DELETE(_, { params }) {
   await connectDB();
 
   try {
-    await Subscription.findByIdAndDelete(params.id);
+    const { id } = await params;
+    await Subscription.findByIdAndDelete(id);
     return NextResponse.json({ message: "Subscription deleted" });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });

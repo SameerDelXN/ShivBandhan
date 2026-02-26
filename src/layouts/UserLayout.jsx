@@ -68,8 +68,10 @@ export default function UserLayout({ children }) {
     );
   }
 
-  // Special case: allow access to profile page even if not verified
-  if (!user?.isVerified && !isProfilePage) {
+  // Special case: allow access to profile and matches pages even if not verified
+  const isMatchesPage = pathname === "/dashboard/matches";
+  
+  if (!user?.isVerified && !isProfilePage && !isMatchesPage) {
     return (
       <div className="flex min-h-screen bg-gradient-to-br from-orange-50 to-blue-50">
         <Sidebar mobileOpen={sidebarOpen} setMobileOpen={setSidebarOpen} />

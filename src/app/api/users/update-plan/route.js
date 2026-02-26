@@ -49,6 +49,8 @@ export async function PATCH(req) {
           'subscription.transactionId': razorpay_payment_id,
           'subscription.subscriptionId': planId,
           'subscription.isSubscribed': true,
+          'isVerified': true,
+          'verificationStatus': 'Verified',
         },
       },
       { new: true }

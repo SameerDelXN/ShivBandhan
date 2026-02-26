@@ -320,14 +320,15 @@ const fetchSentInterests = async (senderId) => {
 
 console.log("matches = ",matches)
   const tabs = [
-    { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility > 0).length, icon: Users },
+    { id: 'all', label: 'All Matches', count: matches.filter(m => m.compatibility >= 0).length, icon: Users },
     { id: 'preferred', label: 'Preferred', count: matches.filter(m => m.compatibility >= 70).length, icon: Star },
     { id: 'new', label: 'New', count: matches.filter(m => m.isNew).length, icon: Sparkles },
     { id: 'nearby', label: 'Nearby', count: matches.filter(m => isSameCity(m.currentCity, user?.currentCity)).length, icon: Navigation }
   ];
 
   const filteredMatches = matches.filter(match => {
-    if (match.compatibility <= 0) return false;
+    // We allow matches with 0 compatibility to be shown because new users
+    // might not have filled their expectations/preferences yet.
     // Always show all matches by default
   let shouldShow = true;
     // Only apply filters if they have values

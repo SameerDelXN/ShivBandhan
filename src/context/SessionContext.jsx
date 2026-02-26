@@ -10,8 +10,8 @@ export function SessionProvider({ children }) {
   const router = useRouter();
 
   // Check for existing session on initial load
-useEffect(() => {
-  async function loadUser() {
+  // Check for existing session
+  const refreshSession = async () => {
     try {
       const response = await fetch('/api/session', {
         credentials: 'include' // Important for cookie-based auth
@@ -25,10 +25,11 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  loadUser();
-}, []);
+  useEffect(() => {
+    refreshSession();
+  }, []);
 
 
   // Login function to be called after OTP verification
@@ -69,6 +70,7 @@ const login = async (userId) => {
     loading,
     login,
     logout,
+    refreshSession,
     isAuthenticated: !!user,
     isPhoneVerified: user?.phoneIsVerified || false,
   };

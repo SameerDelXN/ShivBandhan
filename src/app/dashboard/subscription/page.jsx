@@ -22,7 +22,7 @@
   import { useRouter } from "next/navigation";
   import Razorpay from "razorpay";
   export default function DynamicSubscriptionPlans() {
-    const { user } = useSession();
+    const { user, refreshSession } = useSession();
     const router = useRouter();
 
     const [plans, setPlans] = useState([]);
@@ -34,22 +34,25 @@
     const [isSubscribing, setIsSubscribing] = useState(false);
     const [activeButtonId, setActiveButtonId] = useState(null);
     const fetchUserDatanew = async () => {
-      console.log("hello");
+      if (!user?.id) return;
       try {
         const res = await fetch(`/api/users/${user?.id}`);
+        if (!res.ok) return; // If API gave 404/500, don't attempt to parse HTML
         const darta = await res.json();
-        console.log("Response from API:", darta.subscription);
-        setCurrentSubscription({
-          subscriptionId: darta.subscription.subscriptionId,
-          plan: darta.subscription.plan,
-        });
+        
+        if (darta?.subscription) {
+          setCurrentSubscription({
+            subscriptionId: darta.subscription.subscriptionId,
+            plan: darta.subscription.plan,
+          });
+        }
       } catch (err) {
         console.log("Error fetching user data:", err);
       }
     };
     useEffect(() => {
       fetchUserDatanew();
-    }, []);
+    }, [user?.id]);
     // Fetch plans and current subscription
     useEffect(() => {
       const fetchPlans = async () => {
@@ -145,6 +148,7 @@
               subscriptionId: plan._id,
               plan: plan.name,
             });
+            await refreshSession(); // Trigger re-fetching the updated User so Verify gate opens
             router.push("/payment-success");
           } else {
             throw new Error(
