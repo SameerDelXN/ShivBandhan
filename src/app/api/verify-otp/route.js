@@ -1,4 +1,4 @@
-import otpStore from "../../../lib/otpStore";
+import OTP from "@/models/OTP";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
@@ -28,7 +28,10 @@ export async function POST(req) {
 
     console.log("fullPhoneNumber", fullPhoneNumber);
 
-    const storedOTP = otpStore.get(fullPhoneNumber);
+    await dbConnect();
+
+    const record = await OTP.findOne({ phone: fullPhoneNumber });
+    const storedOTP = record ? record.otp : null;
 
     console.log("storedOTP", storedOTP);
     console.log("Entered otp", otp);
@@ -72,7 +75,7 @@ export async function POST(req) {
       await user.save();
     }
  
-    otpStore.delete(fullPhoneNumber);
+    await OTP.deleteMany({ phone: fullPhoneNumber });
  
     // Create session token
     const token = createToken(user._id);

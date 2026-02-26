@@ -58,6 +58,10 @@ export default function MatchesPage() {
   const [hasSubscription, setHasSubscription] = useState(true);
   const [checkingSubscription, setCheckingSubscription] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [payPerViewProfile, setPayPerViewProfile] = useState(null);
+  const [walletBalance, setWalletBalance] = useState(user?.walletBalance || 0);
+  const { refreshSession } = useSession(); // Access this to refresh user data
+
   console.log('User data: Matches', user);
 
     // Quick filter states
@@ -280,12 +284,13 @@ const fetchSentInterests = async (senderId) => {
 
     if (data.success) {
       const enriched = data.data
-        .filter(matchUser =>
-          matchUser._id !== currentUserData.id &&
-          matchUser.gender !== currentUserData.gender &&
-          matchUser.dob && matchUser.height && matchUser.currentCity &&
-          matchUser.education && matchUser.income && matchUser.maritalStatus && matchUser.caste
-        )
+        .filter(matchUser => {
+          if (matchUser._id === currentUserData.id) return false;
+          // If current user hasn't set gender, show them everything (or just don't strictly filter them out)
+          if (!currentUserData.gender) return true;
+          // Otherwise, only show opposite gender
+          return matchUser.gender !== currentUserData.gender;
+        })
         .map(matchUser => {
           const compatibility = calculateCompatibility(currentUserData, {
             ...matchUser,
@@ -810,39 +815,222 @@ const handleDownloadProfile = async (profile) => {
     console.error('Error sending interest:', error);
   }
 };
-
 const handleImageClick = (match) => {
-  if (!hasSubscription) {
-    window.location.href = '/dashboard/subscription';
-    return;
+  // If user has subscription OR they've already unlocked this profile: show it
+  if (hasSubscription || (user?.unlockedProfiles && user?.unlockedProfiles.includes(match._id))) {
+      setSelectedProfile(match);
+      return;
   }
-  setSelectedProfile(match);
+  
+  // Otherwise, trigger the PayPerView flow
+  setWalletBalance(user?.walletBalance || 0); // Refresh local state from session just in case
+  setPayPerViewProfile(match);
 };
   const closeProfilePopup = () => {
     setSelectedProfile(null);
   };
   console.log("USERRRRRR = ",user?.id)
 
-//   // At the beginning of the ProfilePopup component:
-// if (!hasSubscription) {
-//   return (
-//     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-//       <div className="bg-white rounded-xl p-6 max-w-md text-center">
-//         <Lock className="w-12 h-12 mx-auto text-orange-500 mb-4" />
-//         <h3 className="text-xl font-bold text-gray-900 mb-2">Premium Feature</h3>
-//         <p className="text-gray-600 mb-6">
-//           You need a subscription to view full profiles. Upgrade now to see complete details and photos.
-//         </p>
-//         <button
-//           onClick={() => window.location.href = '/dashboard/subscription'}
-//           className="bg-orange-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors"
-//         >
-//           Upgrade Now
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
+const loadRazorpay = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+};
+
+const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState(50);
+
+  const UNLOCK_COST = 50;
+  const needsFunds = walletBalance < UNLOCK_COST;
+
+  const handleAddFunds = async () => {
+    try {
+      setIsProcessing(true);
+      const res = await loadRazorpay();
+      if (!res) {
+        toast.error("Failed to load Razorpay SDK");
+        setIsProcessing(false);
+        return;
+      }
+
+      // Create Order
+      const orderRes = await fetch("/api/wallet/add-funds", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          amount: topUpAmount,
+          action: "create_order"
+        }),
+      });
+      const orderData = await orderRes.json();
+      
+      if (!orderRes.ok) throw new Error(orderData.error);
+
+      // Trigger Checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: "ShivBandhan Wallet",
+        description: `Add ₹${topUpAmount} to Wallet`,
+        order_id: orderData.order.id,
+        handler: async function (response) {
+          // Verify
+          const verifyRes = await fetch("/api/wallet/add-funds", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: user.id,
+              action: "verify_payment",
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok) {
+            toast.success(`Successfully added ₹${verifyData.addedAmount} to your wallet!`);
+            setWalletBalance(verifyData.newBalance);
+            await refreshSession(); // update global session
+          } else {
+            toast.error(verifyData.error || "Failed to verify transaction.");
+          }
+          setIsProcessing(false);
+        },
+        prefill: {
+          name: user?.name,
+          email: user?.email,
+          contact: user?.phone,
+        },
+        theme: {
+          color: "#f97316", // orange-500
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+          }
+        }
+      };
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Something went wrong.");
+      setIsProcessing(false);
+    }
+  };
+
+  const handleUnlockProfile = async () => {
+    try {
+      setIsProcessing(true);
+      const unlockRes = await fetch("/api/wallet/unlock-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, targetProfileId: targetProfile._id }),
+      });
+      const data = await unlockRes.json();
+      if (unlockRes.ok) {
+        toast.success("Profile fully unlocked!");
+        setWalletBalance(data.newBalance);
+        await refreshSession(); // update global session
+        onUnlock(targetProfile); // close PPV modal and open actual profile
+      } else {
+        toast.error(data.error || "Failed to unlock profile.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Failed to unlock profile.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl relative"
+      >
+        <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+          <X className="w-5 h-5" />
+        </button>
+
+        <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+          <Lock className="w-8 h-8 text-orange-500" />
+        </div>
+
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Premium Profile</h3>
+        <p className="text-gray-600 text-sm mb-6">
+          You need an active subscription to view full profiles. Alternatively, you can unlock this specific profile permanently for just <span className="font-bold text-orange-600">₹{UNLOCK_COST}</span>.
+        </p>
+
+        <div className="bg-orange-50 rounded-xl p-4 mb-6 border border-orange-100">
+          <div className="flex justify-between items-center text-sm font-medium">
+             <span className="text-gray-600">Current Wallet Balance:</span>
+             <span className="text-xl text-orange-600">₹{walletBalance}</span>
+          </div>
+        </div>
+
+        {needsFunds ? (
+          <div className="space-y-4">
+             <p className="text-sm font-medium text-gray-700">Select amount to top-up:</p>
+             <div className="grid grid-cols-3 gap-2 mb-4">
+               {[50, 100, 500].map(amt => (
+                 <button 
+                  key={amt}
+                  onClick={() => setTopUpAmount(amt)}
+                  className={`py-2 px-3 rounded-lg border text-sm font-medium transition-colors ${topUpAmount === amt ? 'bg-orange-500 text-white border-orange-500' : 'bg-white text-gray-700 border-gray-200 hover:bg-orange-50 hover:border-orange-300'}`}
+                 >
+                   ₹{amt}
+                 </button>
+               ))}
+             </div>
+             <button
+              onClick={handleAddFunds}
+              disabled={isProcessing}
+              className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center"
+            >
+              {isProcessing ? <Loader2 className="w-5 h-5 animate-spin mx-auto"/> : `Add ₹${topUpAmount} via Razorpay`}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleUnlockProfile}
+            disabled={isProcessing}
+            className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center shadow-md shadow-orange-500/20"
+          >
+           {isProcessing ? <Loader2 className="w-5 h-5 animate-spin mx-auto"/> : 'Unlock Profile Now'}
+          </button>
+        )}
+
+        <div className="mt-6 pt-4 border-t border-gray-100">
+           <p className="text-xs text-gray-500 mb-3">Or explore our unlimited plans</p>
+           <button
+             onClick={() => window.location.href = '/dashboard/subscription'}
+             className="w-full bg-gray-50 text-orange-600 py-2.5 rounded-lg border border-orange-200 font-medium hover:bg-orange-50 transition-colors"
+           >
+             View Subscription Plans
+           </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+
 const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
 
@@ -1732,13 +1920,26 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
     </div>
 
     {/* Profile Popup */}
-  {selectedProfile && (
-  <ProfilePopup 
-    profile={selectedProfile} 
-    onClose={closeProfilePopup} 
-    hasSubscription={hasSubscription}
-  />
-)}
-  </div>
+      {selectedProfile && (
+        <ProfilePopup 
+          profile={selectedProfile} 
+          onClose={closeProfilePopup} 
+          hasSubscription={hasSubscription || (user?.unlockedProfiles && user?.unlockedProfiles.includes(selectedProfile._id))}
+        />
+      )}
+
+      <AnimatePresence>
+        {payPerViewProfile && (
+          <PayPerViewModal 
+            targetProfile={payPerViewProfile}
+            onClose={() => setPayPerViewProfile(null)}
+            onUnlock={(profile) => {
+               setPayPerViewProfile(null);
+               setSelectedProfile(profile);
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
 );
 }

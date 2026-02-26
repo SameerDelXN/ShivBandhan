@@ -52,9 +52,10 @@
 //   });
 // }
  
-import otpStore from "../../../lib/otpStore";
 import { NextResponse } from "next/server";
- 
+import dbConnect from "@/lib/dbConnect";
+import OTP from "@/models/OTP";
+
 export async function POST(req) {
   try {
     const { phoneNumber } = await req.json();
@@ -65,6 +66,8 @@ export async function POST(req) {
       );
     }
  
+    await dbConnect();
+
     const fullPhoneNumber = `+91${phoneNumber}`;
     let otp;
 
@@ -104,9 +107,10 @@ export async function POST(req) {
       }
     }
 
-    // Store OTP in memory
-    otpStore.set(fullPhoneNumber, otp);
-    setTimeout(() => otpStore.delete(fullPhoneNumber), 5 * 60 * 1000);
+    // Store OTP in MongoDB
+    // Try to remove any existing OTP for this number first
+    await OTP.deleteOne({ phone: fullPhoneNumber });
+    await OTP.create({ phone: fullPhoneNumber, otp });
 
     return NextResponse.json({ success: true, message: "OTP sent successfully" });
   } catch (error) {

@@ -188,6 +188,10 @@
     unlockedAt: { type: Date, default: null },
   },
 
+  // Wallet and Pay-per-view access
+  walletBalance: { type: Number, default: 0 },
+  unlockedProfiles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
     // Timestamps
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

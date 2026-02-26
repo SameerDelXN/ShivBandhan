@@ -52,7 +52,9 @@ export async function GET(request) {
           phoneIsVerified: user.phoneIsVerified,
           subscription: user?.subscription,
           profilePhoto: user.profilePhoto,
-          gender: user?.gender
+          gender: user?.gender,
+          walletBalance: user.walletBalance || 0,
+          unlockedProfiles: user.unlockedProfiles || []
         }
       }),
       { headers: corsHeaders }
@@ -94,7 +96,9 @@ export async function POST(request) {
           },
           profilePhoto: user.profilePhoto,
           subscription: user.subscription || null,
-          gender: user?.gender
+          gender: user?.gender,
+          walletBalance: user.walletBalance || 0,
+          unlockedProfiles: user.unlockedProfiles || []
         }
       }),
       { headers: corsHeaders }
