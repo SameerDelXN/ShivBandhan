@@ -59,8 +59,13 @@ export default function MatchesPage() {
   const [checkingSubscription, setCheckingSubscription] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [payPerViewProfile, setPayPerViewProfile] = useState(null);
+  const [newlyUnlocked, setNewlyUnlocked] = useState([]);
   const [walletBalance, setWalletBalance] = useState(user?.walletBalance || 0);
   const { refreshSession } = useSession(); // Access this to refresh user data
+
+  useEffect(() => {
+    if (user?.walletBalance !== undefined) setWalletBalance(user.walletBalance);
+  }, [user?.walletBalance]);
 
   console.log('User data: Matches', user);
 
@@ -181,6 +186,7 @@ else if (expectation === 'expectedHeight' && matchField === 'height') {
   // Extract cm value from strings like:
   // "4'6"(137 cm)", "5'3"(160 cm)", "51"(155cm)-54"(163cm)", etc.
   const extractCm = (str) => {
+    if (!str || typeof str !== 'string') return null;
     const match = str.match(/(\d+)\s*cm/i); // Finds the first number followed by "cm"
     return match ? parseInt(match[1]) : null;
   };
@@ -213,10 +219,9 @@ else if (expectation === 'expectedHeight' && matchField === 'height') {
     if (userHeightCm >= expectedMinCm && userHeightCm <= expectedMaxCm) {
       matchedPercentage += percentagePerField; // Full match → increase %
     }
-    
   } 
   else {
-    console.error("Failed to parse height values:", { expectedValue, matchValue });
+    // console.error("Failed to parse height values:", { expectedValue, matchValue });
   }
 }
     else if (expectation === 'expectedIncome' && matchField === 'income') {
@@ -275,11 +280,19 @@ const fetchSentInterests = async (senderId) => {
     setIsLoading(true);
 
     const currentUserRes = await fetch('/api/users/me');
+    if (!currentUserRes.ok) {
+      if (currentUserRes.status === 401) {
+        console.warn("User session expired or not found. Cannot fetch matches.");
+        return;
+      }
+      throw new Error('Failed to fetch current user profile');
+    }
     const currentUserData = await currentUserRes.json();
 
-    const sentReceiverIds = await fetchSentInterests(currentUserData._id);
+    const sentReceiverIds = await fetchSentInterests(currentUserData._id || currentUserData.id);
 
     const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
+    if (!res.ok) throw new Error('Failed to fetch matches');
     const data = await res.json();
 
     if (data.success) {
@@ -300,7 +313,7 @@ const fetchSentInterests = async (senderId) => {
           return {
             ...matchUser,
             age: calculateAge(matchUser.dob),
-            profilePhoto: matchUser.profilePhoto || 'https://via.placeholder.com/200x250?text=Profile',
+            profilePhoto: matchUser.profilePhoto || null,
             hasPhoto: !!matchUser.profilePhoto,
             isBlurred: !hasSubscription,
             matchType: 'all',
@@ -847,9 +860,9 @@ const loadRazorpay = () => {
 
 const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [topUpAmount, setTopUpAmount] = useState(50);
+  const [topUpAmount, setTopUpAmount] = useState(1);
 
-  const UNLOCK_COST = 50;
+  const UNLOCK_COST = 1;
   const needsFunds = walletBalance < UNLOCK_COST;
 
   const handleAddFunds = async () => {
@@ -867,7 +880,7 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: user.id,
+          userId: user?.id || user?._id || user?.user?.id || user?.user?._id,
           amount: topUpAmount,
           action: "create_order"
         }),
@@ -890,7 +903,7 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              userId: user.id,
+              userId: user?.id || user?._id || user?.user?.id || user?.user?._id,
               action: "verify_payment",
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
@@ -902,10 +915,15 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
             toast.success(`Successfully added ₹${verifyData.addedAmount} to your wallet!`);
             setWalletBalance(verifyData.newBalance);
             await refreshSession(); // update global session
+            if (verifyData.newBalance >= UNLOCK_COST) {
+              await handleUnlockProfile();
+            } else {
+              setIsProcessing(false);
+            }
           } else {
             toast.error(verifyData.error || "Failed to verify transaction.");
+            setIsProcessing(false);
           }
-          setIsProcessing(false);
         },
         prefill: {
           name: user?.name,
@@ -937,7 +955,7 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
       const unlockRes = await fetch("/api/wallet/unlock-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, targetProfileId: targetProfile._id }),
+        body: JSON.stringify({ userId: user?.id || user?._id || user?.user?.id || user?.user?._id, targetProfileId: targetProfile._id }),
       });
       const data = await unlockRes.json();
       if (unlockRes.ok) {
@@ -987,8 +1005,8 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
         {needsFunds ? (
           <div className="space-y-4">
              <p className="text-sm font-medium text-gray-700">Select amount to top-up:</p>
-             <div className="grid grid-cols-3 gap-2 mb-4">
-               {[50, 100, 500].map(amt => (
+             <div className="grid grid-cols-4 gap-2 mb-4">
+               {[1, 50, 100, 500].map(amt => (
                  <button 
                   key={amt}
                   onClick={() => setTopUpAmount(amt)}
@@ -1333,7 +1351,7 @@ const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
     </>
   );
 };
-const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfile }) => (
+const MatchCard = ({ match, hasSubscription, isUnlocked, setSelectedProfile, onDownloadProfile, onViewProfile }) => (
   <div className="bg-white rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
     <div className="relative">
       {/* Mutual Match Banner */}
@@ -1347,26 +1365,26 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
       )}
 
       {/* Profile Image */}
-     <div className={`aspect-[4/5] bg-gradient-to-br from-orange-50 to-amber-150 flex items-center justify-center relative ${match.mutualMatch ? 'mt-8' : ''}` }>
+     <div 
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onViewProfile) onViewProfile(match);
+        }}
+        className={`aspect-[4/5] bg-gradient-to-br from-orange-50 to-amber-150 flex items-center justify-center relative cursor-pointer ${match.mutualMatch ? 'mt-8' : ''}` }
+      >
         {match.profilePhoto ? (
           <>
             <img
               src={match.profilePhoto}
               alt={`${maskFirstName(match.name)} profile` }
-              className={`w-full h-full object-cover ` }
+              className={`w-full h-full object-cover ${!hasSubscription && !isUnlocked ? 'blur-md brightness-75' : ''}` }
             />
-            {!hasSubscription && (
-              <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center p-4 text-center">
-                
-                {/* <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.location.href = '/dashboard/subscription';
-                  }}
-                  className="mt-2 bg-white text-orange-600 px-3 py-1 rounded-full text-xs font-medium hover:bg-orange-50 transition-colors"
-                >
-                  Unlock Now
-                </button> */}
+            {(!hasSubscription && !isUnlocked) && (
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center">
+                <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-2">
+                   <Lock className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-white font-medium text-sm">Unlock to View</span>
               </div>
             )}
           </>
@@ -1452,11 +1470,15 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
   <button 
     onClick={(e) => {
       e.stopPropagation();
-      if (!hasSubscription) {
-        window.location.href = '/dashboard/subscription';
-        return;
+      if (onViewProfile) {
+        onViewProfile(match);
+      } else {
+        if (!hasSubscription && !isUnlocked) {
+          window.location.href = '/dashboard/subscription';
+          return;
+        }
+        setSelectedProfile(match);
       }
-      setSelectedProfile(match);
     }}
     className="w-full bg-gray-100 text-gray-700 py-1.5 px-2 rounded text-xs font-medium hover:bg-gray-200 transition-colors flex items-center justify-center"
     aria-label="View profile"
@@ -1492,8 +1514,9 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
     <button 
       onClick={(e) => {
         e.stopPropagation();
-        if (!hasSubscription) {
-          window.location.href = '/dashboard/subscription';
+        if (!hasSubscription && !isUnlocked) {
+          if (onViewProfile) onViewProfile(match);
+          else window.location.href = '/dashboard/subscription';
           return;
         }
         handleSendInterest(user?.id ? user.id : user.user.id, match._id);
@@ -1891,15 +1914,26 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
         ) : (
           <>
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredMatches.map((match) => (
-                <MatchCard
-  key={match._id}
-  match={match}
-  hasSubscription={hasSubscription}
-  setSelectedProfile={setSelectedProfile}
-  onDownloadProfile={handleDownloadProfile}
-/>
-              ))}
+              {filteredMatches.map((match) => {
+                 const isUnlocked = newlyUnlocked.includes(match._id) || (user?.unlockedProfiles && user.unlockedProfiles.includes(match._id));
+                 return (
+                  <MatchCard
+                    key={match._id}
+                    match={match}
+                    hasSubscription={hasSubscription}
+                    isUnlocked={isUnlocked}
+                    setSelectedProfile={setSelectedProfile}
+                    onDownloadProfile={handleDownloadProfile}
+                    onViewProfile={() => {
+                      if (!hasSubscription && !isUnlocked) {
+                        setPayPerViewProfile(match);
+                      } else {
+                        setSelectedProfile(match);
+                      }
+                    }}
+                  />
+                );
+              })}
             </div>
 
             {/* Load More Button */}
@@ -1924,7 +1958,7 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
         <ProfilePopup 
           profile={selectedProfile} 
           onClose={closeProfilePopup} 
-          hasSubscription={hasSubscription || (user?.unlockedProfiles && user?.unlockedProfiles.includes(selectedProfile._id))}
+          hasSubscription={hasSubscription || newlyUnlocked.includes(selectedProfile._id) || (user?.unlockedProfiles && user?.unlockedProfiles.includes(selectedProfile._id))}
         />
       )}
 
@@ -1935,6 +1969,7 @@ const MatchCard = ({ match, hasSubscription, setSelectedProfile, onDownloadProfi
             onClose={() => setPayPerViewProfile(null)}
             onUnlock={(profile) => {
                setPayPerViewProfile(null);
+               setNewlyUnlocked(prev => [...prev, profile._id]);
                setSelectedProfile(profile);
             }}
           />
