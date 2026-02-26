@@ -242,7 +242,7 @@ import { useState } from 'react';
 export default function Sidebar({ mobileOpen = false, setMobileOpen }) {
   const pathname = usePathname();
   const router = useRouter(); // Added useRouter hook
-  const { logout } = useSession();
+  const { logout, user } = useSession();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   
   const navItems = [
@@ -367,6 +367,19 @@ export default function Sidebar({ mobileOpen = false, setMobileOpen }) {
               </Link>
             );
           })}
+
+          {/* Wallet Section */}
+          <div className="mx-4 mb-4 mt-2 p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-100/60 shadow-sm flex items-center justify-between transition-transform hover:scale-[1.02]">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-white rounded-lg shadow-sm">
+                <CreditCard className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-0.5">Wallet Balance</p>
+                <p className="font-bold text-gray-900 text-sm">₹{user?.walletBalance || 0}</p>
+              </div>
+            </div>
+          </div>
 
           {/* Log Out Button */}
           <button

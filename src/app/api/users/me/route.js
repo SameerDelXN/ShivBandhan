@@ -120,6 +120,8 @@ export async function GET(request) {
   preferences: user.preferences,
   subscription: user.subscription,
   downloadAccess: user.downloadAccess,
+  walletBalance: user.walletBalance || 0,
+  unlockedProfiles: user.unlockedProfiles || [],
   createdAt: user.createdAt,
 
 

@@ -49,7 +49,7 @@ export default function FeaturedProfilesDynamic() {
             age: calculateAge(u.dob),
             city: u.currentCity || '—',
             profession: u.occupation || u.education || '—',
-            photo: u.profilePhoto || 'https://via.placeholder.com/600x800?text=Profile',
+            photo: u.profilePhoto || 'https://placehold.co/600x800/orange/white?text=Profile',
           }));
         setProfiles(mapped);
       } catch (e) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import connectDB from '@/lib/dbConnect';
 import User from '@/models/User';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
@@ -20,14 +20,14 @@ export async function POST(req) {
 
     // Step 1: Create an Order
     if (action === 'create_order') {
-      if (!amount || amount < 50) {
-        return NextResponse.json({ error: 'Minimum amount is ₹50' }, { status: 400 });
+      if (!amount || amount < 1) {
+        return NextResponse.json({ error: 'Minimum amount is ₹1' }, { status: 400 });
       }
 
       const orderOptions = {
         amount: amount * 100, // Amount is in currency subunits (paise)
         currency: 'INR',
-        receipt: `receipt_wallet_${Date.now()}_${userId}`,
+        receipt: `rw_${Date.now()}_${userId.toString().slice(-6)}`,
         payment_capture: 1 // Auto capture
       };
 

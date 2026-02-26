@@ -14,7 +14,8 @@ export function SessionProvider({ children }) {
   const refreshSession = async () => {
     try {
       const response = await fetch('/api/session', {
-        credentials: 'include' // Important for cookie-based auth
+        credentials: 'include', // Important for cookie-based auth
+        cache: 'no-store'
       });
       const result = await response.json();
       console.log("✅ SessionContext: /api/session result:", result);
