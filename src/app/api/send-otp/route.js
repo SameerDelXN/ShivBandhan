@@ -108,8 +108,8 @@ export async function POST(req) {
     }
 
     // Store OTP in MongoDB
-    // Try to remove any existing OTP for this number first
-    await OTP.deleteOne({ phone: fullPhoneNumber });
+    // Remove all existing OTPs for this number to prevent stale/incorrect code matches
+    await OTP.deleteMany({ phone: fullPhoneNumber });
     await OTP.create({ phone: fullPhoneNumber, otp });
 
     return NextResponse.json({ success: true, message: "OTP sent successfully" });

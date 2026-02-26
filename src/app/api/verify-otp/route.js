@@ -30,7 +30,7 @@ export async function POST(req) {
 
     await dbConnect();
 
-    const record = await OTP.findOne({ phone: fullPhoneNumber });
+    const record = await OTP.findOne({ phone: fullPhoneNumber }).sort({ createdAt: -1 });
     const storedOTP = record ? record.otp : null;
 
     console.log("storedOTP", storedOTP);
