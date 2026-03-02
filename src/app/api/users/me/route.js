@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 import { Weight } from 'lucide-react';
-// export const dynamic = 'force-dynamic';2
+export const dynamic = 'force-dynamic';
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
