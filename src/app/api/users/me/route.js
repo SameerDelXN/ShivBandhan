@@ -14,8 +14,18 @@ export async function GET(request) {
   try {
     await dbConnect();
 
-    // Get token from cookies
-    const token = request.cookies.get('authToken')?.value;
+    // Get token from cookies or Authorization header
+    let token = request.cookies.get('authToken')?.value;
+    if (!token) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const extracted = authHeader.substring(7);
+        if (extracted !== "undefined" && extracted !== "null") {
+          token = extracted;
+        }
+      }
+    }
+
     if (!token) {
       return NextResponse.json(
         { message: 'Unauthorized' },

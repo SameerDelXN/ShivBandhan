@@ -15,6 +15,36 @@ export async function GET(request) {
   try {
     await connectDB();
 
+    // Authenticate the user
+    let token = request.cookies.get('authToken')?.value;
+    if (!token) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const extracted = authHeader.substring(7);
+        if (extracted !== "undefined" && extracted !== "null") {
+          token = extracted;
+        }
+      }
+    }
+
+    if (!token) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
+    // Verify token
+    try {
+      const jwt = require('jsonwebtoken');
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json(
+        { message: 'Invalid token' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     // Get query parameters for potential filtering
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get('limit') || 20;

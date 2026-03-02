@@ -98,7 +98,8 @@ export async function POST(request) {
           subscription: user.subscription || null,
           gender: user?.gender,
           walletBalance: user.walletBalance || 0,
-          unlockedProfiles: user.unlockedProfiles || []
+          unlockedProfiles: user.unlockedProfiles || [],
+          token: token
         }
       }),
       { headers: corsHeaders }

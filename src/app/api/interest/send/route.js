@@ -12,6 +12,37 @@ const corsHeaders = {
 export async function POST(req) {
   try {
     await connectDB();
+    
+    // Authenticate the user
+    let token = req.cookies.get('authToken')?.value;
+    if (!token) {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const extracted = authHeader.substring(7);
+        if (extracted !== "undefined" && extracted !== "null") {
+          token = extracted;
+        }
+      }
+    }
+
+    if (!token) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
+    // Verify token
+    try {
+      const jwt = require('jsonwebtoken');
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json(
+        { message: 'Invalid token' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const { senderId, receiverId } = await req.json();
     console.log("Sender ID:", senderId);
     console.log("Receiver ID:", receiverId);
@@ -96,6 +127,36 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     await connectDB();
+    
+    // Authenticate the user
+    let token = req.cookies.get('authToken')?.value;
+    if (!token) {
+      const authHeader = req.headers.get('authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const extracted = authHeader.substring(7);
+        if (extracted !== "undefined" && extracted !== "null") {
+          token = extracted;
+        }
+      }
+    }
+
+    if (!token) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
+    // Verify token
+    try {
+      const jwt = require('jsonwebtoken');
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return NextResponse.json(
+        { message: 'Invalid token' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
 
     const userId = req.nextUrl.searchParams.get("userId");
     if (!userId) {
