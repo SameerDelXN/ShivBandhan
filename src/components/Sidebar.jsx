@@ -369,7 +369,13 @@ export default function Sidebar({ mobileOpen = false, setMobileOpen }) {
           })}
 
           {/* Wallet Section */}
-          <div className="mx-4 mb-4 mt-2 p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-100/60 shadow-sm flex items-center justify-between transition-transform hover:scale-[1.02]">
+          <div 
+            onClick={() => {
+              setMobileOpen(false);
+              router.push('/dashboard/wallet');
+            }}
+            className="mx-4 mb-4 mt-2 p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-100/60 shadow-sm flex items-center justify-between transition-transform hover:scale-[1.02] cursor-pointer"
+          >
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-white rounded-lg shadow-sm">
                 <CreditCard className="w-5 h-5 text-orange-600" />

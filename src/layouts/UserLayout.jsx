@@ -70,8 +70,9 @@ export default function UserLayout({ children }) {
 
   // Special case: allow access to profile and matches pages even if not verified
   const isMatchesPage = pathname === "/dashboard/matches";
+  const isWalletPage = pathname === "/dashboard/wallet";
   
-  if (!user?.isVerified && !isProfilePage && !isMatchesPage) {
+  if (!user?.isVerified && !isProfilePage && !isMatchesPage && !isWalletPage) {
     return (
       <div className="flex min-h-screen bg-gradient-to-br from-orange-50 to-blue-50">
         <Sidebar mobileOpen={sidebarOpen} setMobileOpen={setSidebarOpen} />
