@@ -12,7 +12,8 @@ import {
 import { Toaster,toast } from 'react-hot-toast';
 
 // Added imports
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, degrees, BlendMode } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import { Download } from 'lucide-react';
 
 // Utility function to mask first names
@@ -484,8 +485,22 @@ const handleDownloadProfile = async (profile) => {
 
     // ---------- MAGAZINE-STYLE WEDDING BIODATA PDF GENERATION ----------
     const pdfDoc = await PDFDocument.create();
+    pdfDoc.registerFontkit(fontkit);
+
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    
+    // Load custom handwriting font for watermark
+    let scriptFont = boldFont; // fallback
+    try {
+      const fontRes = await fetch('/GreatVibes-Regular.ttf');
+      if (fontRes.ok) {
+        const fontBytes = await fontRes.arrayBuffer();
+        scriptFont = await pdfDoc.embedFont(fontBytes);
+      }
+    } catch (e) {
+      console.warn('Custom font not loaded for watermark');
+    }
 
     const pageMargin = 40;
     const lineHeight = 16;
@@ -606,7 +621,29 @@ const handleDownloadProfile = async (profile) => {
         const drawH = img.height * scale;
         const imgX = pageMargin + (photoWidth - drawW) / 2;
         const imgY = cursorY - bannerHeight + (bannerHeight - drawH) / 2;
+
         page.drawImage(img, { x: imgX, y: imgY, width: drawW, height: drawH });
+
+        // Elegant professional watermark centered using logo
+        try {
+          const logoRes = await fetch('/logo.png');
+          const logoBytes = await logoRes.arrayBuffer();
+          const logoImg = await pdfDoc.embedPng(logoBytes);
+          // Make logo cover about 50% of photo width
+          const targetWidth = drawW * 0.5;
+          const logoScale = targetWidth / logoImg.width;
+          
+          page.drawImage(logoImg, { 
+            x: imgX + (drawW - targetWidth) / 2, 
+            y: imgY + (drawH - logoImg.height * logoScale) / 2, 
+            width: targetWidth, 
+            height: logoImg.height * logoScale,
+            opacity: 0.25, // Highly transparent professional look
+            blendMode: BlendMode.Multiply
+          });
+        } catch (e) {
+          console.warn('Logo not found for watermark');
+        }
       } catch (err) {
         drawText('Photo\nUnavailable', pageMargin + 40, cursorY - bannerHeight / 2, 12, true, colorMuted, 100);
       }

@@ -18,7 +18,8 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, degrees, BlendMode } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -237,8 +238,22 @@ export default function UserManagement() {
     console.log("user ==========", user);
     try {
       const pdfDoc = await PDFDocument.create();
+      pdfDoc.registerFontkit(fontkit);
+      
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      
+      // Load custom handwriting font for watermark
+      let scriptFont = boldFont; // fallback
+      try {
+        const fontRes = await fetch('/GreatVibes-Regular.ttf');
+        if (fontRes.ok) {
+          const fontBytes = await fontRes.arrayBuffer();
+          scriptFont = await pdfDoc.embedFont(fontBytes);
+        }
+      } catch (e) {
+        console.warn('Custom font not loaded for watermark');
+      }
 
       const pageMargin = 40;
       const colorText = rgb(0, 0, 0);       // Pure Black text
@@ -337,7 +352,31 @@ export default function UserManagement() {
           const scale = Math.min(photoWidth / img.width, photoHeight / img.height);
           const drawW = img.width * scale;
           const drawH = img.height * scale;
-          page.drawImage(img, { x: pageMargin, y: cursorY - photoHeight, width: drawW, height: drawH });
+          const imgX = pageMargin;
+          const imgY = cursorY - photoHeight;
+          
+          page.drawImage(img, { x: imgX, y: imgY, width: drawW, height: drawH });
+          
+          // Elegant professional watermark centered using logo
+          try {
+            const logoRes = await fetch('/logo.png');
+            const logoBytes = await logoRes.arrayBuffer();
+            const logoImg = await pdfDoc.embedPng(logoBytes);
+            // Make logo cover about 50% of photo width
+            const targetWidth = drawW * 0.5;
+            const logoScale = targetWidth / logoImg.width;
+            
+            page.drawImage(logoImg, { 
+              x: imgX + (drawW - targetWidth) / 2, 
+              y: imgY + (drawH - logoImg.height * logoScale) / 2, 
+              width: targetWidth, 
+              height: logoImg.height * logoScale,
+              opacity: 0.25, // Highly transparent professional look
+              blendMode: BlendMode.Multiply
+            });
+          } catch (e) {
+            console.warn('Logo not found for watermark');
+          }
         } catch (err) {
           page.drawRectangle({ x: pageMargin, y: cursorY - photoHeight, width: photoWidth, height: photoHeight, borderColor: colorLine, borderWidth: 1 });
           page.drawText('Photo', { x: pageMargin + 30, y: cursorY - photoHeight / 2, size: 10, font });
