@@ -416,10 +416,14 @@ export default function UserManagement() {
       const drawSection = (title, items) => {
         ensureSpace(40 + Math.ceil(items.length / 2) * 20);
         
-        page.drawText(title, { x: pageMargin, y: cursorY, size: 12, font: boldFont, color: colorText });
-        cursorY -= 15;
-        page.drawLine({ start: { x: pageMargin, y: cursorY }, end: { x: width - pageMargin, y: cursorY }, thickness: 0.5, color: colorLine });
-        cursorY -= 15;
+        // Section header with pale background and accent bar
+        const sectionWidth = width - 2 * pageMargin;
+        page.drawRectangle({ x: pageMargin + 8, y: cursorY - 14, width: sectionWidth - 8, height: 26, color: rgb(0.97, 0.94, 0.94) });
+        page.drawRectangle({ x: pageMargin, y: cursorY - 14, width: 8, height: 26, color: rgb(0.95, 0.75, 0.25) });
+        
+        page.drawText(title.toUpperCase(), { x: pageMargin + 25, y: cursorY - 6, size: 12, font: boldFont, color: rgb(0.86, 0.35, 0.45) });
+        
+        cursorY -= 25;
         
         const col1X = pageMargin;
         const col2X = width / 2 + 10;

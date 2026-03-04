@@ -716,12 +716,12 @@ const handleDownloadProfile = async (profile) => {
       const x = isLeftColumn ? pageMargin : pageMargin + sectionWidth + pageMargin;
       let y = startY;
       
-      // Section header with icon bar
-      page.drawRectangle({ x, y: y - 35, width: sectionWidth, height: 38, color: rgb(0.97, 0.95, 0.95) });
-      page.drawRectangle({ x, y: y - 35, width: 8, height: 38, color: colorAccent });
-      drawText(title.toUpperCase(), x + 18, y - 22, 12, true, colorPrimary, sectionWidth - 28);
+      // Section header with pale background and accent bar
+      page.drawRectangle({ x: x + 8, y: y - 28, width: sectionWidth - 8, height: 28, color: rgb(0.97, 0.94, 0.94) });
+      page.drawRectangle({ x, y: y - 28, width: 8, height: 28, color: rgb(0.95, 0.75, 0.25) });
+      drawText(title.toUpperCase(), x + 20, y - 18, 11, true, rgb(0.86, 0.35, 0.45), sectionWidth - 30);
       
-      y -= 48;
+      y -= 40;
       
       // Data rows with alternating background
       data.forEach((item, idx) => {
