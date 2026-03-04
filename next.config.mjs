@@ -15,20 +15,17 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-    outputFileTracingExcludes: {
-      '*': ['./api/session'],
-    },
+  outputFileTracingExcludes: {
+    '*': ['./api/session'],
   },
   images: {
-    domains: [
-      'randomuser.me',
-      'images.unsplash.com',
-      'plus.unsplash.com',
-      'lh3.googleusercontent.com',
-      'res.cloudinary.com', // for your own uploads if you ever use Cloudinary
-      'via.placeholder.com',
+    remotePatterns: [
+      { protocol: 'https', hostname: 'randomuser.me' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'plus.unsplash.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'via.placeholder.com' },
     ],
   },
 };
