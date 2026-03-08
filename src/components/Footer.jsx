@@ -12,13 +12,14 @@ import { useRouter } from 'next/navigation';
 const Footer = () => {
   const router = useRouter();
 
-  const handlePolicyClick = (policy) => {
+  const handlePolicyClick = (e, policy) => {
+    e.preventDefault();
     const policyRoutes = {
-      'Privacy Policy': '/policies/privacy-policy',
-      'Terms of Service': '/policies/terms-of-service',
-      'Safety Guidelines': '/policies/safety-guidelines',
-      'Refund Policy': '/policies/refund-policy',
-      'Community Standards': '/policies/community-standards'
+      'Privacy Policy': '/privacy-policy',
+      'Terms of Service': '/terms-of-service',
+      'Safety Guidelines': '/safety-guidelines',
+      'Refund Policy': '/refund-policy',
+      'Community Standards': '/community-standards'
     };
     
     if (policyRoutes[policy]) {
@@ -113,8 +114,9 @@ const Footer = () => {
               {['Privacy Policy', 'Terms of Service', 'Safety Guidelines', 'Refund Policy', 'Community Standards'].map((policy) => (
                 <li key={policy}>
                   <a 
-                    href="#" 
-                    className="text-orange-100/80 hover:text-orange-50 transition-colors duration-200 flex items-center"
+                    href="#"
+                    onClick={(e) => handlePolicyClick(e, policy)}
+                    className="text-orange-100/80 hover:text-orange-50 transition-colors duration-200 flex items-center cursor-pointer"
                   >
                     <span className="w-1 h-1 bg-orange-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
                     {policy}

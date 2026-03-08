@@ -1,9 +1,16 @@
 "use client"
 import { useState } from 'react';
+import Link from 'next/link';
 import { ArrowRight, Check, X } from 'lucide-react';
 
 export default function QuickRegistrationForm() {
   const [step, setStep] = useState(1);
+  const [consents, setConsents] = useState({
+    terms: false,
+    age: false,
+    communication: false,
+    verification: false
+  });
   const [formData, setFormData] = useState({
     name: '',
     gender: '',
@@ -80,6 +87,10 @@ export default function QuickRegistrationForm() {
       const error = validateField(key, value);
       if (error) newErrors[key] = error;
     });
+    
+    if (!consents.terms || !consents.age || !consents.communication || !consents.verification) {
+      newErrors.consents = 'Please agree to all the consent requirements to proceed.';
+    }
     
     setErrors(newErrors);
     
@@ -259,6 +270,60 @@ export default function QuickRegistrationForm() {
                 />
                 {errors.mobile && <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>}
               </div>
+
+              <div className="bg-orange-50/50 p-4 rounded-xl border border-orange-100 mt-4">
+                <p className="text-sm font-semibold text-gray-800 mb-3">User Consent Form (Registration)</p>
+                <div className="space-y-3">
+                  <label className="flex items-start cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={consents.terms}
+                      onChange={(e) => setConsents({...consents, terms: e.target.checked})}
+                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 shadow-sm"
+                    />
+                    <span className="ml-3 text-xs text-gray-600 group-hover:text-gray-800">
+                      I agree to the <Link href="/terms-of-service" className="text-orange-600 hover:underline">Terms and Conditions</Link> and <Link href="/privacy-policy" className="text-orange-600 hover:underline">Privacy Policy</Link>.
+                    </span>
+                  </label>
+                  
+                  <label className="flex items-start cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={consents.age}
+                      onChange={(e) => setConsents({...consents, age: e.target.checked})}
+                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 shadow-sm"
+                    />
+                    <span className="ml-3 text-xs text-gray-600 group-hover:text-gray-800">
+                      I confirm that I am of legal marriageable age (18 for F / 21 for M).
+                    </span>
+                  </label>
+
+                  <label className="flex items-start cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={consents.communication}
+                      onChange={(e) => setConsents({...consents, communication: e.target.checked})}
+                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 shadow-sm"
+                    />
+                    <span className="ml-3 text-xs text-gray-600 group-hover:text-gray-800">
+                      I consent to receive matches and account updates via WhatsApp, SMS, and Email.
+                    </span>
+                  </label>
+
+                  <label className="flex items-start cursor-pointer group">
+                    <input 
+                      type="checkbox" 
+                      checked={consents.verification}
+                      onChange={(e) => setConsents({...consents, verification: e.target.checked})}
+                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 shadow-sm"
+                    />
+                    <span className="ml-3 text-xs text-gray-600 group-hover:text-gray-800">
+                      I understand that Shivbandhan Matrimony does not verify the background of every user and I will perform my own due diligence before entering into a marriage.
+                    </span>
+                  </label>
+                </div>
+                {errors.consents && <p className="mt-2 text-xs font-medium text-red-600">{errors.consents}</p>}
+              </div>
               
               <div className="flex gap-3 pt-2">
                 <button
@@ -280,10 +345,6 @@ export default function QuickRegistrationForm() {
             </div>
           )}
         </form>
-        
-        <p className="text-xs text-gray-500 mt-6 text-center">
-          By registering, you agree to our Terms and Privacy Policy
-        </p>
       </div>
     </div>
   );
