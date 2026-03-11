@@ -16,28 +16,10 @@ import { PDFDocument, StandardFonts, rgb, degrees, BlendMode } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { Download } from 'lucide-react';
 
-// Utility function to mask first names
 const maskFirstName = (fullName) => {
-  if (!fullName) return '****';
-  const names = fullName.trim().split(/\s+/);
-
-  if (names.length === 1) {
-    // Only one word → hide it all
-    return '*'.repeat(names[0].length);
-  }
-
-  if (names.length === 2) {
-    // Two words → hide first, show last
-    return `${'*'.repeat(names[0].length)} ${names[1]}` ;
-  }
-
-  // Three or more words → hide first + middle, show last
-  const hiddenPart = names
-    .slice(0, -1)
-    .map(n => '*'.repeat(n.length))
-    .join(' ');
-  const lastName = names[names.length - 1];
-  return `${hiddenPart} ${lastName}` ;
+  if (!fullName) return '******';
+  // Completely hide the user's name for locked profiles
+  return '******';
 };
 
 
@@ -1179,7 +1161,7 @@ const ProfilePopup = ({ profile, onClose , hasSubscription }) => {
               {/* Name and Title */}
               <div className="border-b border-orange-100 pb-4">
                 <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                 {hasSubscription ? profile.name : maskFirstName(profile.name)}
+                 {profile.name}
                  {profile.isVerified && (
                  <span className="ml-2 inline-flex items-center bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
                  <CheckCircle className="w-3 h-3 mr-1" />
@@ -1414,14 +1396,14 @@ const MatchCard = ({ match, hasSubscription, isUnlocked, setSelectedProfile, onD
             <img
               src={match.profilePhoto}
               alt={`${maskFirstName(match.name)} profile` }
-              className={`w-full h-full object-cover ${!hasSubscription && !isUnlocked ? 'blur-md brightness-75' : ''}` }
+              className="w-full h-full object-cover"
             />
             {(!hasSubscription && !isUnlocked) && (
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center">
-                <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-2">
-                   <Lock className="w-6 h-6 text-white" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent pt-12 pb-3 flex flex-col items-center justify-end text-center pointer-events-none">
+                <div className="flex items-center space-x-1.5 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm shadow-md">
+                   <Lock className="w-3.5 h-3.5 text-white" />
+                   <span className="text-white font-medium text-xs">Unlock to View Name</span>
                 </div>
-                <span className="text-white font-medium text-sm">Unlock to View</span>
               </div>
             )}
           </>
@@ -1474,7 +1456,7 @@ const MatchCard = ({ match, hasSubscription, isUnlocked, setSelectedProfile, onD
       {/* Profile Info */}
       <div className="p-3">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="font-semibold text-gray-900 text-sm"> {hasSubscription ? match.name : maskFirstName(match.name)}</h3>
+          <h3 className="font-semibold text-gray-900 text-sm"> {hasSubscription || isUnlocked ? match.name : maskFirstName(match.name)}</h3>
           <div className="flex items-center space-x-1">
             <Clock className="w-2.5 h-2.5 text-gray-400" />
             <span className="text-[10px] text-gray-500">{match.lastActive}</span>

@@ -29,7 +29,7 @@ export default function MatrimonialNavbar() {
     }`}>
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
+        <Link href="/" className="flex items-center space-x-2">
           <Image 
             src={"/logo.png"} 
             width={1920} 
@@ -40,19 +40,25 @@ export default function MatrimonialNavbar() {
           <span className="font-serif text-2xl font-bold text-[#7b2b2a]">
             Shiv<span className="text-orange-600">Bandhan</span>
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
-          {['Home', 'Browse Profiles', 'Success Stories', 'About Us', 'Contact'].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+          {[
+            { name: 'Home', path: '/' },
+            { name: 'Browse Profiles', path: '/#browse-profiles' },
+            { name: 'Success Stories', path: '/#success-stories' },
+            { name: 'About Us', path: '/about' },
+            { name: 'Contact', path: '/contact' }
+          ].map((item) => (
+            <Link
+              key={item.name}
+              href={item.path}
               className="relative text-[#7b2b2a] font-medium hover:text-orange-600 transition-colors duration-300 group"
             >
-              {item}
+              {item.name}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-600 to-amber-600 transition-all duration-300 group-hover:w-full"></span>
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -85,15 +91,21 @@ export default function MatrimonialNavbar() {
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="flex flex-col p-4 space-y-4">
-            {['Home', 'Browse Profiles', 'Success Stories', 'About Us', 'Contact'].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
+            {[
+              { name: 'Home', path: '/' },
+              { name: 'Browse Profiles', path: '/#browse-profiles' },
+              { name: 'Success Stories', path: '/#success-stories' },
+              { name: 'About Us', path: '/about' },
+              { name: 'Contact', path: '/contact' }
+            ].map((item) => (
+              <Link
+                key={item.name}
+                href={item.path}
                 className="text-[#7b2b2a] py-2 hover:text-orange-600 transition-colors duration-200 border-b border-orange-50 last:border-b-0"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {item}
-              </a>
+                {item.name}
+              </Link>
             ))}
             <div className="pt-2 flex flex-col space-y-3">
               <Link 
