@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { useSession } from "@/context/SessionContext";
-import { ShieldAlert, ArrowRight, CheckCircle, XCircle, Menu,Sparkles } from "lucide-react";
+import { Menu, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function UserLayout({ children }) {
@@ -69,78 +69,24 @@ export default function UserLayout({ children }) {
   }
 
   // Special case: allow access to profile and matches pages even if not verified
-  const isMatchesPage = pathname === "/dashboard/matches";
-  const isWalletPage = pathname === "/dashboard/wallet";
-  
-  if (!user?.isVerified && !isProfilePage && !isMatchesPage && !isWalletPage) {
-    return (
-      <div className="flex min-h-screen bg-gradient-to-br from-orange-50 to-blue-50">
-        <Sidebar mobileOpen={sidebarOpen} setMobileOpen={setSidebarOpen} />
-        <div className="flex-1 p-6 overflow-y-auto flex items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-2xl w-full bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200"
-          >
-            <div className="p-8 text-center">
-              <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-orange-100 mb-6">
-                <ShieldAlert className="h-10 w-10 text-orange-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Account Verification Required</h2>
-              <p className="text-gray-600 mb-6">
-                Your account is not yet verified. Please complete your profile to access all features.
-              </p>
-              
-              <div className="space-y-4 mb-8 text-left">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-gray-800">Complete Your Profile</h4>
-                    <p className="text-sm text-gray-500">Fill in all required details in your profile section</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <XCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-gray-800">Current Restrictions</h4>
-                    <p className="text-sm text-gray-500">You cannot access other pages until verified</p>
-                  </div>
-                </div>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => router.push("/dashboard/profile/me")}
-                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all"
-              >
-                Complete My Profile
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </motion.button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
+  // The unverified check block has been removed to allow access to all pages
 
   return (
     <div className="flex min-h-screen">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      
+
       <Sidebar mobileOpen={sidebarOpen} setMobileOpen={setSidebarOpen} />
-      
+
       <main className="flex-1 p-4 lg:p-6 overflow-y-auto bg-gray-100 relative">
         {/* Mobile header */}
         <div className="lg:hidden flex items-center justify-between mb-4 bg-white p-3 rounded-lg shadow-sm">
-          <button 
+          <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg text-gray-600 hover:bg-gray-200"
           >
@@ -155,7 +101,7 @@ export default function UserLayout({ children }) {
             </span>
           </div>
         </div>
-        
+
         {children}
       </main>
     </div>
