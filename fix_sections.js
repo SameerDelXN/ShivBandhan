@@ -6,16 +6,16 @@ require('dotenv').config({ path: '.env.local' });
 async function main() {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("Connected to DB");
-  
+
   const FormSection = require('./src/models/FormSection').default || require('./src/models/FormSection');
-  
+
   const sections = await FormSection.find();
   console.log('Found total sections:', sections.length);
-  
+  //sample
   const unique = new Map();
   const toKeep = [];
   const toDelete = [];
-  
+
   sections.forEach(s => {
     if (!unique.has(s.label)) {
       unique.set(s.label, true);
@@ -24,7 +24,7 @@ async function main() {
       toDelete.push(s._id);
     }
   });
-  
+
   if (toDelete.length > 0) {
     await FormSection.deleteMany({ _id: { $in: toDelete } });
     console.log(`Deleted ${toDelete.length} duplicate sections`);
@@ -36,7 +36,7 @@ async function main() {
   const remaining = await FormSection.find();
   console.log('Remaining sections:', remaining.length);
   remaining.forEach(r => console.log(' -', r.label));
-  
+
   mongoose.disconnect();
 }
 
