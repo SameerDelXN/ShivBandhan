@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import Choice from "@/components/Choice";
 import QuickRegistrationForm from "@/components/QuickRegistrationForm";
 import SearchMatchesWidget from "@/components/SearchMatchesWidget";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -17,10 +16,9 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <SearchMatchesWidget />
-      <Choice />
       {/* <QuickRegistrationForm /> */}
       
-      {/* <WhyChooseUs /> */}
+      <WhyChooseUs />
       <FeaturedProfiles />
       {/* <SuccessStories /> */}
       <AppDownload />

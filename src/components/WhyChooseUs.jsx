@@ -14,25 +14,25 @@ export default function WhyChooseUs() {
     {
       icon: Shield,
       title: "Verified Profiles",
-      description: "Every profile undergoes strict verification to ensure authenticity and build genuine trust.",
+      description: "Safety is our priority. Every profile on our platform undergoes a manual screening process to ensure authenticity and trust.",
       accentColor: "from-orange-500 to-amber-500"
     },
     {
-      icon: CheckCircle,
-      title: "100% Privacy Protected",
-      description: "Advanced encryption and privacy controls to keep your personal information completely secure.",
+      icon: Target,
+      title: "Advanced Matchmaking",
+      description: "Our smart search filters and algorithms help you find matches based on your specific preferences, including education, profession, family background, and values.",
       accentColor: "from-amber-500 to-orange-400"
     },
     {
-      icon: HeartHandshake,
-      title: "Maratha Community Focus",
-      description: "Connect with partners who share similar cultural values, traditions, and family backgrounds.",
+      icon: Shield,
+      title: "Privacy & Control",
+      description: "We give you complete control over your information. Choose who can see your photos and contact details with our advanced privacy settings.",
       accentColor: "from-orange-600 to-amber-600"
     },
     {
-      icon: Target,
-      title: "AI-Powered Matching",
-      description: "Smart algorithms analyze compatibility to suggest the most suitable matches for you.",
+      icon: HeartHandshake,
+      title: "Dedicated Support",
+      description: "Our team is committed to assisting you at every step of your journey—from creating a profile to finding the \"One.\"",
       accentColor: "from-amber-600 to-orange-500"
     }
   ];
@@ -72,15 +72,14 @@ export default function WhyChooseUs() {
           </div>
           
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Where Tradition Meets
+            Why Choose
             <span className="block bg-gradient-to-r from-orange-600 via-amber-500 to-orange-700 bg-clip-text text-transparent">
-              Modern Matchmaking
+              ShivBandhan Matrimony?
             </span>
           </h2>
           
-          <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            We blend Maratha traditions with advanced technology to create meaningful connections 
-            that lead to lifelong partnerships.
+          <p className="text-lg md:text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+            At ShivBandhan Matrimony, we believe that marriage is not just the union of two individuals, but the coming together of two families. We are dedicated to providing a secure and seamless platform for you to find your perfect life partner.
           </p>
         </div>
 

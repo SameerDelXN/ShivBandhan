@@ -879,9 +879,9 @@ const loadRazorpay = () => {
 
 const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [topUpAmount, setTopUpAmount] = useState(1);
+  const [topUpAmount, setTopUpAmount] = useState(199);
 
-  const UNLOCK_COST = 1;
+  const UNLOCK_COST = 199;
   const needsFunds = walletBalance < UNLOCK_COST;
 
   const handleAddFunds = async () => {
@@ -1025,7 +1025,7 @@ const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
           <div className="space-y-4">
              <p className="text-sm font-medium text-gray-700">Select amount to top-up:</p>
              <div className="grid grid-cols-4 gap-2 mb-4">
-               {[1, 50, 100, 500].map(amt => (
+               {[199, 500, 1000, 2000].map(amt => (
                  <button 
                   key={amt}
                   onClick={() => setTopUpAmount(amt)}
