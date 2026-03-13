@@ -879,9 +879,9 @@ export default function MatchesPage() {
 
   const PayPerViewModal = ({ targetProfile, onClose, onUnlock }) => {
     const [isProcessing, setIsProcessing] = useState(false);
-    const [topUpAmount, setTopUpAmount] = useState(1);
+    const [topUpAmount, setTopUpAmount] = useState(199);
 
-    const UNLOCK_COST = 1;
+    const UNLOCK_COST = 199;
     const needsFunds = walletBalance < UNLOCK_COST;
 
     const handleAddFunds = async () => {
@@ -1024,12 +1024,30 @@ export default function MatchesPage() {
           {needsFunds ? (
             <div className="space-y-4">
               <p className="text-sm font-medium text-red-600 mb-2">Insufficient money in wallet.</p>
-              <p className="text-sm text-gray-600 mb-4">Please add funds to your wallet to unlock this profile permanently.</p>
+              <p className="text-sm text-gray-600 mb-2">Select an amount to top up to unlock this profile continuously.</p>
+              
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {[199, 500, 1000, 2000].map(amount => (
+                  <button
+                    key={amount}
+                    onClick={() => setTopUpAmount(amount)}
+                    className={`py-2 rounded-lg border text-sm font-medium transition-colors ${
+                      topUpAmount === amount 
+                        ? 'bg-orange-100 border-orange-500 text-orange-700' 
+                        : 'bg-white border-gray-200 text-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    ₹{amount}
+                  </button>
+                ))}
+              </div>
+
               <button
-                onClick={() => window.location.href = '/dashboard/wallet'}
-                className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center shadow-md shadow-orange-500/20"
+                onClick={handleAddFunds}
+                disabled={isProcessing}
+                className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center shadow-md shadow-orange-500/20 disabled:opacity-50"
               >
-                Add Money to Wallet
+                {isProcessing ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : `Add ₹${topUpAmount} to Wallet`}
               </button>
             </div>
           ) : (

@@ -21,7 +21,7 @@ export async function POST(req) {
         return NextResponse.json({ success: true, message: 'Profile already unlocked' }, { status: 200 });
     }
 
-    const COST = 1;
+    const COST = 199;
 
     // Check balance
     if ((user.walletBalance || 0) < COST) {
