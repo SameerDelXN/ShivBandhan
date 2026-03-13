@@ -48,8 +48,7 @@ const PolicyLayout = ({ title, children }) => {
               <Link href="/policies/privacy-policy" className="text-rose-100/80 hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/policies/terms-of-service" className="text-rose-100/80 hover:text-white transition-colors">Terms of Service</Link>
               <Link href="/policies/refund-policy" className="text-rose-100/80 hover:text-white transition-colors">Refund Policy</Link>
-              <Link href="/policies/safety-guidelines" className="text-rose-100/80 hover:text-white transition-colors">Safety Guidelines</Link>
-              <Link href="/policies/community-standards" className="text-rose-100/80 hover:text-white transition-colors">Community Standards</Link>
+              {/* <Link href="/policies/safety-guidelines" className="text-rose-100/80 hover:text-white transition-colors">Safety Guidelines</Link> */}
             </div>
             <div className="border-t border-rose-800/50 my-8 mx-auto w-3/4"></div>
             <p className="text-rose-100/60 text-sm">

@@ -19,7 +19,7 @@ const Footer = () => {
       'Terms of Service': '/terms-of-service',
       'Safety Guidelines': '/safety-guidelines',
       'Refund Policy': '/refund-policy',
-      'Community Standards': '/community-standards'
+      // 'Community Standards': '/community-standards'
     };
     
     if (policyRoutes[policy]) {
@@ -111,7 +111,7 @@ const Footer = () => {
               Policies
             </h3>
             <ul className="space-y-3 font-sans">
-              {['Privacy Policy', 'Terms of Service', 'Safety Guidelines', 'Refund Policy', 'Community Standards'].map((policy) => (
+              {['Privacy Policy', 'Terms of Service', 'Refund Policy'].map((policy) => (
                 <li key={policy}>
                   <a 
                     href="#"
