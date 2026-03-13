@@ -44,13 +44,17 @@ export default function FeaturedProfilesDynamic() {
               hasPhoto && hasName && hasEmail && hasNative && hasOccupationOrEducation && hasValidDob && verified
             );
           })
-          .map((u) => ({
-            name: u.name || 'Member',
-            age: calculateAge(u.dob),
-            city: u.currentCity || '—',
-            profession: u.occupation || u.education || '—',
-            photo: u.profilePhoto || 'https://placehold.co/600x800/orange/white?text=Profile',
-          }));
+          .map((u) => {
+            const nameParts = (u.name || 'Member').trim().split(' ');
+            const surname = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+            return {
+              name: surname,
+              age: calculateAge(u.dob),
+              city: u.currentCity || '—',
+              profession: u.occupation || u.education || '—',
+              photo: u.profilePhoto || 'https://placehold.co/600x800/orange/white?text=Profile',
+            };
+          });
         setProfiles(mapped);
       } catch (e) {
         setError(e?.message || 'Something went wrong');
@@ -132,9 +136,8 @@ export default function FeaturedProfilesDynamic() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div
-          className={`text-center mb-16 transition-all duration-700 transform ${
-            isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}
+          className={`text-center mb-16 transition-all duration-700 transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            }`}
         >
           <h2 className="text-4xl font-bold text-gray-800 mb-4 font-serif">Featured Profiles</h2>
           <p className="text-lg text-[#7b2b2a] max-w-2xl mx-auto">
@@ -178,15 +181,13 @@ export default function FeaturedProfilesDynamic() {
               <div
                 key={index}
                 ref={(el) => (cardsRef.current[index] = el)}
-                className={`flex-shrink-0 w-80 transition-all duration-500 transform snap-center ${
-                  index === currentIndex ? 'scale-105 opacity-100' : 'scale-95 opacity-80'
-                }`}
+                className={`flex-shrink-0 w-80 transition-all duration-500 transform snap-center ${index === currentIndex ? 'scale-105 opacity-100' : 'scale-95 opacity-80'
+                  }`}
                 style={{ transitionDelay: `${50 * Math.abs(currentIndex - index)}ms` }}
               >
                 <div
-                  className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${
-                    index === currentIndex ? 'border-2 border-orange-300' : 'border border-orange-100'
-                  }`}
+                  className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${index === currentIndex ? 'border-2 border-orange-300' : 'border border-orange-100'
+                    }`}
                 >
                   <div className="relative h-96 overflow-hidden">
                     <Image
@@ -237,11 +238,10 @@ export default function FeaturedProfilesDynamic() {
             <button
               key={index}
               onClick={() => handleDotClick(index)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex
+              className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
                   ? 'w-8 bg-gradient-to-r from-orange-600 to-amber-600'
                   : 'w-2 bg-orange-200 hover:bg-orange-300'
-              }`}
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
