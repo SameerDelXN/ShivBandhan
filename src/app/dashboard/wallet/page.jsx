@@ -22,7 +22,7 @@ const loadRazorpay = () => {
 export default function WalletPage() {
   const { user, refreshSession } = useSession();
   const [walletBalance, setWalletBalance] = useState(0);
-  const [selectedAmount, setSelectedAmount] = useState(50);
+  const [selectedAmount, setSelectedAmount] = useState(199);
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Sync state when user session loads
@@ -32,7 +32,7 @@ export default function WalletPage() {
     }
   }, [user?.walletBalance]);
 
-  const topUpOptions = [1, 50, 100, 500];
+  const topUpOptions = [199, 500, 1000, 2000];
 
   const handleAddFunds = async () => {
     try {
