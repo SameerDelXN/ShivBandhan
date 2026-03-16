@@ -28,6 +28,7 @@ export async function GET(request) {
     }
 
     if (!token) {
+      console.log('🔴 fetchAllUsers: No token found in cookies or headers');
       return NextResponse.json(
         { message: 'Unauthorized' },
         { status: 401, headers: corsHeaders }
@@ -37,8 +38,10 @@ export async function GET(request) {
     // Verify token
     try {
       const jwt = require('jsonwebtoken');
-      jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('🟢 fetchAllUsers: Token verified for userId:', decoded.userId);
     } catch (err) {
+      console.error('🔴 fetchAllUsers: Token verification failed:', err.message);
       return NextResponse.json(
         { message: 'Invalid token' },
         { status: 401, headers: corsHeaders }
