@@ -58,17 +58,35 @@ import OTP from "@/models/OTP";
 
 export async function POST(req) {
   try {
-    const { phoneNumber } = await req.json();
+    await dbConnect();
+    const User = (await import("@/models/User")).default;
+
+    const { phoneNumber, type } = await req.json(); // type: 'login' or 'register'
+    
     if (!phoneNumber || phoneNumber.length !== 10) {
       return NextResponse.json(
         { success: false, message: "Invalid phone number" },
         { status: 400 }
       );
     }
- 
-    await dbConnect();
 
     const fullPhoneNumber = `+91${phoneNumber}`;
+    const user = await User.findOne({ phone: fullPhoneNumber });
+
+    if (type === 'login' && !user) {
+      return NextResponse.json(
+        { success: false, message: "Phone number not registered. Please register first." },
+        { status: 404 }
+      );
+    }
+
+    if (type === 'register' && user) {
+      return NextResponse.json(
+        { success: false, message: "Phone number already registered. Please login instead." },
+        { status: 400 }
+      );
+    }
+
     let otp;
 
     // Static OTP for testing

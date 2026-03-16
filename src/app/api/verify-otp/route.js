@@ -65,7 +65,8 @@ export async function POST(req) {
         phone: fullPhoneNumber,
         name: (firstName || lastName) ? `${firstName || ''} ${lastName || ''}`.trim() : undefined,
         gender: gender || null,
-        isVerified: false,
+        isVerified: true, // Automatically verify on registration
+        verificationStatus: 'Verified',
         phoneIsVerified: true,
         lastLoginAt: new Date()
       });
@@ -73,7 +74,7 @@ export async function POST(req) {
     } else {
       user.lastLoginAt = new Date();
       user.phoneIsVerified = true;
-      if (!user.isVerified) user.isVerified = false;
+      // Keep existing verification status for existing users
       await user.save();
     }
  

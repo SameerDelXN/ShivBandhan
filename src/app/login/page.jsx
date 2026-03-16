@@ -66,7 +66,8 @@ export default function MatrimonialLogin() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber.replace(/\s/g, '') // Remove spaces
+          phoneNumber: phoneNumber.replace(/\s/g, ''), // Remove spaces
+          type: isRegisterMode ? 'register' : 'login'
         }),
       });
 
@@ -165,7 +166,8 @@ export default function MatrimonialLogin() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: phoneNumber.replace(/\s/g, '') // Remove spaces
+          phoneNumber: phoneNumber.replace(/\s/g, ''), // Remove spaces
+          type: isRegisterMode ? 'register' : 'login'
         }),
       });
 
