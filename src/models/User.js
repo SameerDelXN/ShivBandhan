@@ -4,18 +4,8 @@
 
     name: String,
     phone: { 
-    type: String, 
+      type: String, 
       unique: true, 
-      profilePhoto:{
-        type:String
-      },
-    profileCompletion: { type: Number, default: 0 },
-      // validate: {
-      //   validator: function(v) {
-      //     return /^\+91\d{10}$/.test(v); // Validates Indian phone numbers with +91 prefix
-      //   },
-      //   message: props => `${props.value} is not a valid Indian phone number!`
-      // }
     },
 
     // Verification status

@@ -355,62 +355,8 @@ const DynamicProfileForm = () => {
       // Create a deep copy of the current formData
       const currentFormData = JSON.parse(JSON.stringify(formData));
       console.log("current = ", currentFormData)
-      // Transform the data to match your schema
-      const transformedData = {
-        name: currentFormData["Full Name"],
-        email: currentFormData["Email Address"],
-        gender: currentFormData["Gender"],
-        dob: currentFormData["Date of Birth"],
-        height: currentFormData["Height"],
-        religion: currentFormData["Religion"],
-        currentCity: currentFormData["Current City"],
-        education: currentFormData["Highest Education"],
-        maritalStatus: currentFormData["Marital Status"],
-        motherTongue: currentFormData["Mother Tongue"],
-        caste: currentFormData["Caste"],
-        subCaste: currentFormData["Sub Caste"],
-        gothra: currentFormData["Gothra"],
-        fieldOfStudy: currentFormData["Field of Study"],
-        college: currentFormData["College/University"],
-        occupation: currentFormData["Occupation"],
-        company: currentFormData["Company"],
-        weight: currentFormData["Weight"],
-        permanentAddress: currentFormData["Permanent Address"],
-        profilePhoto: currentFormData['profilePhoto'],
-        complexion: currentFormData["Complexion"],
-        income: currentFormData["Annual Income"],
-        bloodGroup: currentFormData["Blood Group"],
-        wearsLens: currentFormData["Wears Lens"],
-        fatherName: currentFormData["Father's Name"],
-        parentResidenceCity: currentFormData["Parent's Residence City"],
-        mother: currentFormData["Mother's Name"],
-        brothers: currentFormData["Number of Brothers"],
-        marriedBrothers: currentFormData["Married Brothers"],
-        sisters: currentFormData["Number of Sisters"],
-        marriedSisters: currentFormData["Married Sisters"],
-        nativeDistrict: currentFormData["Native District"],
-        nativeCity: currentFormData["Native City"],
-        familyWealth: currentFormData["Family Wealth"],
-        relativeSurname: currentFormData["Relative Surnames"],
-        parentOccupation: currentFormData["Parent's Occupation"],
-        mamaSurname: currentFormData["Mama's Surname"],
-        rashi: currentFormData["Rashi"],
-        nakshira: currentFormData["Nakshira"],
-        charan: currentFormData["Charan"],
-        gan: currentFormData["Gan"],
-        nadi: currentFormData["Nadi"],
-        mangal: currentFormData["Mangal Dosha"],
-        birthPlace: currentFormData["Birth Place"],
-        birthTime: currentFormData["Birth Time"],
-        gotraDevak: currentFormData["Gotra Devak"],
-        expectedCaste: currentFormData["Expected Caste"],
-        preferredCity: currentFormData["Preferred City"],
-        expectedAgeDifference: currentFormData["Expected Age Difference"],
-        expectedEducation: currentFormData["Expected Education"],
-        divorcee: currentFormData["Accept Divorcee"],
-        expectedHeight: currentFormData["Expected Height"],
-        expectedIncome: currentFormData["Expected Income"]
-      };
+      // Transform the data to match your schema using the robust transformation helper
+      const transformedData = transformFormDataForBackend(formData);
 
       // Prepare the final payload
       const payload = {
