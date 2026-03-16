@@ -70,12 +70,13 @@ export default function MatrimonialNavbar() {
           >
             Login
           </Link>
-          {/* Register button if needed - keeping commented for now
-          <button className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-full hover:from-orange-700 hover:to-amber-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center hover:translate-y-px">
+          <Link 
+            href="/login" 
+            className="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-full hover:from-orange-700 hover:to-amber-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center hover:translate-y-px"
+          >
             <span>Register</span>
             <User size={16} className="ml-2" />
-          </button>
-          */}
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -115,11 +116,13 @@ export default function MatrimonialNavbar() {
               >
                 Login
               </Link>
-              {/* Register button for mobile if needed
-              <button className="w-full py-2 text-center bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-full hover:from-orange-700 hover:to-amber-700 transition-all duration-300 shadow-md">
-                Register
-              </button>
-              */}
+                <Link 
+                  href="/login" 
+                  className="w-full py-2 text-center bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-full hover:from-orange-700 hover:to-amber-700 transition-all duration-300 shadow-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Register
+                </Link>
             </div>
           </div>
         </div>

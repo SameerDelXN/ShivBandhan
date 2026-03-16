@@ -55,8 +55,8 @@ export async function GET(request) {
    const userData = {
   // Basic Info
   name: user.name,
-  phone: user.privacySettings.showContact ? user.phone : undefined,
-  profilePhoto: user.privacySettings.showPhoto ? user.profilePhoto : undefined,
+  phone: user.phone,
+  profilePhoto: user.profilePhoto,
   gender: user.gender,
   dob: user.dob,
   height: user.height,

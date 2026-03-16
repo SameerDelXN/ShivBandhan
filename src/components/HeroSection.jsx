@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ArrowRight, Sparkles, Heart } from "lucide-react";
+import Link from 'next/link';
 
 export default function MatrimonialHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -120,13 +121,16 @@ export default function MatrimonialHero() {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-6 relative z-30">
-                  <button className="group px-8 py-4 bg-orange-600 text-white rounded-full hover:from-orange-700 hover:via-amber-700 hover:to-orange-800 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 transform flex items-center justify-center text-base font-semibold">
+                  <Link 
+                    href="/login"
+                    className="group px-8 py-4 bg-orange-600 text-white rounded-full hover:from-orange-700 hover:via-amber-700 hover:to-orange-800 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 transform flex items-center justify-center text-base font-semibold"
+                  >
                     <span>Start Your Journey Free</span>
                     <ArrowRight
                       size={20}
                       className="ml-3 transform group-hover:translate-x-2 transition-transform duration-200"
                     />
-                  </button>
+                  </Link>
 
                   <button className="px-8 py-4 bg-white/90 text-orange-700 rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl border border-orange-200/50 flex items-center justify-center text-base font-semibold">
                     <span>Explore Success Stories</span>

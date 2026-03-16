@@ -14,7 +14,7 @@ const corsHeaders = {
  
 export async function POST(req) {
   try {
-    const { phoneNumber, otp } = await req.json();
+    const { phoneNumber, otp, firstName, lastName, gender } = await req.json();
  
     // Input validation
     if (!phoneNumber || phoneNumber.length !== 10 || !otp || otp.length !== 6) {
@@ -63,6 +63,8 @@ export async function POST(req) {
     if (!user) {
       user = new User({
         phone: fullPhoneNumber,
+        name: (firstName || lastName) ? `${firstName || ''} ${lastName || ''}`.trim() : undefined,
+        gender: gender || null,
         isVerified: false,
         phoneIsVerified: true,
         lastLoginAt: new Date()

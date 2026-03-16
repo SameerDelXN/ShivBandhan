@@ -7,6 +7,10 @@ import { useSession } from '@/context/SessionContext'
 export default function MatrimonialLogin() {
   const router = useRouter()
   const [step, setStep] = useState(1); // 1: Phone Number, 2: OTP
+  const [isRegisterMode, setIsRegisterMode] = useState(true);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [gender, setGender] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+91');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -41,6 +45,13 @@ export default function MatrimonialLogin() {
   const handleSendOTP = async () => {
     setError('');
     
+    if (isRegisterMode) {
+      if (!firstName.trim() || !lastName.trim() || !gender) {
+        setError('Please fill in all your details');
+        return;
+      }
+    }
+
     if (!validatePhoneNumber(phoneNumber)) {
       setError('Please enter a valid 10-digit mobile number');
       return;
@@ -115,7 +126,8 @@ export default function MatrimonialLogin() {
         },
         body: JSON.stringify({
           phoneNumber: phoneNumber.replace(/\s/g, ''),
-          otp: otpString
+          otp: otpString,
+          ...(isRegisterMode && { firstName, lastName, gender })
         }),
       });
 
@@ -194,8 +206,12 @@ export default function MatrimonialLogin() {
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-3 hover:rotate-0 transition-all duration-300">
               <span className="text-white text-xl sm:text-2xl font-bold">💕</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">Welcome Back</h1>
-            <p className="text-sm sm:text-base text-gray-600">Find your perfect match</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">
+              {isRegisterMode ? 'Create Account' : 'Welcome Back'}
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              {isRegisterMode ? 'Begin your eternal journey' : 'Find your perfect match'}
+            </p>
           </div>
 
           {/* Content */}
@@ -203,6 +219,49 @@ export default function MatrimonialLogin() {
             {step === 1 ? (
               // Phone Number Step
               <div className="space-y-4 sm:space-y-6">
+                {isRegisterMode && (
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="col-span-2 sm:col-span-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">First Name</label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="First Name"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Last Name</label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Last Name"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Gender</label>
+                      <div className="flex space-x-2">
+                        {['Male', 'Female'].map((g) => (
+                          <button
+                            key={g}
+                            onClick={() => setGender(g)}
+                            className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
+                              gender === g 
+                                ? 'bg-orange-50 border-orange-500 text-orange-600 font-semibold' 
+                                : 'bg-gray-50 border-gray-100 text-gray-600'
+                            }`}
+                          >
+                            {g}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3 flex items-center">
                     <Phone size={14} className="mr-2 text-orange-500" />
@@ -251,6 +310,15 @@ export default function MatrimonialLogin() {
                     </>
                   )}
                 </button>
+
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={() => setIsRegisterMode(!isRegisterMode)}
+                    className="text-orange-600 hover:text-orange-700 text-sm font-semibold transition-colors"
+                  >
+                    {isRegisterMode ? 'Already have an account? Login' : 'New user? Register now'}
+                  </button>
+                </div>
               </div>
             ) : (
               // OTP Step
