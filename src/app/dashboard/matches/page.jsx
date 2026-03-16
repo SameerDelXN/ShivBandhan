@@ -1561,18 +1561,6 @@ export default function MatchesPage() {
               </button>
             )}
 
-            {/* Download (icon-only) */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDownloadProfile && onDownloadProfile(match);
-              }}
-              className="w-full col-span-2 sm:col-span-1 bg-orange-50 text-orange-700 py-1.5 rounded text-xs hover:bg-orange-100 transition-colors flex items-center justify-center"
-              title="Download PDF"
-              aria-label="Download profile as PDF"
-            >
-              <Download className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </div>
