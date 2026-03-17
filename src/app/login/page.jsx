@@ -18,6 +18,7 @@ export default function MatrimonialLogin() {
   const [resendTimer, setResendTimer] = useState(0);
   const [error, setError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { login, user } = useSession()
 
   useEffect(() => {
@@ -48,6 +49,10 @@ export default function MatrimonialLogin() {
     if (isRegisterMode) {
       if (!firstName.trim() || !lastName.trim() || !gender) {
         setError('Please fill in all your details');
+        return;
+      }
+      if (!termsAccepted) {
+        setError('Please accept the Terms and Conditions to continue.');
         return;
       }
     }
@@ -292,6 +297,37 @@ export default function MatrimonialLogin() {
                   </div>
                 </div>
 
+                {/* Terms & Conditions - Only for Register Mode */}
+                {isRegisterMode && (
+                  <div className="mt-2">
+                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                      <div
+                        onClick={() => setTermsAccepted(!termsAccepted)}
+                        className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                          termsAccepted
+                            ? 'bg-orange-500 border-orange-500'
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        {termsAccepted && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-xs text-gray-500 leading-relaxed">
+                        I agree to the{' '}
+                        <a href="/terms" className="text-orange-500 underline font-semibold">Terms and Conditions</a>
+                        {' '}and{' '}
+                        <a href="/privacy" className="text-orange-500 underline font-semibold">Privacy Policy</a>.
+                        {' '}I confirm that I am of legal marriageable age (18 for F / 21 for M).
+                        {' '}I consent to receive matches and account updates via WhatsApp, SMS, and Email.
+                        {' '}I understand that Shivbandhan Matrimony does not verify the background of every user and I will perform my own due diligence before entering into a marriage.
+                      </span>
+                    </label>
+                  </div>
+                )}
+
                 {error && (
                   <div className="text-red-500 text-xs sm:text-sm bg-red-50 p-2 sm:p-3 rounded-md sm:rounded-lg border border-red-100">
                     {error}
@@ -300,8 +336,12 @@ export default function MatrimonialLogin() {
 
                 <button
                   onClick={handleSendOTP}
-                  disabled={isLoading}
-                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg sm:rounded-xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center group"
+                  disabled={isLoading || (isRegisterMode && !termsAccepted)}
+                  className={`w-full py-3 sm:py-4 text-white rounded-lg sm:rounded-xl transition-all duration-300 shadow-md hover:shadow-lg sm:shadow-lg sm:hover:shadow-xl flex items-center justify-center group ${
+                    isRegisterMode && !termsAccepted
+                      ? 'bg-gray-300 cursor-not-allowed opacity-60'
+                      : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                  }`}
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

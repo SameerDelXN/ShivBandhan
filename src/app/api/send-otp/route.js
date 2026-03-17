@@ -61,8 +61,14 @@ export async function POST(req) {
     await dbConnect();
     const User = (await import("@/models/User")).default;
 
-    const { phoneNumber, type } = await req.json(); // type: 'login' or 'register'
+    const body = await req.json();
+    const { phoneNumber, type } = body;
     
+    console.log("--- Send OTP Request ---");
+    console.log("Full Request Body:", JSON.stringify(body));
+    console.log("Type:", type);
+    console.log("Phone Number:", phoneNumber);
+
     if (!phoneNumber || phoneNumber.length !== 10) {
       return NextResponse.json(
         { success: false, message: "Invalid phone number" },
@@ -72,17 +78,34 @@ export async function POST(req) {
 
     const fullPhoneNumber = `+91${phoneNumber}`;
     const user = await User.findOne({ phone: fullPhoneNumber });
-
-    if (type === 'login' && !user) {
-      return NextResponse.json(
-        { success: false, message: "Phone number not registered. Please register first." },
-        { status: 404 }
-      );
+    
+    console.log("Full Phone Number Searched:", fullPhoneNumber);
+    console.log("User Found in DB:", user ? "Yes" : "No");
+    if (user) {
+      console.log("User ID:", user._id);
+      console.log("User Phone in DB:", user.phone);
     }
 
-    if (type === 'register' && user) {
+    // Enforce check based on type
+    if (type === 'login') {
+      if (!user) {
+        return NextResponse.json(
+          { success: false, message: "Phone number not registered. Please register first." },
+          { status: 404 }
+        );
+      }
+    } else if (type === 'register') {
+      if (user) {
+        return NextResponse.json(
+          { success: false, message: "Phone number already registered. Please login." },
+          { status: 400 }
+        );
+      }
+    } else {
+      // If type is not provided or invalid, we should probably default to login check for safety 
+      // or return an error. Let's return an error requiring type.
       return NextResponse.json(
-        { success: false, message: "Phone number already registered. Please login instead." },
+        { success: false, message: "Request type (login/register) is required." },
         { status: 400 }
       );
     }

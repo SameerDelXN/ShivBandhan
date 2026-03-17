@@ -25,21 +25,29 @@ export async function POST(req) {
     }
  
     const fullPhoneNumber = `+91${phoneNumber}`;
-
-    console.log("fullPhoneNumber", fullPhoneNumber);
+ 
+    console.log("--- OTP Verification Debug ---");
+    console.log("Received Phone (raw):", phoneNumber);
+    console.log("Full Phone (formatted):", fullPhoneNumber);
+    console.log("Entered OTP:", otp);
 
     await dbConnect();
-
+ 
     const record = await OTP.findOne({ phone: fullPhoneNumber }).sort({ createdAt: -1 });
-    const storedOTP = record ? record.otp : null;
+    console.log("DB Record Found:", record ? "Yes" : "No");
 
-    console.log("storedOTP", storedOTP);
-    console.log("Entered otp", otp);
+    if (record) {
+      console.log("Stored OTP in DB:", record.otp);
+      console.log("OTP match result:", record.otp === otp.toString());
+    }
+
+    const storedOTP = record ? record.otp : null;
  
     // OTP verification
     const isStaticTest = phoneNumber === "8080407364" && otp === "123456";
 
     if (!storedOTP && !isStaticTest) {
+      console.log("Error: OTP expired or not sent");
       return new NextResponse(
         JSON.stringify({ success: false, error: "OTP expired or not sent" }),
         { status: 400, headers: corsHeaders }
