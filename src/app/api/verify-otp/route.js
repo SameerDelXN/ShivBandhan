@@ -10,7 +10,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Credentials' : true,
 };
- //sample
 export async function POST(req) {
   try {
     const { phoneNumber, otp, firstName, lastName, gender } = await req.json();
