@@ -19,7 +19,35 @@ export default function MatrimonialLogin() {
   const [error, setError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');  
+  const [genderTouched, setGenderTouched] = useState(false);
   const { login, user } = useSession()
+
+  // Only letters allowed — no numbers, spaces, or special characters
+  const validateName = (value) => /^[a-zA-Z]+$/.test(value);
+
+  const handleFirstNameChange = (e) => {
+    const value = e.target.value;
+    const cleaned = value.replace(/[^a-zA-Z]/g, '');
+    setFirstName(cleaned);
+    if (value !== cleaned || (value.length > 0 && !validateName(value))) {
+      setFirstNameError('Only letters are allowed (no numbers, spaces, or symbols)');
+    } else {
+      setFirstNameError('');
+    }
+  };
+
+  const handleLastNameChange = (e) => {
+    const value = e.target.value;
+    const cleaned = value.replace(/[^a-zA-Z]/g, '');
+    setLastName(cleaned);
+    if (value !== cleaned || (value.length > 0 && !validateName(value))) {
+      setLastNameError('Only letters are allowed (no numbers, spaces, or symbols)');
+    } else {
+      setLastNameError('');
+    }
+  };
 
   useEffect(() => {
     setIsLoaded(true);
@@ -48,7 +76,12 @@ export default function MatrimonialLogin() {
     
     if (isRegisterMode) {
       if (!firstName.trim() || !lastName.trim() || !gender) {
+        setGenderTouched(true);
         setError('Please fill in all your details');
+        return;
+      }
+      if (firstNameError || lastNameError) {
+        setError('Please fix the name errors before continuing.');
         return;
       }
       if (!termsAccepted) {
@@ -233,20 +266,30 @@ export default function MatrimonialLogin() {
                       <input
                         type="text"
                         value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
+                        onChange={handleFirstNameChange}
                         placeholder="First Name"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all ${firstNameError ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}
                       />
+                      {firstNameError && (
+                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                          <span>⚠</span> {firstNameError}
+                        </p>
+                      )}
                     </div>
                     <div className="col-span-2 sm:col-span-1">
                       <label className="block text-xs font-medium text-gray-700 mb-1">Last Name</label>
                       <input
                         type="text"
                         value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
+                        onChange={handleLastNameChange}
                         placeholder="Last Name"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                        className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all ${lastNameError ? 'border-red-400 bg-red-50' : 'border-gray-200'}`}
                       />
+                      {lastNameError && (
+                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                          <span>⚠</span> {lastNameError}
+                        </p>
+                      )}
                     </div>
                     <div className="col-span-2">
                       <label className="block text-xs font-medium text-gray-700 mb-1">Gender</label>
@@ -254,10 +297,12 @@ export default function MatrimonialLogin() {
                         {['Male', 'Female'].map((g) => (
                           <button
                             key={g}
-                            onClick={() => setGender(g)}
+                            onClick={() => { setGender(g); setGenderTouched(true); }}
                             className={`flex-1 py-3 px-4 rounded-xl border transition-all ${
                               gender === g 
-                                ? 'bg-orange-50 border-orange-500 text-orange-600 font-semibold' 
+                                ? 'bg-orange-50 border-orange-500 text-orange-600 font-semibold'
+                                : genderTouched && !gender
+                                ? 'bg-red-50 border-red-400 text-gray-600'
                                 : 'bg-gray-50 border-gray-100 text-gray-600'
                             }`}
                           >
@@ -265,6 +310,11 @@ export default function MatrimonialLogin() {
                           </button>
                         ))}
                       </div>
+                      {genderTouched && !gender && (
+                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                          <span>⚠</span> Please select your gender
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
