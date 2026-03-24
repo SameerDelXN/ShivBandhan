@@ -367,9 +367,9 @@ export default function MatrimonialLogin() {
                       </div>
                       <span className="text-xs text-gray-500 leading-relaxed">
                         I agree to the{' '}
-                        <a href="/terms" className="text-orange-500 underline font-semibold">Terms and Conditions</a>
+                        <a href="/terms-of-service" className="text-orange-500 underline font-semibold">Terms and Conditions</a>
                         {' '}and{' '}
-                        <a href="/privacy" className="text-orange-500 underline font-semibold">Privacy Policy</a>.
+                        <a href="/privacy-policy" className="text-orange-500 underline font-semibold">Privacy Policy</a>.
                         {' '}I confirm that I am of legal marriageable age (18 for F / 21 for M).
                         {' '}I consent to receive matches and account updates via WhatsApp, SMS, and Email.
                         {' '}I understand that Shivbandhan Matrimony does not verify the background of every user and I will perform my own due diligence before entering into a marriage.

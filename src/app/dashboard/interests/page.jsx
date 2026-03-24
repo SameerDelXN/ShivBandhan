@@ -452,21 +452,15 @@ export default function InterestsPage() {
               </div>
               
               {/* Image container */}
-              <div className="p-4">
+              <div className="p-4 relative">
+                <img src="/logo.png" alt="watermark" className="absolute top-4 left-4 w-16 h-16 object-contain opacity-70 pointer-events-none drop-shadow-lg z-10" />
                 <div className="relative pt-[100%]">
                   <img 
                     src={expandedImage} 
                     alt="Expanded profile" 
-                    className="absolute top-0 left-0 w-full h-full object-contain"
+                    className="absolute top-0 left-0 w-full h-full object-contain rounded-md"
                   />
                 </div>
-              </div>
-              
-              {/* Footer */}
-              <div className="bg-orange-50 p-3 border-t border-orange-200 flex justify-center">
-                <span className="text-orange-800 text-sm font-medium">
-                  Shivbandhan Matrimony
-                </span>
               </div>
             </motion.div>
           </motion.div>
