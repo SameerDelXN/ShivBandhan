@@ -7,6 +7,12 @@
       type: String, 
       unique: true, 
     },
+    shivbandhanId: {
+      type: String,
+      unique: true,
+      sparse: true, // allows null for legacy users until migration
+      index: true,
+    },
 
     // Verification status
     isVerified: {

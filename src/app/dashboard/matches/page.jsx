@@ -650,7 +650,13 @@ export default function MatchesPage() {
       page.drawRectangle({ x: infoStartX - 5, y: infoY - 28, width: 5, height: 32, color: colorPrimary });
       drawText(nameDisplay, infoStartX + 5, infoY - 18, 18, true, colorPrimary, width - infoStartX - pageMargin - 10);
 
-      infoY -= 50;
+      // ShivBandhan ID
+      if (profile?.shivbandhanId) {
+        drawText(`ID: ${profile.shivbandhanId}`, infoStartX + 5, infoY - 35, 10, true, colorMuted, 200);
+        infoY -= 55;
+      } else {
+        infoY -= 50;
+      }
 
       // Stats grid
       const statBox = (label, value, x, y, color) => {
@@ -1176,6 +1182,9 @@ export default function MatchesPage() {
                       </span>
                     )}
                   </h2>
+                  {profile.shivbandhanId && (
+                    <p className="text-xs text-orange-500 font-semibold mb-1">ID: {profile.shivbandhanId}</p>
+                  )}
                   <p className="text-orange-600 font-medium">{profile.occupation || 'Professional'}</p>
                 </div>
 
@@ -1461,7 +1470,12 @@ export default function MatchesPage() {
         {/* Profile Info */}
         <div className="p-3">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="font-semibold text-gray-900 text-sm"> {hasSubscription || isUnlocked ? match.name : maskFirstName(match.name)}</h3>
+            <div>
+              <h3 className="font-semibold text-gray-900 text-sm"> {hasSubscription || isUnlocked ? match.name : maskFirstName(match.name)}</h3>
+              {match.shivbandhanId && (
+                <p className="text-[10px] text-orange-500 font-medium">ID: {match.shivbandhanId}</p>
+              )}
+            </div>
             <div className="flex items-center space-x-1">
               <Clock className="w-2.5 h-2.5 text-gray-400" />
               <span className="text-[10px] text-gray-500">{match.lastActive}</span>

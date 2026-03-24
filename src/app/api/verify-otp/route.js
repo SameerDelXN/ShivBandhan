@@ -2,6 +2,7 @@ import OTP from "@/models/OTP";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
+import Counter from "@/models/Counter";
 import { createToken, setTokenCookie } from "@/lib/auth";
 
 const corsHeaders = {
@@ -67,6 +68,10 @@ export async function POST(req) {
     const isNewUser = !user;
  
     if (!user) {
+      // Generate unique ShivBandhan ID
+      const seq = await Counter.getNextSequence("shivbandhanId");
+      const shivbandhanId = `SHIVBANDHAN${String(seq).padStart(3, "0")}`;
+
       user = new User({
         phone: fullPhoneNumber,
         name: (firstName || lastName) ? `${firstName || ''} ${lastName || ''}`.trim() : undefined,
@@ -74,7 +79,8 @@ export async function POST(req) {
         isVerified: true, // Automatically verify on registration
         verificationStatus: 'Verified',
         phoneIsVerified: true,
-        lastLoginAt: new Date()
+        lastLoginAt: new Date(),
+        shivbandhanId,
       });
       await user.save();
     } else {

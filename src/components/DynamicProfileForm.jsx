@@ -748,10 +748,13 @@ const DynamicProfileForm = () => {
               </div>
             </div>
             <div>
-              <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center space-x-2 mb-1">
                 <h1 className="text-2xl font-bold text-gray-900">{formData?.name || 'Your Name'}</h1>
                 {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
               </div>
+              {formData?.shivbandhanId && (
+                <p className="text-xs text-orange-500 font-semibold mb-1">ID: {formData.shivbandhanId}</p>
+              )}
               <div className="space-y-1 text-gray-600">
                 <div className="flex items-center space-x-4 text-sm">
                   {formData?.height && <span>{formData?.height}</span>}

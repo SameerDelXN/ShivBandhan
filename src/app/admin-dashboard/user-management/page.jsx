@@ -66,6 +66,7 @@ export default function UserManagement() {
         console.log("data = ", data.data);
         const transformedUsers = data.data.map(user => ({
           id: user._id,
+          shivbandhanId: user.shivbandhanId || '',
           name: user.name || 'N/A',
           email: user.email,
           phone: user.phone,
@@ -160,9 +161,10 @@ export default function UserManagement() {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(user => 
-        user.name.toLowerCase().includes(term) || 
-        user.email.toLowerCase().includes(term) ||
-        user.phone.toLowerCase().includes(term)
+        user.name?.toLowerCase().includes(term) || 
+        user.email?.toLowerCase().includes(term) ||
+        user.phone?.toLowerCase().includes(term) ||
+        user.shivbandhanId?.toLowerCase().includes(term)
       );
     }
 
@@ -314,6 +316,12 @@ export default function UserManagement() {
 
       // Header Section
       page.drawText('BIODATA', { x: width / 2 - 40, y: cursorY, size: 16, font: boldFont, color: colorText });
+      // ShivBandhan ID at top right
+      if (user?.shivbandhanId) {
+        const idText = `ID: ${user.shivbandhanId}`;
+        const idWidth = boldFont.widthOfTextAtSize(idText, 10);
+        page.drawText(idText, { x: width - pageMargin - idWidth, y: cursorY + 2, size: 10, font: boldFont, color: rgb(0.86, 0.25, 0.35) });
+      }
       cursorY -= 30;
 
       // Draw Logo (Left)
@@ -654,6 +662,7 @@ export default function UserManagement() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
+                <th className="text-left py-4 px-6 font-semibold text-gray-900">SB ID</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">User</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Status</th>
                 <th className="text-left py-4 px-6 font-semibold text-gray-900">Plan</th>
@@ -666,6 +675,9 @@ export default function UserManagement() {
             <tbody>
               {users.slice(startIndex, endIndex).map((user, index) => (
                 <tr key={user.id} className="border-b border-gray-100 hover:bg-orange-50/30 transition-colors">
+                  <td className="py-4 px-6">
+                    <span className="text-xs font-mono text-orange-600 font-semibold">{user.shivbandhanId || '-'}</span>
+                  </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
@@ -846,6 +858,9 @@ export default function UserManagement() {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
+                    {selectedUser.shivbandhanId && (
+                      <p className="text-xs text-orange-500 font-semibold">ID: {selectedUser.shivbandhanId}</p>
+                    )}
                     <div className="flex space-x-2 mt-1">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

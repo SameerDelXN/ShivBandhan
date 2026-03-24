@@ -170,8 +170,8 @@ export async function POST(request) {
     currentY -= 50;
 
     // Profile ID
-    const profileId = userData._id ? userData._id.toString().slice(-6).toUpperCase() : 
-                     Date.now().toString().slice(-6);
+    const profileId = userData.shivbandhanId || 
+                     (userData._id ? `SB-${userData._id.toString().slice(-6).toUpperCase()}` : `SB-${Date.now().toString().slice(-6)}`);
     
     // Calculate text area width based on whether we have a profile image
     const textAreaWidth = profileImage ? contentWidth - 180 : contentWidth;
@@ -221,7 +221,7 @@ export async function POST(request) {
     });
     
     // Profile ID
-    const profileIdText = `Profile ID: SB-${profileId}`;
+    const profileIdText = `Profile ID: ${profileId}`;
     const profileIdWidth = boldFont.widthOfTextAtSize(profileIdText, 10);
     drawText(profileIdText, margin + textAreaWidth - profileIdWidth, currentY + 55, {
       size: 10,
@@ -386,7 +386,7 @@ export async function POST(request) {
       pdf: base64Pdf,
       fileName,
       message: 'Profile PDF generated successfully',
-      profileId: `SB-${profileId}`
+      profileId: profileId
     });
 
   } catch (error) {
