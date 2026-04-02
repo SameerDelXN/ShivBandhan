@@ -1,11 +1,11 @@
 "use client"
 import React from 'react';
 import { Heart, Mail, MapPin, Phone } from 'lucide-react';
-import { 
-  Facebook as LucideFacebook, 
-  Twitter as LucideTwitter, 
-  Instagram as LucideInstagram, 
-  Linkedin as LucideLinkedin 
+import {
+  Facebook as LucideFacebook,
+  Twitter as LucideTwitter,
+  Instagram as LucideInstagram,
+  Linkedin as LucideLinkedin
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -21,7 +21,7 @@ const Footer = () => {
       'Refund Policy': '/refund-policy',
       // 'Community Standards': '/community-standards'
     };
-    
+
     if (policyRoutes[policy]) {
       router.push(policyRoutes[policy]);
     }
@@ -30,28 +30,28 @@ const Footer = () => {
   return (
     <footer className="w-full bg-orange-900 text-white">
       <div className="flex items-center space-x-3">
-    <img 
-      src="assest/logo1.png"  // <-- Add your Shivbandhan logo here
-      alt="Shivbandhan Logo"
-      className="w-18 h-18 object-contain mt-8 ml-8"
-    />
-    <span className="text-4xl font-serif font-bold mt-10">
-      शिवबंधन
-    </span>
-  </div>
+        <img
+          src="assest/logo1.png"  // <-- Add your Shivbandhan logo here
+          alt="Shivbandhan Logo"
+          className="w-18 h-18 object-contain mt-8 ml-8"
+        />
+        <span className="text-4xl font-serif font-bold mt-10">
+          शिवबंधन
+        </span>
+      </div>
       <div className="container mx-auto px-4 py-16">
         <div className="relative">
-  {/* Couple Image */}
-  <img
-    src="/assest/couple.png"   // <-- put your image path here
-    alt="Couple"
-    className="hidden md:block w-64 lg:w-72 absolute -top-90 right-0"
-  />
-</div>
+          {/* Couple Image */}
+          <img
+            src="/assest/couple.png"   // <-- put your image path here
+            alt="Couple"
+            className="hidden md:block w-64 lg:w-72 absolute -top-90 right-0"
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          
-          
+
+
           {/* Branding Section */}
           <div className="space-y-6">
             <div className="flex items-center space-x-2">
@@ -61,28 +61,28 @@ const Footer = () => {
             <p className="text-orange-100/80 font-sans leading-relaxed">
               Helping you find meaningful connections that last a lifetime. Our thoughtful matchmaking honors tradition while embracing modern relationships.
             </p>
-           <div className="flex space-x-4 pt-2">
-  {['facebook'].map((social) => {
-    const Icon = {
-      facebook: LucideFacebook,
-      twitter: LucideTwitter,
-      instagram: LucideInstagram,
-      linkedin: LucideLinkedin
-    }[social];
-    
-    return (
-      <a 
-        key={social} 
-        href="#" 
-        className="w-10 h-10 rounded-full bg-orange-900/30 hover:bg-orange-900/50 flex items-center justify-center transition-colors duration-300"
-        aria-label={social}
-      >
-        <span className="sr-only">{social}</span>
-        <Icon className="w-5 h-5 opacity-80 text-white" />
-      </a>
-    );
-  })}
-</div>
+            <div className="flex space-x-4 pt-2">
+              {['facebook'].map((social) => {
+                const Icon = {
+                  facebook: LucideFacebook,
+                  twitter: LucideTwitter,
+                  instagram: LucideInstagram,
+                  linkedin: LucideLinkedin
+                }[social];
+
+                return (
+                  <a
+                    key={social}
+                    href="#"
+                    className="w-10 h-10 rounded-full bg-orange-900/30 hover:bg-orange-900/50 flex items-center justify-center transition-colors duration-300"
+                    aria-label={social}
+                  >
+                    <span className="sr-only">{social}</span>
+                    <Icon className="w-5 h-5 opacity-80 text-white" />
+                  </a>
+                );
+              })}
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -93,8 +93,8 @@ const Footer = () => {
             <ul className="space-y-3 font-sans">
               {['Home', 'Search', 'Matches', 'Success Stories', 'Pricing'].map((link) => (
                 <li key={link}>
-                  <a 
-                    href="#" 
+                  <a
+                    href="#"
                     className="text-orange-100/80 hover:text-orange-50 transition-colors duration-200 flex items-center"
                   >
                     <span className="w-1 h-1 bg-orange-400 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
@@ -113,7 +113,7 @@ const Footer = () => {
             <ul className="space-y-3 font-sans">
               {['Privacy Policy', 'Terms of Service', 'Refund Policy'].map((policy) => (
                 <li key={policy}>
-                  <a 
+                  <a
                     href="#"
                     onClick={(e) => handlePolicyClick(e, policy)}
                     className="text-orange-100/80 hover:text-orange-50 transition-colors duration-200 flex items-center cursor-pointer"
@@ -135,7 +135,7 @@ const Footer = () => {
               <li className="flex items-start space-x-3">
                 <MapPin className="text-orange-300 mt-1 flex-shrink-0" size={18} />
                 <span className="text-orange-100/80">
-                 Pune,Maharashtra
+                  Pune,Maharashtra
                 </span>
               </li>
               <li className="flex items-center space-x-3">
@@ -147,7 +147,7 @@ const Footer = () => {
               <li className="flex items-center space-x-3">
                 <Phone className="text-orange-300" size={18} />
                 <a href="tel:+911234567890" className="text-orange-100/80 hover:text-orange-50">
-                 +91 940-423-3327
+                  +91 9168319090
                 </a>
               </li>
             </ul>
