@@ -338,7 +338,7 @@ export default function UserManagement() {
       // Draw Company Address (Center/Right-ish)
       page.drawText('Durga Prasad Apartments, S. No. 26/6, Flat No. 1, Above Udyam Vikas Bank,', { x: 120, y: cursorY, size: 9, font });
       page.drawText('Hingne KD, Sinhagad Road, Pune 411051, Maharashtra, India', { x: 120, y: cursorY - 12, size: 9, font });
-      page.drawText('Mobile : +91-8888438693 / +91-8888438694', { x: 120, y: cursorY - 24, size: 9, font });
+      page.drawText('Mobile : +91 9168319090', { x: 120, y: cursorY - 24, size: 9, font });
       page.drawText(`Email : support@shivbandhan.com | info@shivbandhan.com`, { x: 120, y: cursorY - 36, size: 9, font });
       page.drawText('Website : www.shivbandhan.com', { x: 120, y: cursorY - 48, size: 9, font });
       
@@ -375,11 +375,11 @@ export default function UserManagement() {
             const logoScale = targetWidth / logoImg.width;
             
             page.drawImage(logoImg, { 
-              x: imgX + (drawW - targetWidth) / 2, 
-              y: imgY + (drawH - logoImg.height * logoScale) / 2, 
+              x: imgX + 5, 
+              y: imgY + 5, 
               width: targetWidth, 
               height: logoImg.height * logoScale,
-              opacity: 0.25, // Highly transparent professional look
+              opacity: 0.3, // Highly transparent professional look
               blendMode: BlendMode.Multiply
             });
           } catch (e) {

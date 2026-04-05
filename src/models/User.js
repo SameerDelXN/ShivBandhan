@@ -175,6 +175,13 @@
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subscription",
     },
+    // Tracking usage for subscription limits
+    usage: {
+      weeklyUnlocks: { type: Number, default: 0 },
+      dailyMatches: { type: Number, default: 0 },
+      lastWeeklyReset: { type: Date, default: Date.now },
+      lastDailyReset: { type: Date, default: Date.now }
+    }
   },
 
   // Permanent unlock for PDF downloads (non-subscription, one-time payment)

@@ -158,7 +158,14 @@ export async function POST(request) {
       color: accentBlue,
       italic: true
     });
-    currentY -= 50;
+    currentY -= 12;
+
+    drawText('Mobile: +91 9168319090', 
+             headerX, currentY, {
+      size: 9,
+      color: darkText
+    });
+    currentY -= 38;
 
     // Horizontal divider
     page.drawLine({
@@ -198,6 +205,21 @@ export async function POST(request) {
         width: imgDims.width,
         height: imgDims.height,
       });
+
+      // Add logo watermark at bottom-left corner of profile photo
+      if (logoImage) {
+        const watermarkWidth = imgDims.width * 0.25;
+        const watermarkScale = watermarkWidth / logoImage.width;
+        const watermarkHeight = logoImage.height * watermarkScale;
+        
+        page.drawImage(logoImage, {
+          x: imgX + 5,
+          y: imgY + 5,
+          width: watermarkWidth,
+          height: watermarkHeight,
+          opacity: 0.3,
+        });
+      }
     }
     
     // Background for profile header
