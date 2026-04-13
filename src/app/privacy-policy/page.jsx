@@ -242,13 +242,14 @@ export default function PrivacyPolicy() {
                   <p className="text-xs text-orange-800 mb-4 font-medium uppercase tracking-wide">As per IT Act 2000 & DPDP Act 2023</p>
                   <div className="space-y-2 text-sm text-gray-800">
                     <p><strong className="text-gray-900">Entity:</strong> Shivbandhan Matrimony LLP</p>
-                    <p><strong className="text-gray-900">Address:</strong> Karve Nagar, Pune, Maharashtra 411052</p>
+                    <p><strong className="text-gray-900">Address:</strong> Durga Prasad Apartments, S. No. 26/6, Flat No. 1, Above Udyam Vikas Bank,
+Hingne KD, Sinhagad Road, Pune 411051, Maharashtra, India</p>
                     <p className="pt-2">
                       <strong className="text-gray-900">Email:</strong>{' '}
-                      <a href="mailto:support@shivbandhan.com" className="text-orange-600 hover:text-orange-700 font-semibold transition-colors">support@shivbandhan.com</a>
+                      <a href="mailto:support@shivbandhan.com" className="text-orange-600 hover:text-orange-700 font-semibold transition-colors">info@shivbandhan.com</a>
                     </p>
                     <p>
-                      <strong className="text-gray-900">Phone:</strong> <span className="text-orange-600 font-semibold">+91-8888438693</span>
+                      <strong className="text-gray-900">Phone:</strong> <span className="text-orange-600 font-semibold">+91 9168319090</span>
                     </p>
                   </div>
                 </div>
