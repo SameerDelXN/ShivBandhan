@@ -29,7 +29,7 @@ export default function UserManagement() {
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({});
-  
+
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
@@ -55,13 +55,13 @@ export default function UserManagement() {
     try {
       setLoading(true);
       const response = await fetch(`/api/users/fetchAllUsers`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch users');
       }
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         console.log("data = ", data.data);
         const transformedUsers = data.data.map(user => ({
@@ -98,7 +98,7 @@ export default function UserManagement() {
           phoneIsVerified: user.phoneIsVerified,
           verificationStatus: user.verificationStatus || 'Unverified',
           adminWillFill: user.profileSetup?.willAdminFill || false,
-          
+
           // Additional Relative Info
           fatherName: user.fatherName,
           parentResidenceCity: user.parentResidenceCity,
@@ -137,7 +137,7 @@ export default function UserManagement() {
           expectedHeight: user.expectedHeight,
           expectedIncome: user.expectedIncome,
         }));
-        
+
         setUsers(transformedUsers);
         setAllUsers(transformedUsers);
         setTotalUsers(transformedUsers.length);
@@ -160,8 +160,8 @@ export default function UserManagement() {
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(user => 
-        user.name?.toLowerCase().includes(term) || 
+      filtered = filtered.filter(user =>
+        user.name?.toLowerCase().includes(term) ||
         user.email?.toLowerCase().includes(term) ||
         user.phone?.toLowerCase().includes(term) ||
         user.shivbandhanId?.toLowerCase().includes(term)
@@ -226,10 +226,10 @@ export default function UserManagement() {
 
   // Handle save edited user
   const handleSaveEdit = () => {
-    setUsers(users.map(user => 
+    setUsers(users.map(user =>
       user.id === editingUser.id ? { ...user, ...editFormData } : user
     ));
-    setAllUsers(allUsers.map(user => 
+    setAllUsers(allUsers.map(user =>
       user.id === editingUser.id ? { ...user, ...editFormData } : user
     ));
     setEditingUser(null);
@@ -241,10 +241,10 @@ export default function UserManagement() {
     try {
       const pdfDoc = await PDFDocument.create();
       pdfDoc.registerFontkit(fontkit);
-      
+
       const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-      
+
       // Load custom handwriting font for watermark
       let scriptFont = boldFont; // fallback
       try {
@@ -280,7 +280,7 @@ export default function UserManagement() {
         for (const word of words) {
           const testLine = currentLine ? `${currentLine} ${word}` : word;
           const testWidth = textFont.widthOfTextAtSize(testLine, textSize);
-          
+
           if (testWidth > maxWidth && currentLine !== '') {
             lines.push(currentLine);
             currentLine = word;
@@ -297,19 +297,19 @@ export default function UserManagement() {
         const labelWidth = 100;
         const valueWidth = colWidth - labelWidth;
         const cleanValue = safeText(value);
-        
+
         // Draw the label
         page.drawText(label || '', { x, y, size: 10, font, color: colorText });
-        
+
         // Wrap and draw the value
         const lines = getWrappedLines(cleanValue, valueWidth, font, 10);
         let startY = y;
-        
+
         for (const line of lines) {
           page.drawText(line, { x: x + labelWidth, y: startY, size: 10, font, color: colorText });
           startY -= 12; // line height
         }
-        
+
         // Returns the Y drop amount (minus 18 is the base spacing)
         return Math.max(18, lines.length * 12 + 6);
       };
@@ -341,7 +341,7 @@ export default function UserManagement() {
       page.drawText('Mobile : +91 9168319090', { x: 120, y: cursorY - 24, size: 9, font });
       page.drawText(`Email : support@shivbandhan.com | info@shivbandhan.com`, { x: 120, y: cursorY - 36, size: 9, font });
       page.drawText('Website : www.shivbandhan.com', { x: 120, y: cursorY - 48, size: 9, font });
-      
+
       cursorY -= 65;
       page.drawLine({ start: { x: pageMargin, y: cursorY }, end: { x: width - pageMargin, y: cursorY }, thickness: 1, color: colorLine });
       cursorY -= 5;
@@ -362,9 +362,9 @@ export default function UserManagement() {
           const drawH = img.height * scale;
           const imgX = pageMargin;
           const imgY = cursorY - photoHeight;
-          
+
           page.drawImage(img, { x: imgX, y: imgY, width: drawW, height: drawH });
-          
+
           // Elegant professional watermark centered using logo
           try {
             const logoRes = await fetch('/logo.png');
@@ -373,11 +373,11 @@ export default function UserManagement() {
             // Make logo cover about 50% of photo width
             const targetWidth = drawW * 0.5;
             const logoScale = targetWidth / logoImg.width;
-            
-            page.drawImage(logoImg, { 
-              x: imgX + 5, 
-              y: imgY + 5, 
-              width: targetWidth, 
+
+            page.drawImage(logoImg, {
+              x: imgX + 5,
+              y: imgY + 5,
+              width: targetWidth,
               height: logoImg.height * logoScale,
               opacity: 0.3, // Highly transparent professional look
               blendMode: BlendMode.Multiply
@@ -423,25 +423,25 @@ export default function UserManagement() {
       // General Section Renderer
       const drawSection = (title, items) => {
         ensureSpace(40 + Math.ceil(items.length / 2) * 20);
-        
+
         // Section header with pale background and accent bar
         const sectionWidth = width - 2 * pageMargin;
         page.drawRectangle({ x: pageMargin + 8, y: cursorY - 14, width: sectionWidth - 8, height: 26, color: rgb(0.97, 0.94, 0.94) });
         page.drawRectangle({ x: pageMargin, y: cursorY - 14, width: 8, height: 26, color: rgb(0.95, 0.75, 0.25) });
-        
+
         page.drawText(title.toUpperCase(), { x: pageMargin + 25, y: cursorY - 6, size: 12, font: boldFont, color: rgb(0.86, 0.35, 0.45) });
-        
+
         cursorY -= 25;
-        
+
         const col1X = pageMargin;
         const col2X = width / 2 + 10;
-        
+
         for (let i = 0; i < items.length; i += 2) {
           let h1 = 18;
           let h2 = 18;
-          if(items[i]) h1 = drawGridItem(items[i].label, items[i].value, col1X, cursorY, 200);
-          if(items[i + 1]) h2 = drawGridItem(items[i + 1].label, items[i + 1].value, col2X, cursorY, 200);
-          
+          if (items[i]) h1 = drawGridItem(items[i].label, items[i].value, col1X, cursorY, 200);
+          if (items[i + 1]) h2 = drawGridItem(items[i + 1].label, items[i + 1].value, col2X, cursorY, 200);
+
           cursorY -= Math.max(h1, h2);
         }
         cursorY -= 5;
@@ -559,10 +559,10 @@ export default function UserManagement() {
       }
 
       // Update local state
-      setUsers(users.map(user => 
+      setUsers(users.map(user =>
         user.id === userId ? { ...user, adminWillFill: !currentValue } : user
       ));
-      setAllUsers(allUsers.map(user => 
+      setAllUsers(allUsers.map(user =>
         user.id === userId ? { ...user, adminWillFill: !currentValue } : user
       ));
 
@@ -573,10 +573,10 @@ export default function UserManagement() {
 
   // Handle ban/suspend user
   const handleBanUser = (userId) => {
-    setUsers(users.map(user => 
+    setUsers(users.map(user =>
       user.id === userId ? { ...user, status: "Suspended" } : user
     ));
-    setAllUsers(allUsers.map(user => 
+    setAllUsers(allUsers.map(user =>
       user.id === userId ? { ...user, status: "Suspended" } : user
     ));
   };
@@ -602,7 +602,7 @@ export default function UserManagement() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <p className="text-red-800">Error: {error}</p>
-        <button 
+        <button
           onClick={() => fetchUsers(currentPage)}
           className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
         >
@@ -635,7 +635,7 @@ export default function UserManagement() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <select 
+          <select
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -644,7 +644,7 @@ export default function UserManagement() {
               <option key={status} value={status}>{status}</option>
             ))}
           </select>
-          <select 
+          <select
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             value={planFilter}
             onChange={(e) => setPlanFilter(e.target.value)}
@@ -691,26 +691,24 @@ export default function UserManagement() {
                   </td>
                   <td className="py-4 px-6">
                     <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        user.status === "Active"
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.status === "Active"
                           ? "bg-green-100 text-green-800"
                           : user.status === "Pending"
-                          ? "bg-amber-300 text-amber-800"
-                          : user.status === "Inactive"
-                          ? "bg-gray-100 text-gray-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
+                            ? "bg-amber-300 text-amber-800"
+                            : user.status === "Inactive"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
                     >
                       {user.status}
                     </span>
                   </td>
                   <td className="py-4 px-6">
                     <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        user.plan === "Premium" || user.plan === "Gold"
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.plan === "Premium" || user.plan === "Gold"
                           ? "bg-amber-300 text-amber-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {user.plan === "Premium" || user.plan === "Gold" ? (
                         <Crown className="w-3 h-3 mr-1" />
@@ -723,14 +721,12 @@ export default function UserManagement() {
                   <td className="py-4 px-6">
                     <button
                       onClick={() => handleToggleAdminFill(user.id, user.adminWillFill)}
-                      className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none ${
-                        user.adminWillFill ? 'bg-orange-500' : 'bg-gray-200'
-                      }`}
+                      className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none ${user.adminWillFill ? 'bg-orange-500' : 'bg-gray-200'
+                        }`}
                     >
                       <span
-                        className={`inline-block w-4 h-4 transform transition-transform bg-white rounded-full ${
-                          user.adminWillFill ? 'translate-x-6' : 'translate-x-1'
-                        }`}
+                        className={`inline-block w-4 h-4 transform transition-transform bg-white rounded-full ${user.adminWillFill ? 'translate-x-6' : 'translate-x-1'
+                          }`}
                       />
                       {user.adminWillFill ? (
                         <ToggleRight className="absolute left-1 w-3 h-3 text-white" />
@@ -747,19 +743,19 @@ export default function UserManagement() {
                       >
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         className="text-green-600 hover:text-green-700 p-1"
                         onClick={() => handleExportUser(user)}
                       >
                         <Download className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         className="text-amber-600 hover:text-amber-700 p-1"
                         onClick={() => handleEditUser(user)}
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         className="text-red-600 hover:text-red-700 p-1"
                         onClick={() => handleBanUser(user.id)}
                       >
@@ -780,19 +776,18 @@ export default function UserManagement() {
               Showing {startIndex + 1} to {endIndex} of {totalUsers} users
             </p>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={handlePrevious}
                 disabled={currentPage === 1}
-                className={`px-3 py-2 border rounded-lg text-sm font-medium flex items-center ${
-                  currentPage === 1 
-                    ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
+                className={`px-3 py-2 border rounded-lg text-sm font-medium flex items-center ${currentPage === 1
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Previous
               </button>
-              
+
               {/* Page Numbers */}
               <div className="flex items-center space-x-1">
                 {[...Array(totalPages)].map((_, index) => {
@@ -801,26 +796,24 @@ export default function UserManagement() {
                     <button
                       key={pageNumber}
                       onClick={() => goToPage(pageNumber)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium ${
-                        currentPage === pageNumber
+                      className={`px-3 py-2 rounded-lg text-sm font-medium ${currentPage === pageNumber
                           ? 'bg-orange-500 text-white'
                           : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       {pageNumber}
                     </button>
                   );
                 })}
               </div>
-              
-              <button 
+
+              <button
                 onClick={handleNext}
                 disabled={currentPage === totalPages}
-                className={`px-3 py-2 border rounded-lg text-sm font-medium flex items-center ${
-                  currentPage === totalPages 
-                    ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
+                className={`px-3 py-2 border rounded-lg text-sm font-medium flex items-center ${currentPage === totalPages
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -863,22 +856,20 @@ export default function UserManagement() {
                     )}
                     <div className="flex space-x-2 mt-1">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          selectedUser.status === "Active"
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.status === "Active"
                             ? "bg-green-100 text-green-800"
                             : selectedUser.status === "Pending"
-                            ? "bg-amber-300 text-amber-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
+                              ? "bg-amber-300 text-amber-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
                       >
                         {selectedUser.status}
                       </span>
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          selectedUser.plan === "Premium" || selectedUser.plan === "Gold"
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.plan === "Premium" || selectedUser.plan === "Gold"
                             ? "bg-amber-300 text-amber-800"
                             : "bg-gray-100 text-gray-800"
-                        }`}
+                          }`}
                       >
                         {selectedUser.plan === "Premium" || selectedUser.plan === "Gold" ? (
                           <Crown className="w-3 h-3 mr-1" />
@@ -894,8 +885,8 @@ export default function UserManagement() {
                     </div>
                     <div className="mt-2">
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           checked={selectedUser.adminWillFill}
                           onChange={(e) => handleToggleAdminFill(selectedUser.id, selectedUser.adminWillFill)}
                           className="sr-only peer"
@@ -1037,7 +1028,7 @@ export default function UserManagement() {
               >
                 Close
               </button>
-              <button 
+              <button
                 className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                 onClick={() => handleEditUser(selectedUser)}
               >
