@@ -5,11 +5,14 @@ import User from "@/models/User";
 import Counter from "@/models/Counter";
 import { createToken, setTokenCookie } from "@/lib/auth";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Or your specific origin
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Credentials' : true,
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 export async function POST(req) {
   try {
@@ -19,7 +22,7 @@ export async function POST(req) {
     if (!phoneNumber || phoneNumber.length !== 10 || !otp || otp.length !== 6) {
       return new NextResponse(
         JSON.stringify({ success: false, error: "Invalid phone number or OTP" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400, headers: getCorsHeaders(req) }
       );
     }
  
@@ -49,14 +52,14 @@ export async function POST(req) {
       console.log("Error: OTP expired or not sent");
       return new NextResponse(
         JSON.stringify({ success: false, error: "OTP expired or not sent" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400, headers: getCorsHeaders(req) }
       );
     }
  
     if (!isStaticTest && storedOTP !== otp.toString()) {
       return new NextResponse(
         JSON.stringify({ success: false, error: "Invalid OTP" }),
-        { status: 400, headers: corsHeaders }
+        { status: 400, headers: getCorsHeaders(req) }
       );
     }
 
@@ -106,7 +109,7 @@ export async function POST(req) {
           phoneIsVerified: user.phoneIsVerified
         }
       }),
-      { headers: corsHeaders }
+      { headers: getCorsHeaders(req) }
     );
  
     // Set HTTP-only cookie
@@ -118,15 +121,13 @@ export async function POST(req) {
     console.error("Error verifying OTP:", error);
     return new NextResponse(
       JSON.stringify({ success: false, error: "Error verifying OTP" }),
-      { status: 500, headers: corsHeaders }
+      { status: 500, headers: getCorsHeaders(req) }
     );
   }
 }
  
 // Add OPTIONS handler for preflight requests
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    headers: corsHeaders
-  });
+  return new NextResponse(null, { headers: getCorsHeaders(req) });
 }
  

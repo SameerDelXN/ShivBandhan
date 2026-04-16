@@ -4,11 +4,14 @@ import mongoose from 'mongoose';
 import User from '@/models/User'; // Assuming your User model is imported from here
 import connectDB from '@/lib/dbConnect';
 // Connect to MongoDB if not already connected
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true'
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 
 export async function GET(request) {
@@ -31,7 +34,7 @@ export async function GET(request) {
       console.log('🔴 fetchAllUsers: No token found in cookies or headers');
       return NextResponse.json(
         { message: 'Unauthorized' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -44,13 +47,13 @@ export async function GET(request) {
       console.error('🔴 fetchAllUsers: Token verification failed:', err.message);
       return NextResponse.json(
         { message: 'Invalid token' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
     // Get query parameters for potential filtering
     const { searchParams } = new URL(request.url);
-    const limit = searchParams.get('limit') || 20;
+    const limit = searchParams.get('limit') || 1000;
     const page = searchParams.get('page') || 1;
     const skip = (page - 1) * limit;
     
@@ -73,6 +76,7 @@ export async function GET(request) {
     
     // Fetch users with pagination
     const users = await User.find(query)
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit))
       .select('-__v') // Exclude version key
@@ -90,13 +94,20 @@ export async function GET(request) {
         limit: parseInt(limit),
         totalPages: Math.ceil(total / limit)
       }
-    },{headers:corsHeaders});
+    },{ headers: getCorsHeaders(request) });
     
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(
       { success: false, message: 'Failed to fetch users', error: error.message },
-      { status: 500 ,headers:corsHeaders  }
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
+}
+
+export async function OPTIONS(request) {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(request)
+  });
 }

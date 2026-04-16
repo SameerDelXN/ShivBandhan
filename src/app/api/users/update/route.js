@@ -210,11 +210,14 @@ import FormSection from '@/models/FormSection';
 import dbConnect from '@/lib/dbConnect';
 
 export const dynamic = 'force-dynamic';
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true'
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 export async function PUT(request) {
   try {
@@ -228,7 +231,7 @@ export async function PUT(request) {
     if (!userId) {
       return NextResponse.json(
         { message: 'User ID is required' },
-        { status: 400,headers:corsHeaders }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -260,7 +263,7 @@ export async function PUT(request) {
     if (!updatedUser) {
       return NextResponse.json(
         { message: 'User not found' },
-        { status: 404,headers:corsHeaders}
+        { status: 404, headers: getCorsHeaders(request) }
       );
     }
 
@@ -268,7 +271,7 @@ export async function PUT(request) {
       success: true,
       data: updatedUser,
       message: 'Profile updated successfully'
-    },{headers:corsHeaders});
+    },{ headers: getCorsHeaders(request) });
 
   } catch (error) {
     console.error('Error updating user profile:', error);
@@ -277,12 +280,10 @@ export async function PUT(request) {
         message: 'Internal server error',
         error: error.message 
       },
-      { status: 500 ,headers:corsHeaders}
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
 }
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    headers: corsHeaders
-  });
+  return new NextResponse(null, { headers: getCorsHeaders(request) });
 }
