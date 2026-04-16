@@ -53,7 +53,7 @@ export async function GET(request) {
 
     // Get query parameters for potential filtering
     const { searchParams } = new URL(request.url);
-    const limit = searchParams.get('limit') || 20;
+    const limit = searchParams.get('limit') || 1000;
     const page = searchParams.get('page') || 1;
     const skip = (page - 1) * limit;
     
@@ -76,6 +76,7 @@ export async function GET(request) {
     
     // Fetch users with pagination
     const users = await User.find(query)
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit))
       .select('-__v') // Exclude version key

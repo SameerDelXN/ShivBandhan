@@ -275,7 +275,7 @@ export default function MatchesPage() {
 
       const sentReceiverIds = await fetchSentInterests(currentUserData._id || currentUserData.id);
 
-      const res = await fetch('/api/users/fetchAllUsers?limit=20&page=1');
+      const res = await fetch('/api/users/fetchAllUsers?limit=100&page=1');
       if (!res.ok) throw new Error('Failed to fetch matches');
       const data = await res.json();
 
