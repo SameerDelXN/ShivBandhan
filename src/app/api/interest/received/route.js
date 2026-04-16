@@ -11,11 +11,11 @@ const getCorsHeaders = (req) => {
     'Access-Control-Allow-Credentials': 'true'
   };
 };
-export async function GET(req) {
+export async function GET(request) {
   try {
     await connectDB();
 
-    const userId = req.nextUrl.searchParams.get("userId");
+    const userId = request.nextUrl.searchParams.get("userId");
     
     // Validate input
     if (!userId) {

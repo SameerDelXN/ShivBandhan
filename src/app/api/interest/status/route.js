@@ -12,10 +12,10 @@ const getCorsHeaders = (req) => {
     'Access-Control-Allow-Credentials': 'true'
   };
 };
-export async function PATCH(req) {
+export async function PATCH(request) {
   await connectDB();
 
-  const { interestId, status } = await req.json();
+  const { interestId, status } = await request.json();
   console.log("Interest ID:", interestId);
   console.log("Status:", status);
   if (!interestId || !["accepted", "declined"].includes(status)) {

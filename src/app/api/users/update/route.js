@@ -284,6 +284,6 @@ export async function PUT(request) {
     );
   }
 }
-export async function OPTIONS() {
+export async function OPTIONS(request) {
   return new NextResponse(null, { headers: getCorsHeaders(request) });
 }

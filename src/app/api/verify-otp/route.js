@@ -14,9 +14,9 @@ const getCorsHeaders = (req) => {
     'Access-Control-Allow-Credentials': 'true'
   };
 };
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const { phoneNumber, otp, firstName, lastName, gender } = await req.json();
+    const { phoneNumber, otp, firstName, lastName, gender } = await request.json();
  
     // Input validation
     if (!phoneNumber || phoneNumber.length !== 10 || !otp || otp.length !== 6) {
@@ -127,7 +127,7 @@ export async function POST(req) {
 }
  
 // Add OPTIONS handler for preflight requests
-export async function OPTIONS() {
+export async function OPTIONS(request) {
   return new NextResponse(null, { headers: getCorsHeaders(request) });
 }
  

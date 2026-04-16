@@ -12,14 +12,14 @@ const getCorsHeaders = (req) => {
     'Access-Control-Allow-Credentials': 'true'
   };
 };
-export async function POST(req) {
+export async function POST(request) {
   try {
     await connectDB();
     
     // Authenticate the user
-    let token = req.cookies.get('authToken')?.value;
+    let token = request.cookies.get('authToken')?.value;
     if (!token) {
-      const authHeader = req.headers.get('authorization');
+      const authHeader = request.headers.get('authorization');
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const extracted = authHeader.substring(7);
         if (extracted !== "undefined" && extracted !== "null") {
@@ -46,7 +46,7 @@ export async function POST(req) {
       );
     }
 
-    const { senderId, receiverId } = await req.json();
+    const { senderId, receiverId } = await request.json();
     console.log("Sender ID:", senderId);
     console.log("Receiver ID:", receiverId);
     // Validate input
@@ -127,14 +127,14 @@ export async function POST(req) {
   }
 }
 
-export async function GET(req) {
+export async function GET(request) {
   try {
     await connectDB();
     
     // Authenticate the user
-    let token = req.cookies.get('authToken')?.value;
+    let token = request.cookies.get('authToken')?.value;
     if (!token) {
-      const authHeader = req.headers.get('authorization');
+      const authHeader = request.headers.get('authorization');
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const extracted = authHeader.substring(7);
         if (extracted !== "undefined" && extracted !== "null") {
@@ -161,7 +161,7 @@ export async function GET(req) {
       );
     }
 
-    const userId = req.nextUrl.searchParams.get("userId");
+    const userId = request.nextUrl.searchParams.get("userId");
     if (!userId) {
       return NextResponse.json(
         { message: "User ID is required" },
