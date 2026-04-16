@@ -5,12 +5,15 @@
 // const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
  
 // // Define CORS headers
-// const corsHeaders = {
-//   'Access-Control-Allow-Origin': 'http://localhost:8081',
-//   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-//   'Access-Control-Allow-Headers': 'Content-Type',
-//   'Access-Control-Allow-Credentials' : true,
-// };
+// const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
+};
  
 // export async function POST(req) {
 //   try {
@@ -18,7 +21,7 @@
 //     if (!phoneNumber || phoneNumber.length !== 10) {
 //       return new NextResponse(
 //         JSON.stringify({ success: false, message: "Invalid phone number" }),
-//         { status: 400, headers: corsHeaders }
+//         { status: 400, headers: getCorsHeaders(request) }
 //       );
 //     }
  
@@ -36,12 +39,12 @@
  
 //     return new NextResponse(
 //       JSON.stringify({ success: true, message: "OTP sent successfully" }),
-//       { headers: corsHeaders }
+//       { headers: getCorsHeaders(request) }
 //     );
 //   } catch (error) {
 //     return new NextResponse(
 //       JSON.stringify({ success: false, message: "Error sending OTP", error: error.message }),
-//       { status: 500, headers: corsHeaders }
+//       { status: 500, headers: getCorsHeaders(request) }
 //     );
 //   }
 // }

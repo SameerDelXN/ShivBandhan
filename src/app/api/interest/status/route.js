@@ -3,11 +3,14 @@ import connectDB from "@/lib/dbConnect";
 import Interest from "@/models/Interest";
 import User from "@/models/User";
 import Notification from "@/models/Notification";
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true'
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 export async function PATCH(req) {
   await connectDB();
@@ -16,12 +19,12 @@ export async function PATCH(req) {
   console.log("Interest ID:", interestId);
   console.log("Status:", status);
   if (!interestId || !["accepted", "declined"].includes(status)) {
-    return NextResponse.json({ message: "Invalid input" }, { status: 400,headers:corsHeaders });
+    return NextResponse.json({ message: "Invalid input" }, { status: 400, headers: getCorsHeaders(request) });
   }
 
   const interest = await Interest.findById(interestId);
   if (!interest) {
-    return NextResponse.json({ message: "Interest not found" }, { status: 404 ,headers:corsHeaders});
+    return NextResponse.json({ message: "Interest not found" }, { status: 404, headers: getCorsHeaders(request) });
   }
 
   interest.status = status;
@@ -61,6 +64,13 @@ export async function PATCH(req) {
     }
   }
 
-  return NextResponse.json({ message: "Status updated", interest },{headers:corsHeaders});
+  return NextResponse.json({ message: "Status updated", interest },{ headers: getCorsHeaders(request) });
 }
 // This route updates the status of an interest (accepted or declined).
+
+export async function OPTIONS(request) {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(request)
+  });
+}

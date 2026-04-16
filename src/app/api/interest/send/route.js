@@ -3,11 +3,14 @@ import connectDB from "@/lib/dbConnect";
 import Interest from "@/models/Interest";
 import User from "@/models/User"; // Import User model
 import Notification from "@/models/Notification";
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true'
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 export async function POST(req) {
   try {
@@ -28,7 +31,7 @@ export async function POST(req) {
     if (!token) {
       return NextResponse.json(
         { message: 'Unauthorized' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -39,7 +42,7 @@ export async function POST(req) {
     } catch (err) {
       return NextResponse.json(
         { message: 'Invalid token' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -50,7 +53,7 @@ export async function POST(req) {
     if (!senderId || !receiverId) {
       return NextResponse.json(
         { message: "Both senderId and receiverId are required" },
-        { status: 400,headers:corsHeaders }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -61,7 +64,7 @@ export async function POST(req) {
     if (!senderExists || !receiverExists) {
       return NextResponse.json(
         { message: "Either sender or receiver does not exist" },
-        { status: 404 ,headers:corsHeaders}
+        { status: 404, headers: getCorsHeaders(request) }
       );
     }
 
@@ -70,7 +73,7 @@ export async function POST(req) {
     if (existing) {
       return NextResponse.json(
         { message: "Interest already sent" },
-        { status: 400 ,headers:corsHeaders}
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -113,13 +116,13 @@ export async function POST(req) {
         sender: senderExists,
         receiver: receiverExists
       }
-    },{headers:corsHeaders});
+    },{ headers: getCorsHeaders(request) });
 
   } catch (error) {
     console.error("Error in POST interest:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500,headers:corsHeaders }
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
 }
@@ -143,7 +146,7 @@ export async function GET(req) {
     if (!token) {
       return NextResponse.json(
         { message: 'Unauthorized' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -154,7 +157,7 @@ export async function GET(req) {
     } catch (err) {
       return NextResponse.json(
         { message: 'Invalid token' },
-        { status: 401, headers: corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -162,7 +165,7 @@ export async function GET(req) {
     if (!userId) {
       return NextResponse.json(
         { message: "User ID is required" },
-        { status: 400,headers:corsHeaders }
+        { status: 400, headers: getCorsHeaders(request) }
       );
     }
 
@@ -171,7 +174,7 @@ export async function GET(req) {
     if (!userExists) {
       return NextResponse.json(
         { message: "User not found" },
-        { status: 404,headers:corsHeaders }
+        { status: 404, headers: getCorsHeaders(request) }
       );
     }
 
@@ -194,13 +197,20 @@ export async function GET(req) {
     return NextResponse.json({ 
       success: true,
       interests: populatedInterests 
-    },{headers:corsHeaders});
+    },{ headers: getCorsHeaders(request) });
 
   } catch (error) {
     console.error("Error in GET interests:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500,headers:corsHeaders }
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
+}
+
+export async function OPTIONS(request) {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(request)
+  });
 }

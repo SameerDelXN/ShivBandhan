@@ -4,11 +4,14 @@ import User from '@/models/User';
 import dbConnect from '@/lib/dbConnect';
 import { Weight } from 'lucide-react';
 export const dynamic = 'force-dynamic';
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:8081', // Must be explicit, not *
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Credentials': 'true'
+const getCorsHeaders = (req) => {
+  const origin = req?.headers?.get('origin') || '*';
+  return {
+    'Access-Control-Allow-Origin': origin !== '*' ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
 };
 export async function GET(request) {
   try {
@@ -29,7 +32,7 @@ export async function GET(request) {
     if (!token) {
       return NextResponse.json(
         { message: 'Unauthorized' },
-        { status: 401 ,headers:corsHeaders}
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
     console.log('Token :', token);
@@ -39,7 +42,7 @@ export async function GET(request) {
     if (!decoded) {
       return NextResponse.json(
         { message: 'Invalid token' },
-        { status: 401,headers:corsHeaders }
+        { status: 401, headers: getCorsHeaders(request) }
       );
     }
 
@@ -47,7 +50,7 @@ export async function GET(request) {
     if (!user) {
       return NextResponse.json(
         { message: 'User not found' },
-        { status: 404,headers:corsHeaders }
+        { status: 404, headers: getCorsHeaders(request) }
       );
     }
     console.log('User found:', user);
@@ -142,12 +145,19 @@ export async function GET(request) {
   }
 };
     console.log("Me = ",userData)
-    return NextResponse.json(userData,{headers:corsHeaders});
+    return NextResponse.json(userData,{ headers: getCorsHeaders(request) });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
-      { status: 500,headers:corsHeaders }
+      { status: 500, headers: getCorsHeaders(request) }
     );
   }
+}
+
+export async function OPTIONS(request) {
+  return new Response(null, {
+    status: 204,
+    headers: getCorsHeaders(request)
+  });
 }
