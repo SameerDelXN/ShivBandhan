@@ -46,6 +46,7 @@ export const calculateProfileCompletion = (user) => {
     'gan',
     'nadi',
     'gotraDevak',
+    'devak',
     'mangal',
     'expectedCaste',
     'expectedEducation',

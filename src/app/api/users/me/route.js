@@ -117,6 +117,8 @@ export async function GET(request) {
   birthPlace: user.birthPlace,
   birthTime: user.birthTime,
   gotraDevak: user.gotraDevak,
+  devak: user.devak,
+  shivbandhanId: user.shivbandhanId,
   
   // Expectations
   expectedCaste: user.expectedCaste,

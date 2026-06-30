@@ -129,10 +129,10 @@ const calculateCompletion = (section) => {
     if (!formData) return 0; 
     const fields = {
       basic: ['name', 'dob', 'height', 'gender', 'maritalStatus', 'motherTongue', 'currentCity', 'weight', 'email', 'permanentAddress', 'wearsLens', 'bloodGroup', 'complexion'],
-      religious: ['religion', 'caste', 'subCaste', 'gothra'],
+      religious: ['religion', 'caste', 'subCaste'],
       education: ['education', 'fieldOfStudy', 'college', 'occupation', 'company', 'income'],
       relative: ['fatherName', 'parentResidenceCity', 'mother', 'brothers', 'marriedBrothers', 'sisters', 'marriedSisters', 'nativeDistrict', 'nativeCity', 'familyWealth', 'relativeSurname', 'parentOccupation', 'mamaSurname',],
-      horoscope: ['rashi', 'nakshira', 'charan', 'gan', 'nadi', 'mangal', 'birthPlace', 'birthTime', 'gotraDevak'],
+      horoscope: ['rashi', 'nakshira', 'charan', 'gan', 'nadi', 'mangal', 'birthPlace', 'birthTime', 'gothra', 'devak'],
       expectations: ['expectedCaste', 'preferredCity', 'expectedAgeDifference', 'expectedEducation', 'divorcee', 'expectedHeight', 'expectedIncome',]
     };
   
@@ -657,16 +657,6 @@ const handlePhotoUploadSuccess = (result, photoId) => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gothra</label>
-                  <input 
-                    type="text"
-                    value={formData?.gothra}
-                    onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
-                    placeholder="Enter your gothra" 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -1045,12 +1035,22 @@ case 'relative':
                   />
                 </div>
                  <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gotra/Devak</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gotra</label>
                   <input 
                     type="text"
-                    value={formData.gotraDevak}
-                    onChange={(e) => setFormData({ ...formData, gotraDevak: e.target.value })}
-                    placeholder="Enter gotra/devak"
+                    value={formData.gothra}
+                    onChange={(e) => setFormData({ ...formData, gothra: e.target.value })}
+                    placeholder="Enter gotra"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                  />
+                </div>
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Devak</label>
+                  <input 
+                    type="text"
+                    value={formData.devak || ''}
+                    onChange={(e) => setFormData({ ...formData, devak: e.target.value })}
+                    placeholder="Enter devak"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                   />
                 </div>

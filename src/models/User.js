@@ -129,6 +129,7 @@
     birthPlace: String,
     birthTime: String,
     gotraDevak: String,
+    devak: String,
 //sample
     // Expectations
     expectedCaste: String,

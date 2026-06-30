@@ -79,6 +79,8 @@ const DynamicProfileForm = () => {
     "Birth Time": 'birthTime',
     "Gan": 'gan',
     "Gotra Devak": 'gotraDevak',
+    "Gotra": 'gothra',
+    "Devak": 'devak',
 
     // Expectations
     "Expected Caste": 'expectedCaste',
@@ -753,7 +755,9 @@ const DynamicProfileForm = () => {
                 {verificationStatus === 'Verified' && <Award className="w-5 h-5 text-green-500" />}
               </div>
               {formData?.shivbandhanId && (
-                <p className="text-xs text-orange-500 font-semibold mb-1">ID: {formData.shivbandhanId}</p>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-bold tracking-wide">ID: {formData.shivbandhanId}</span>
+                </div>
               )}
               <div className="space-y-1 text-gray-600">
                 <div className="flex items-center space-x-4 text-sm">

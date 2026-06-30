@@ -540,11 +540,20 @@ const EditProfileModal = ({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Gotra/Devak</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gotra</label>
                   <input
                     type="text"
-                    value={formData.gotraDevak || ''}
-                    onChange={(e) => handleChange('gotraDevak', e.target.value)}
+                    value={formData.gothra || ''}
+                    onChange={(e) => handleChange('gothra', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Devak</label>
+                  <input
+                    type="text"
+                    value={formData.devak || ''}
+                    onChange={(e) => handleChange('devak', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   />
                 </div>
@@ -1594,9 +1603,16 @@ export default function Verification() {
                         onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
                       />
                       <DetailItem 
-                        label="Gotra/Devak" 
-                        value={selectedProfile.gotraDevak} 
-                        field="gotraDevak"
+                        label="Gotra" 
+                        value={selectedProfile.gothra || selectedProfile.gotraDevak} 
+                        field="gothra"
+                        profile={selectedProfile}
+                        onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
+                      />
+                      <DetailItem 
+                        label="Devak" 
+                        value={selectedProfile.devak} 
+                        field="devak"
                         profile={selectedProfile}
                         onEdit={(field, value) => handleEditProfile({ ...selectedProfile, [field]: value })}
                       />

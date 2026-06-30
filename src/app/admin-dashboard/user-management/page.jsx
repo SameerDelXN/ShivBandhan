@@ -127,6 +127,7 @@ export default function UserManagement() {
           birthPlace: user.birthPlace,
           birthTime: user.birthTime,
           gotraDevak: user.gotraDevak,
+          devak: user.devak || '',
 
           // Additional Expectations
           expectedCaste: user.expectedCaste,
@@ -271,6 +272,19 @@ export default function UserManagement() {
         return String(text).replace(/₹/g, 'Rs. ').replace(/[^\x00-\xFF]/g, '');
       };
 
+      // Helper function to format DOB as dd/mm/yyyy
+      const formatDob = (dobValue) => {
+        if (!dobValue || dobValue === 'N/A') return '-';
+        try {
+          const d = new Date(dobValue);
+          if (isNaN(d.getTime())) return safeText(dobValue);
+          const day = String(d.getDate()).padStart(2, '0');
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const year = d.getFullYear();
+          return `${day}/${month}/${year}`;
+        } catch { return safeText(dobValue); }
+      };
+
       // Helper function to figure out line wrapping
       const getWrappedLines = (text, maxWidth, textFont, textSize) => {
         const words = text.split(' ');
@@ -336,8 +350,8 @@ export default function UserManagement() {
       }
 
       // Draw Company Address (Center/Right-ish)
-      page.drawText('Durga Prasad Apartments, S. No. 26/6, Flat No. 1, Above Udyam Vikas Bank,', { x: 120, y: cursorY, size: 9, font });
-      page.drawText('Hingne KD, Sinhagad Road, Pune 411051, Maharashtra, India', { x: 120, y: cursorY - 12, size: 9, font });
+      page.drawText('YashGanga Complex, Flat No.306, Near Hotel Deccan Pavilion,', { x: 120, y: cursorY, size: 9, font });
+      page.drawText('Navale Bridge, Katraj Bypass Rd, Narhe, Pune-411041, Maharashtra, India', { x: 120, y: cursorY - 12, size: 9, font });
       page.drawText('Mobile : +91 9168319090', { x: 120, y: cursorY - 24, size: 9, font });
       page.drawText(`Email : support@shivbandhan.com | info@shivbandhan.com`, { x: 120, y: cursorY - 36, size: 9, font });
       page.drawText('Website : www.shivbandhan.com', { x: 120, y: cursorY - 48, size: 9, font });
@@ -398,7 +412,7 @@ export default function UserManagement() {
       let basicInfoY = cursorY - 10;
       page.drawText(safeText(user?.name), { x: basicInfoX, y: basicInfoY, size: 11, font: boldFont });
       basicInfoY -= 15;
-      page.drawText(`DOB : ${safeText(user?.dob)}`, { x: basicInfoX, y: basicInfoY, size: 10, font });
+      page.drawText(`DOB : ${formatDob(user?.dob)}`, { x: basicInfoX, y: basicInfoY, size: 10, font });
       basicInfoY -= 15;
       page.drawText(`Gender : ${safeText(user?.gender)}`, { x: basicInfoX, y: basicInfoY, size: 10, font });
       basicInfoY -= 15;
@@ -454,7 +468,7 @@ export default function UserManagement() {
         { label: 'Name :', value: user?.name },
         { label: 'Mobile :', value: user?.phone },
         { label: 'Email :', value: user?.email },
-        { label: 'DOB :', value: user?.dob },
+        { label: 'DOB :', value: formatDob(user?.dob) },
         { label: 'Marital Status :', value: user?.maritalStatus },
         { label: 'Community :', value: user?.religion },
         { label: 'Caste :', value: user?.caste },
@@ -505,7 +519,8 @@ export default function UserManagement() {
         { label: 'Mangal :', value: user?.mangal },
         { label: 'Birth Place :', value: user?.birthPlace },
         { label: 'Birth Time :', value: user?.birthTime },
-        { label: 'Gotra/Devak :', value: user?.gotraDevak }
+        { label: 'Gotra :', value: user?.gothra || user?.gotraDevak },
+        { label: 'Devak :', value: user?.devak }
       ]);
 
       // Expectation
@@ -676,13 +691,17 @@ export default function UserManagement() {
               {users.slice(startIndex, endIndex).map((user, index) => (
                 <tr key={user.id} className="border-b border-gray-100 hover:bg-orange-50/30 transition-colors">
                   <td className="py-4 px-6">
-                    <span className="text-xs font-mono text-orange-600 font-semibold">{user.shivbandhanId || '-'}</span>
+                    <span className="text-sm font-mono text-orange-600 font-semibold">{user.shivbandhanId || '-'}</span>
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
-                        <Users className="w-5 h-5 text-orange-500" />
-                      </div>
+                      {user.profilePhoto ? (
+                        <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover border border-orange-200" />
+                      ) : (
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-100 to-amber-300 rounded-full flex items-center justify-center">
+                          <Users className="w-5 h-5 text-orange-500" />
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium text-gray-900">{user.name}</p>
                         <p className="text-sm text-gray-500">{user.email}</p>
@@ -826,12 +845,12 @@ export default function UserManagement() {
       {/* View User Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-gray-800/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-orange-100/50 w-full max-w-4xl overflow-hidden max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl border border-orange-100/50 w-full max-w-5xl overflow-hidden max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-orange-50 to-amber-150 px-6 py-4 border-b border-orange-100 flex justify-between items-center sticky top-0">
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 px-6 py-4 border-b border-orange-100 flex justify-between items-center sticky top-0 z-10">
               <div>
                 <h3 className="text-xl font-bold text-orange-800">User Profile</h3>
-                <p className="text-sm text-orange-600/80">Detailed information about {selectedUser.name}</p>
+                <p className="text-sm text-orange-600/80">Complete profile of {selectedUser.name}</p>
               </div>
               <button
                 onClick={() => setSelectedUser(null)}
@@ -842,179 +861,176 @@ export default function UserManagement() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* User Avatar and Basic Info */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
+            <div className="p-6 space-y-6">
+              {/* User Avatar and Basic Info Header */}
+              <div className="flex items-center space-x-4 pb-4 border-b border-gray-100">
+                {selectedUser.profilePhoto ? (
+                  <img src={selectedUser.profilePhoto} alt={selectedUser.name} className="w-20 h-20 rounded-full object-cover border-2 border-orange-200 shadow-md" />
+                ) : (
                   <div className="w-20 h-20 bg-gradient-to-br from-orange-200 to-amber-400 rounded-full flex items-center justify-center shadow-md">
                     <Users className="w-8 h-8 text-orange-600" />
                   </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
-                    {selectedUser.shivbandhanId && (
-                      <p className="text-xs text-orange-500 font-semibold">ID: {selectedUser.shivbandhanId}</p>
+                )}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900">{selectedUser.name}</h4>
+                  {selectedUser.shivbandhanId && (
+                    <p className="text-sm text-orange-500 font-semibold">ID: {selectedUser.shivbandhanId}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.status === "Active" ? "bg-green-100 text-green-800" : selectedUser.status === "Pending" ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800"}`}>
+                      {selectedUser.status}
+                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.plan === "Premium" || selectedUser.plan === "Gold" ? "bg-amber-100 text-amber-800" : "bg-gray-100 text-gray-800"}`}>
+                      {(selectedUser.plan === "Premium" || selectedUser.plan === "Gold") && <Crown className="w-3 h-3 mr-1" />}
+                      {selectedUser.plan}
+                    </span>
+                    {selectedUser.isVerified && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <Check className="w-3 h-3 mr-1" /> Verified
+                      </span>
                     )}
-                    <div className="flex space-x-2 mt-1">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.status === "Active"
-                            ? "bg-green-100 text-green-800"
-                            : selectedUser.status === "Pending"
-                              ? "bg-amber-300 text-amber-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {selectedUser.status}
+                    {selectedUser.phoneIsVerified && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        Phone Verified
                       </span>
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedUser.plan === "Premium" || selectedUser.plan === "Gold"
-                            ? "bg-amber-300 text-amber-800"
-                            : "bg-gray-100 text-gray-800"
-                          }`}
-                      >
-                        {selectedUser.plan === "Premium" || selectedUser.plan === "Gold" ? (
-                          <Crown className="w-3 h-3 mr-1" />
-                        ) : null}
-                        {selectedUser.plan}
-                      </span>
-                      {selectedUser.isVerified && (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <Check className="w-3 h-3 mr-1" />
-                          Verified
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-2">
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={selectedUser.adminWillFill}
-                          onChange={(e) => handleToggleAdminFill(selectedUser.id, selectedUser.adminWillFill)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        <span className="ml-3 text-sm font-medium text-gray-700">
-                          Admin Can Fill
-                        </span>
-                      </label>
-                    </div>
+                    )}
+                  </div>
+                  <div className="mt-2">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked={selectedUser.adminWillFill} onChange={() => handleToggleAdminFill(selectedUser.id, selectedUser.adminWillFill)} className="sr-only peer" />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                      <span className="ml-3 text-sm font-medium text-gray-700">Admin Can Fill</span>
+                    </label>
                   </div>
                 </div>
+              </div>
 
-                {/* Personal Details Card */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Personal Details */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
                     <Users className="h-4 w-4 mr-2 text-orange-500" />
                     Personal Details
                   </h5>
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-gray-500">Age</p>
-                      <p className="font-medium">{selectedUser.age}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Gender</p>
-                      <p className="font-medium">{selectedUser.gender}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Date of Birth</p>
-                      <p className="font-medium">{selectedUser.dob}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Marital Status</p>
-                      <p className="font-medium">{selectedUser.maritalStatus}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Height</p>
-                      <p className="font-medium">{selectedUser.height}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Weight</p>
-                      <p className="font-medium">{selectedUser.weight}</p>
-                    </div>
+                    {[['Phone', selectedUser.phone], ['Email', selectedUser.email], ['Age', selectedUser.age], ['Gender', selectedUser.gender], ['Date of Birth', selectedUser.dob], ['Marital Status', selectedUser.maritalStatus], ['Height', selectedUser.height], ['Weight', selectedUser.weight], ['Blood Group', selectedUser.bloodGroup], ['Complexion', selectedUser.complexion], ['Wears Lens', selectedUser.wearsLens]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Religious Details Card */}
+                {/* Religious & Cultural */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
                     <Crown className="h-4 w-4 mr-2 text-orange-500" />
-                    Religious & Cultural Details
+                    Religious & Cultural
                   </h5>
                   <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-gray-500">Religion</p>
-                      <p className="font-medium">{selectedUser.religion}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Caste</p>
-                      <p className="font-medium">{selectedUser.caste}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Sub Caste</p>
-                      <p className="font-medium">{selectedUser.subCaste}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500">Gothra</p>
-                      <p className="font-medium">{selectedUser.gothra}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <p className="text-gray-500">Mother Tongue</p>
-                      <p className="font-medium">{selectedUser.motherTongue}</p>
-                    </div>
+                    {[['Religion', selectedUser.religion], ['Caste', selectedUser.caste], ['Sub Caste', selectedUser.subCaste], ['Gothra', selectedUser.gothra], ['Mother Tongue', selectedUser.motherTongue]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
 
-              {/* Additional Information */}
-              <div className="space-y-4">
-                {/* Address Card */}
+                {/* Location */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     Location
                   </h5>
-                  <p className="text-sm">{selectedUser.address}</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Current City / Address', selectedUser.address], ['Native District', selectedUser.nativeDistrict], ['Native City', selectedUser.nativeCity]].map(([label, value]) => (
+                      <div key={label} className={label.includes('Address') ? 'col-span-2' : ''}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Education & Career Card */}
+                {/* Education & Career */}
                 <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
                   <h5 className="font-medium text-gray-900 mb-3 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                      <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>
                     Education & Career
                   </h5>
-                  <div className="space-y-2 text-sm">
-                    <div className="grid grid-cols-1 gap-2">
-                      <div>
-                        <p className="text-gray-500">Education</p>
-                        <p className="font-medium">{selectedUser.education}</p>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Education', selectedUser.education], ['Field of Study', selectedUser.fieldOfStudy], ['College', selectedUser.college], ['Occupation', selectedUser.familyBackground], ['Company', selectedUser.company], ['Income', selectedUser.income]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Field of Study</p>
-                        <p className="font-medium">{selectedUser.fieldOfStudy}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Relative Info */}
+                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <Users className="h-4 w-4 mr-2 text-orange-500" />
+                    Relative Info
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Father Name', selectedUser.fatherName], ['Mother', selectedUser.mother], ['Parent Res. City', selectedUser.parentResidenceCity], ['Parent Occupation', selectedUser.parentOccupation], ['Brothers', selectedUser.brothers], ['Married Brothers', selectedUser.marriedBrothers], ['Sisters', selectedUser.sisters], ['Married Sisters', selectedUser.marriedSisters], ['Family Wealth', selectedUser.familyWealth], ['Relative Surname', selectedUser.relativeSurname], ['Mama Surname', selectedUser.mamaSurname]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">College</p>
-                        <p className="font-medium">{selectedUser.college}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Horoscope Info */}
+                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                    Horoscope Info
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Rashi', selectedUser.rashi], ['Nakshira', selectedUser.nakshira], ['Charan', selectedUser.charan], ['Gan', selectedUser.gan], ['Nadi', selectedUser.nadi], ['Mangal', selectedUser.mangal], ['Birth Place', selectedUser.birthPlace], ['Birth Time', selectedUser.birthTime], ['Gotra', selectedUser.gothra || selectedUser.gotraDevak], ['Devak', selectedUser.devak]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Occupation</p>
-                        <p className="font-medium">{selectedUser.familyBackground}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Expectations */}
+                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    Expectations
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Expected Caste', selectedUser.expectedCaste], ['Preferred City', selectedUser.preferredCity], ['Age Difference', selectedUser.expectedAgeDifference], ['Expected Education', selectedUser.expectedEducation], ['Accept Divorcee', selectedUser.divorcee], ['Expected Height', selectedUser.expectedHeight], ['Expected Income', selectedUser.expectedIncome]].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Company</p>
-                        <p className="font-medium">{selectedUser.company}</p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Account Info */}
+                <div className="bg-gray-50/70 rounded-lg p-4 border border-gray-100">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    Account Info
+                  </h5>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    {[['Joined', selectedUser.joined], ['Last Login', selectedUser.lastLogin], ['Verification', selectedUser.verificationStatus], ['Phone Verified', selectedUser.phoneIsVerified ? 'Yes' : 'No'], ['Admin Can Fill', selectedUser.adminWillFill ? 'Yes' : 'No']].map(([label, value]) => (
+                      <div key={label}>
+                        <p className="text-gray-500">{label}</p>
+                        <p className="font-medium">{value || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-gray-500">Income</p>
-                        <p className="font-medium">{selectedUser.income}</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
